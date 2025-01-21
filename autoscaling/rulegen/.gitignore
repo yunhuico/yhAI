@@ -1,0 +1,5 @@
+rulegen
+bin/
+vendor/*
+!vendor/vendor.json
+./dev.rules

@@ -1,0 +1,134 @@
+FROM golang:1.6.2
+
+# docker build -t jiezhang/python:3.4-go-1.6-alpine -f Dockerfile.base .
+MAINTAINER jzhang@linkernetworks.com
+
+# install docker tools
+RUN mkdir -p /opt/local/bin \
+    && apt-get update \
+    && apt-get install -y \
+        expect \
+        unzip \
+        --no-install-recommends
+
+ENV DOCKER_VERSION=1.12.0
+ENV MACHINE_VERSION=0.9.0
+ENV COMPOSE_VERSION=1.8.1
+
+# Download docker-machine
+# here download linker customized version from google storage
+RUN curl -L https://storage.googleapis.com/linkerdcos/linker-docker-machine/v${MACHINE_VERSION}/docker-machine >/opt/local/bin/docker-machine-${MACHINE_VERSION} && \
+    chmod +x /opt/local/bin/docker-machine-${MACHINE_VERSION}
+
+
+# Download docker
+RUN curl -L https://get.docker.com/builds/Linux/x86_64/docker-${DOCKER_VERSION}.tgz > /tmp/docker-${DOCKER_VERSION}.tgz && \
+    cd /tmp && tar -xzf ./docker-${DOCKER_VERSION}.tgz && \
+    rm /tmp/docker-${DOCKER_VERSION}.tgz && \
+    mv /tmp/docker/docker /opt/local/bin/docker-${DOCKER_VERSION} && \
+    chmod +x /opt/local/bin/docker-${DOCKER_VERSION}
+
+# Download docker-compose
+RUN curl -L https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > /opt/local/bin/docker-compose-${COMPOSE_VERSION} && \
+    chmod +x /opt/local/bin/docker-compose-${COMPOSE_VERSION}
+
+# docker-compose depend on glibc, need install it by pip
+#RUN apk --update add py-pip py-yaml \
+#    && pip install -U docker-compose==${COMPOSE_VERSION}
+
+RUN ln -s /opt/local/bin/docker-${DOCKER_VERSION} /opt/local/bin/docker \
+    && ln -s /opt/local/bin/docker-machine-${MACHINE_VERSION} /opt/local/bin/docker-machine \
+    && ln -s /opt/local/bin/docker-compose-${COMPOSE_VERSION} /opt/local/bin/docker-compose
+
+ENV PATH=/opt/local/bin:$PATH
+
+# add deployer codes and build
+RUN go get -d github.com/Sirupsen/logrus \
+    && go get -d github.com/magiconair/properties \
+    && go get -d github.com/emicklei/go-restful \
+    && go get -d github.com/emicklei/go-restful-swagger12 \
+    && go get -d github.com/compose/mejson \
+    && go get -d github.com/jmoiron/jsonq \
+    && go get -d github.com/samuel/go-zookeeper/zk \
+    && go get -d github.com/LinkerNetworks/go-marathon \
+    && go get -d github.com/pborman/uuid \
+    && go get -d github.com/bmizerany/assert \
+    && git clone https://github.com/wordnik/swagger-ui.git /go/bin/swagger-ui
+
+COPY . /go/src/linkernetworks.com/dcos-backend
+
+WORKDIR /go/src/linkernetworks.com/dcos-backend/deployer
+
+RUN go build -v -o /go/bin/deployer \
+    && chmod u+x /go/bin/deployer
+
+# add resource files and move all files under /linker
+RUN mkdir -p /linker \
+    && cp /go/bin/deployer /linker \
+    && cp -r ./resources/* /go/bin/swagger-ui /linker \
+    && cp ./dcos_deploy.properties /linker \
+    && cp ./entrypoint.sh /linker \
+    && chmod u+x /linker/*.sh \
+    && sed -i 's/"http:\/\/petstore.swagger.io\/v2\/swagger.json"/"\/apidocs.json"/g' /linker/swagger-ui/dist/index.html
+
+# add mesos-agent tar file from google storage
+RUN mkdir -p /linker/mesos \
+    && curl -L https://storage.googleapis.com/linkerdcos/mesos/agent-1.2.1/customized-slave.tar > /linker/mesos/customized-slave.tar  \
+    && chmod 755 /linker/mesos/customized-slave.tar
+
+
+RUN echo "# Add by linker" >> /etc/ssh/ssh_config \
+    && echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config \
+    && echo "UserKnownHostsFile /dev/null" >> /etc/ssh/ssh_config
+
+EXPOSE 10003
+
+#Expose the config and log folder
+VOLUME ["/linker/docker","/linker/swarm","/var/log"]
+
+# remove source codes
+RUN rm -rf /go/src/*
+
+WORKDIR /linker
+
+ENTRYPOINT ["/bin/bash"]
+
+
+#### STAGE 2 ####
+# Docker >= 17.05.0-ce
+FROM linkerrepository/alpine:3.6
+
+ENV GLIBC 2.23-r3
+
+RUN apk update && apk add --no-cache openssl ca-certificates bash expect unzip && \
+    wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://raw.githubusercontent.com/sgerrand/alpine-pkg-glibc/master/sgerrand.rsa.pub && \
+    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/$GLIBC/glibc-$GLIBC.apk && \
+    apk add --no-cache glibc-$GLIBC.apk && rm glibc-$GLIBC.apk && \
+    ln -s /lib/libz.so.1 /usr/glibc-compat/lib/ && \
+    ln -s /lib/libc.musl-x86_64.so.1 /usr/glibc-compat/lib
+
+ENV DOCKER_VERSION=1.12.0
+ENV MACHINE_VERSION=0.9.0
+ENV COMPOSE_VERSION=1.8.1
+ENV PATH=/opt/local/bin:$PATH
+
+COPY --from=0 /opt/local/bin/docker-${DOCKER_VERSION} /opt/local/bin/
+COPY --from=0 /opt/local/bin/docker-machine-${MACHINE_VERSION} /opt/local/bin/
+COPY --from=0 /opt/local/bin/docker-compose-${COMPOSE_VERSION} /opt/local/bin/
+COPY --from=0 /linker /linker
+
+RUN ln -s /opt/local/bin/docker-${DOCKER_VERSION} /opt/local/bin/docker && \
+    ln -s /opt/local/bin/docker-machine-${MACHINE_VERSION} /opt/local/bin/docker-machine && \
+    ln -s /opt/local/bin/docker-compose-${COMPOSE_VERSION} /opt/local/bin/docker-compose
+
+RUN echo "# Add by linker" >> /etc/ssh/ssh_config \
+    && echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config \
+    && echo "UserKnownHostsFile /dev/null" >> /etc/ssh/ssh_config
+
+WORKDIR /linker
+EXPOSE 10003
+
+#Expose the config and log folder
+VOLUME ["/linker/docker","/linker/swarm","/var/log"]
+
+ENTRYPOINT ["/bin/bash"]

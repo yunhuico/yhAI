@@ -1,0 +1,110 @@
+<div class="clearfix">
+    <div class="row">
+        <div class="col-xs-12">
+            <span class="title-font">{{$state.params.serviceName}}</span>
+             <a ui-sref="service" class="action-link"><span class="glyphicon glyphicon-hand-left" aria-hidden="true"></span> {{'service.gobackToService'|translate}} </a>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 10px;">
+        <div class="col-xs-12">{{'common.desc'|translate}} : {{selectedService.description}}</div>
+    </div>
+     <div class="row" style="margin-top: 10px;">
+        <div class="col-xs-2">{{'common.cpuTotal' | translate}} : {{selectedService.total_cpu}}</div>
+        <div class="col-xs-2">{{'common.memoryTotal' | translate}} : {{selectedService.total_mem}} MB</div>
+        <div class="col-xs-2">{{'common.gpuTotal' | translate}} : {{selectedService.total_gpu}}</div>
+        <div class="col-xs-2">{{'common.containerNum' | translate}} : {{selectedService.total_container}}</div>
+        <div class="col-xs-4">{{'common.createdTime' | translate}} : {{selectedService.time_create}}</div>
+    </div>
+     <div class="row" style="margin-top: 10px;">
+        <div class="col-xs-2">{{'common.cpuUsed' | translate}} : {{selectedService.running_cpu}}</div>
+        <div class="col-xs-2">{{'common.memoryUsed' | translate}} : {{selectedService.running_mem}} MB</div>
+        <div class="col-xs-2">{{'common.gpuUsed' | translate}} : {{selectedService.running_gpu}}</div>
+        <div class="col-xs-2">{{'common.containerNumRunning' | translate}} : {{selectedService.running_container}}</div>
+        <div class="col-xs-4">{{'common.status' | translate}} : <status type="{{selectedService.status}}"></status></div>
+       
+    </div>   
+    <uib-tabset style="margin-top: 40px;" ng-if="dataReady">
+        <uib-tab heading="{{'service.component' | translate}}" select="" active="true">
+            <p ng-if="!selectedService.created_by_json && selectedService.components.length == 0">
+                {{'service.noComponent' | translate}}
+            </p>
+            <!-- <p ng-if="selectedService.created_by_json && selectedService.status != 'RUNNING'">
+                {{'service.showComponentLater' | translate}}
+            </p> -->
+            <div class="panel panel-default" style="border-color:#ccc;margin-bottom:40px;" ng-repeat="item in selectedService.components">
+                <div class="panel-body" style="background-color:#f9f9f9">
+                    <div class="row">
+                        <div class="col-xs-1">
+                            <status type="{{item.status}}"></status>
+                        </div>
+                        <div class="col-xs-2" style="word-break:break-all">{{item.app.id}}</div>
+                        <div class="col-xs-2">
+                          <p>{{'common.port' | translate}} <i class="icon-resize-horizontal"></i> {{'service.servicePort' | translate}}:</p>
+                          <p ng-repeat="mapping in item.app.container.docker.portMappings">[&nbsp;{{mapping.containerPort}} <i class="icon-resize-horizontal"></i> {{mapping.servicePort}}&nbsp;]&nbsp;;</p>
+                        </div>
+                        <div class="col-xs-5">
+                          <p>{{'node.image' | translate}} : {{item.app.container.docker.image}}</p>
+                        </div>
+                        <div class="col-xs-2" style="text-align:right">
+                            <span class="glyphicon glyphicon-scale glyphicon-operation" aria-hidden="true" uib-tooltip="{{'common.scale' | translate}}" ng-click="prepareScale(item)" ng-if="item.can_scale"></span>
+                            <span class="glyphicon glyphicon-edit glyphicon-operation" aria-hidden="true" uib-tooltip="{{'common.edit' | translate}}" ng-if="item.can_modify" ng-click="prepareEdit(item)"></span>
+                            <span class="glyphicon glyphicon-play glyphicon-operation" aria-hidden="true" uib-tooltip="{{'common.bootstrap' | translate}}" ng-click="startOrStopComponent(item,'start')" ng-if="item.can_start"></span>
+                            <span class="glyphicon glyphicon-pause glyphicon-operation" aria-hidden="true" uib-tooltip="{{'common.stop' | translate}}" ng-if="item.can_stop" ng-click="startOrStopComponent(item,'stop')" ></span>
+                            <span class="glyphicon glyphicon-trash glyphicon-operation" aria-hidden="true" uib-tooltip="{{'common.delete' | translate}}"  ng-if="item.can_delete" ng-click="confirmDelete(item)" ></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-1"></div>
+                      <div class="col-xs-2">
+                        {{'common.cpu' | translate}} : {{item.app.cpus}}
+                      </div>
+                      <div class="col-xs-2">
+                        {{'common.gpu' | translate}} : {{item.app.gpus}}
+                      </div>
+                      <div class="col-xs-2">
+                        {{'common.memory' | translate}} : {{item.app.mem}} MB
+                      </div>
+                    </div>
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="item_1 in item.app.tasks">
+                        <div class="row">
+                            <div class="col-xs-1">
+                                <status type="{{item_1.startedAt != '' ? 'RUNNING':'DEPLOYING'}}"></status>
+                            </div>
+                            <!-- <div class="col-xs-5">{{'common.container' | translate}}&nbsp;{{$index+1}}:&nbsp;&nbsp;<a ui-sref="service.detail.container({containerId:item_1.id,containerName:containerObj[item_1.id]})">{{containerObj[item_1.id]}}</a></div> -->
+                            <div class="col-xs-5">{{'common.container' | translate}}&nbsp;{{$index+1}}:&nbsp;&nbsp;<a ng-click="showContainerInfo(item_1.id,item_1.slaveId)" uib-tooltip="{{'common.detail' | translate}}" ng-if='item_1.startedAt != ""'>{{containerObj[item_1.id]}}</a><span ng-if='item_1.startedAt == ""'>{{containerObj[item_1.id]}}</span></div>
+                         
+                            <div class="col-xs-2">{{'common.node' | translate}} : {{item_1.host}}</div>
+                            <div class="col-xs-3">{{'common.updatedTime' | translate}} : {{item_1.startedAt}}</div>
+                            <div class="col-xs-1" style="text-align:right">
+                                <span class="glyphicon glyphicon-console glyphicon-operation" aria-hidden="true" uib-tooltip="{{'common.Console' | translate}}" ng-click="showConsole(containerObj[item_1.id])"></span>
+                                <span class="glyphicon glyphicon-retweet glyphicon-operation" aria-hidden="true" uib-tooltip="{{'common.redeploy' | translate}}" ng-click="confirmOperate(item_1.id,'redeploy');"></span>
+                                <span class="glyphicon glyphicon-stop glyphicon-operation" aria-hidden="true" uib-tooltip="{{'common.kill' | translate}}" ng-click="confirmOperate(item_1.id,'kill');"></span>
+                                <span class="glyphicon glyphicon-bell glyphicon-operation" aria-hidden="true" uib-tooltip="{{'node.MonitoringInformation' | translate}}" ng-click="goToMonitoring(containerObj[item_1.id]);" ng-if='item_1.startedAt != ""'></span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </uib-tab>
+         <uib-tab heading="{{'common.graph' | translate}}" ng-if="!selectedService.created_by_json" select="showGraph()">
+            <div id="serviceGraphDiv" style="width:100%;height:560px;cursor: move;overflow:hidden"></div>
+         </uib-tab>
+         <uib-tab heading="JSON" select="showJSON()">
+             <pre>{{jsonString}}</pre>
+         </uib-tab>
+    </uib-tabset>
+    <div style="position:absolute;right:20px;top:228px;">
+       
+        <button type="button" class="btn btn-success btn-sm" ng-click="createComponent();" ng-disabled="_.isEmpty(selectedService)" ng-if="!selectedService.created_by_json && selectedService.status != 'STOPPED' && selectedService.status != 'TERMINATING'&&selectedService.status != 'DELETING'"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> {{'service.addComponent' | translate}}</button>
+        <!-- <button type="button" class="btn btn-info btn-sm" ng-click="editJSON();" ng-if="selectedService.created_by_json && selectedService.status=='RUNNING'"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> {{'service.editJSON' | translate}}</button> -->
+        <button type="button" class="btn btn-success btn-sm" ng-click="editJSON(jsonString);" ng-if="selectedService.created_by_json && selectedService.status != 'STOPPED' && selectedService.status != 'TERMINATING' && selectedService.status != 'DELETING'"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> {{'service.editJSON' | translate}}</button>
+         <button type="button" class="btn btn-info btn-sm" ng-click="showDetail();" ng-if="selectedService.status != 'STOPPED'">
+            <!-- <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>  -->
+            <!-- <i class="icon-refresh icon-spin"></i> -->
+            <i class="icon-refresh"></i>
+            {{'common.refresh' | translate}}
+        </button>
+    </div>
+</div>

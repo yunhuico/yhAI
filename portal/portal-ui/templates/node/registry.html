@@ -1,0 +1,29 @@
+<div class="modal-header">
+   <button type="button" class="close" aria-label="Close" ng-click="close('close')"><span aria-hidden="true">&times;</span></button>
+  <h4>{{'node.updateRegistry' | translate}}</h4>
+</div>
+<div class="modal-body">
+  <form class="form-horizontal" name="addRegistry" novalidate autocomplete="off">
+    <div class="form-group">
+      <label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'node.selectRegistry' | translate}}</label>
+      <div class="col-sm-6" style="margin-top: 5px;">
+        <div ng-show=" ! registery">Loading ...</div>
+        <label ng-repeat="item in registery track by $index" style="display: block;">
+          <input
+            type="checkbox"
+            name="addRegistry[]"
+            value="{{item._id}}"
+            ng-checked="item.checked"
+            ng-click="toggleSelection(item)"
+          > {{item.name}}
+        </label>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button ng-click="close('execute');" class="btn btn-primary">
+    {{'common.save' | translate}}
+  </button>
+  <button class="btn btn-warning" ng-click="close('close')">{{'common.cancel' | translate}}</button>
+</div>

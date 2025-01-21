@@ -1,0 +1,688 @@
+<div>
+  <div class="modal-header">
+    <button type="button" class="close" aria-label="Close" ng-click="close('close')"><span aria-hidden="true">&times;</span></button>
+    <h4>{{'service.editComponent' | translate}}</h4>
+  </div>
+  <div class="modal-body clearfix">
+    <ul class="nav nav-pills nav-stacked nav-steps pull-left" style="width:30%;">
+      <li role="presentation" ng-class="{active:stepObj.current=='basic'}" ng-click="setCurrent('basic')">
+        <a>{{'service.basic' | translate}}<span class="badge pull-right">1</span></a>
+      </li>
+      <li role="presentation" ng-class="{active:stepObj.current=='network'}" ng-click="setCurrent('network')">
+        <a>{{'common.network' | translate}}<span class="badge pull-right">2</span></a>
+      </li>
+      <li role="presentation" ng-class="{active:stepObj.current=='relationship'}" ng-click="setCurrent('relationship')">
+        <a>{{'service.relationship' | translate}}<span class="badge pull-right">3</span></a>
+      </li>
+      <li role="presentation" ng-class="{active:stepObj.current=='healthCheck'}" ng-click="setCurrent('healthCheck')">
+        <a>{{'service.healthChecks' | translate}}<span class="badge pull-right">4</span></a>
+      </li>
+      <li role="presentation" ng-class="{active:stepObj.current=='advanced'}" ng-click="setCurrent('advanced')">
+        <a>{{'service.advanced' | translate}}<span class="badge pull-right">5</span></a>
+      </li>
+    </ul>
+    <div class="pull-left wizard-body">
+      <form ng-show="stepObj.current == 'basic'" name="BasicForm" novalidate autocomplete="off">
+        <div class="form-group">
+          <label>{{'common.name' | translate}}</label>
+          <input type="text" class="form-control" ng-model="componentRequest.app.id" name="nameInput" disabled>
+        </div>
+        <hr/>
+        <div class="row">
+          <h4 class="component-title">{{'node.image' | translate}} (:{{'node.version' | translate}})</h4>
+          <div class="form-group col-xs-12">
+            <input type="text" class="form-control" ng-model="component.app.container.docker.image" required name="imageInput">
+            <span class="form-error" ng-if="BasicForm.$submitted || BasicForm.imageInput.$touched">
+                           <span ng-if="BasicForm.imageInput.$error.required">{{'service.imageRequired' | translate}}</span>
+            </span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="checkbox col-xs-6">
+            <label>
+						<input type="checkbox" style="margin-top:1px" ng-model="component.app.container.docker.forcePullImage">
+                			{{'service.createComponentInfo.downloadImage' | translate}}
+                		</label>
+          </div>
+          <div class="checkbox col-xs-6" style="margin-top:10px">
+            <label>
+							<input type="checkbox" style="margin-top:1px" ng-model="component.app.container.docker.privileged">
+	                		{{'service.createComponentInfo.highPrivilege' | translate}}
+						</label>
+          </div>
+        </div>
+        <hr/>
+        <div class="row">
+          <h4 class="component-title">{{'service.containerRuntime' | translate}}</h4>
+          <div class="form-group col-xs-6">
+            <label class="radio-inline">
+              <input type="radio" name="type" ng-change="changeRuntime()" ng-model="component.app.container.type" value="DOCKER"> {{'service.dockerRuntime' | translate}}
+            </label>
+          </div>
+          <div class="form-group col-xs-6">
+            <label class="radio-inline">
+              <input type="radio" name="type" ng-change="changeRuntime()" ng-model="component.app.container.type" value="MESOS">{{'service.mesosRuntime' | translate}}
+            </label>
+          </div>
+        </div>
+        <hr/>
+        <div class="row">
+          <h4 class="component-title">{{'service.resource' | translate}}</h4>
+          <div class="form-group col-xs-3">
+            <label>{{'common.containerNum' | translate}}</label>
+            <input name="containerNum" type="number" class="form-control" ng-pattern="/^[A-Za-z0-9\-]+$/" ng-model="component.app.instances" min="0" required>
+            <span class="form-error" ng-if="BasicForm.containerNum.$touched">
+							<span ng-if="BasicForm.containerNum.$error.number">{{'service.createComponentInfo.number' | translate}}</span>
+            <span ng-if="BasicForm.containerNum.$error.min">{{'service.createComponentInfo.number' | translate}}</span>
+            <span ng-if="BasicForm.containerNum.$error.required">{{'service.createComponentInfo.number' | translate}}</span>
+            <span ng-if="!BasicForm.containerNum.$error.min&&BasicForm.containerNum.$error.pattern">{{'service.createComponentInfo.number' | translate}}</span>
+            </span>
+          </div>
+          <div class="form-group col-xs-3">
+            <label>{{'common.cpu' | translate}}</label>
+            <input type="number" class="form-control" ng-model="component.app.cpus" name="cpuInput" min="0" max="1" required>
+            <span class="form-error" ng-if="BasicForm.$submitted || BasicForm.cpuInput.$touched">
+                           <span ng-if="BasicForm.cpuInput.$error.required">{{'service.cpuRequired' | translate}}</span>
+            <span ng-if="BasicForm.cpuInput.$error.number">{{'service.number' | translate}}</span>
+            <span ng-if="BasicForm.cpuInput.$error.min">{{'service.cpuMin' | translate}}</span>
+            <span ng-if="BasicForm.cpuInput.$error.max">{{'service.cpuMax' | translate}}</span>
+            </span>
+          </div>
+          <div class="form-group col-xs-3">
+            <label>{{'common.memory' | translate}} (MB)</label>
+            <input type="number" class="form-control" ng-model="component.app.mem" name="memoryInput" min="0" required>
+            <span class="form-error" ng-if="BasicForm.$submitted || BasicForm.memoryInput.$touched">
+                           <span ng-if="BasicForm.memoryInput.$error.required">{{'service.memoryRequired' | translate}}</span>
+            <span ng-if="BasicForm.memoryInput.$error.number">{{'service.number' | translate}}</span>
+            <span ng-if="BasicForm.memoryInput.$error.min">{{'service.min' | translate}}</span>
+
+            </span>
+          </div>
+          <div class="form-group col-xs-3">
+            <label>{{'common.disk' | translate}} (MB)</label>
+            <input type="number" class="form-control" ng-model="component.app.disk" name="diskInput" min="0">
+            <span class="form-error" ng-if="BasicForm.$submitted || BasicForm.diskInput.$touched">
+              <span ng-if="BasicForm.diskInput.$error.number">{{'service.number' | translate}}</span>
+              <span ng-if="BasicForm.diskInput.$error.min">{{'service.min' | translate}}</span>
+            </span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-xs-3">
+            <label>{{'common.gpu' | translate}}</label>
+            <input type="number" class="form-control" ng-model="component.app.gpus" name="gpuInput" min="0" max="40" ng-pattern="/^\d+$/" ng-disabled="component.app.container.type == 'DOCKER'" ng-required="component.app.container.type == 'MESOS'">
+            <span class="form-error" ng-if="BasicForm.$submitted || BasicForm.gpuInput.$touched">
+              <span ng-if="BasicForm.gpuInput.$error.required">{{'service.gpuRequired' | translate}}</span>
+              <span ng-if="BasicForm.gpuInput.$error.number || BasicForm.gpuInput.$error.pattern">{{'service.number' | translate}}</span>
+              <span ng-if="BasicForm.diskInput.$error.min">{{'service.gpuMin' | translate}}</span>
+              <span ng-if="BasicForm.gpuInput.$error.max">{{'service.gpuMax' | translate}}</span>
+            </span>
+          </div>
+        </div>
+      </form>
+      <form ng-show="stepObj.current == 'network'" name="NetworkForm" novalidate autocomplete="off">
+        <div class="row">
+          <h4 class="component-title">{{'common.network' | translate}}</h4>
+          <div class="form-group col-xs-12">
+            <select class="form-control" ng-change="resetUDNetwork();clearUDNetArray();" ng-model="component.app.container.docker.network" ng-disabled="component.app.container.type === 'MESOS'">
+							<option value="BRIDGE">{{'common.bridge' | translate}}</option>
+							<option value="HOST">{{'common.host' | translate}}</option>
+							<option value="" ng-if="UserDefinedNetwork.length!=0">{{'common.userdefined' | translate}}</option>
+						</select>
+          </div>
+        </div>
+        <hr/>
+        <div class="row" ng-if="!component.app.container.docker.network">
+          <div class="form-group col-xs-6">
+            <label>{{'network.networkName'| translate}}</label>
+            <select class="form-control" ng-change="clearUDNetArray();" ng-model="UDNetwork.NetworkName">
+							<option ng-repeat="item in UserDefinedNetwork" value='{{item.network.name}}'>{{item.network.name}}</option>
+						</select>
+          </div>
+          <div class="form-group col-xs-6">
+            <label>{{'network.NetworkDomain'| translate}}</label>
+            <input type="text" name="NetworkDomain" ng-change="clearUDNetArray()" class="form-control" ng-model="UDNetwork.NetworkDomain" required ng-pattern="/^[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62}){0,}$/">
+            <span class="form-error" ng-if="NetworkForm.$submitted || NetworkForm.NetworkDomain.$touched">
+                            <span ng-if="NetworkForm.NetworkDomain.$error.required">{{'network.NetworkDomain'| translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+            <span ng-if="NetworkForm.NetworkDomain.$error.pattern">{{'network.NetworkError' | translate}}</span>
+            </span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="checkbox col-xs-10">
+            <label>
+							<input type="checkbox" style="margin-top:1px;" ng-model="ExternalAccess.checked" ng-change='resetExternalAccess()'>
+							{{'service.createComponentInfo.allowExternalAccess' | translate}}
+						</label>
+          </div>
+          <div class="checkbox col-xs-2">
+            <span class="glyphicon glyphicon-plus-sign glyphicon-action-add" aria-hidden="true" style="padding-top:17px;" ng-click="addParameter('externalaccess');" ng-if="ExternalAccess.checked"></span>
+          </div>
+          <div ng-if="ExternalAccess.checked">
+            <div class="row" ng-repeat="item in ExternalAccess.array track by $index">
+              <div class="form-group col-xs-3">
+                <label>{{'service.createComponentInfo.ContainerPort' | translate}}</label>
+                <input type="number" class="form-control" name="ContainerPort" ng-model="ExternalAccess.array[$index].containerPort" required>
+                <span class="form-error" ng-if="NetworkForm.$submitted || NetworkForm.ContainerPort.$touched">
+		                           <span ng-if="NetworkForm.ContainerPort.$error.required">{{'service.createComponentInfo.ContainerPort' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+                </span>
+              </div>
+              <div class="form-group col-xs-4" style="padding: 0;">
+                <label>{{'service.createComponentInfo.LoadBalancerExternalPort' | translate}}</label>
+                <input type="number" class="form-control" name="LoadBalancerExternalPort" ng-model="ExternalAccess.array[$index].servicePort" required>
+                <span class="form-error" ng-if="NetworkForm.$submitted || NetworkForm.LoadBalancerExternalPort.$touched">
+		                           <span ng-if="NetworkForm.LoadBalancerExternalPort.$error.required">{{'service.createComponentInfo.LoadBalancerExternalPort' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+                </span>
+              </div>
+              <div class="form-group col-xs-2" style="padding-right: 0;">
+                <label>{{'service.createComponentInfo.name' | translate}}</label>
+                <input type="string" class="form-control" name="name" ng-model="ExternalAccess.array[$index].name" required>
+                <span class="form-error" ng-if="NetworkForm.$submitted || NetworkForm.name.$touched">
+		                           <span ng-if="NetworkForm.name.$error.required">{{'service.createComponentInfo.name' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+                </span>
+              </div>
+              <div class="form-group col-xs-2" style="padding-right: 0;">
+                <label>{{'service.createComponentInfo.protocol' | translate}}</label>
+                <select class="form-control" ng-model="ExternalAccess.array[$index].protocol">
+									<option value="tcp">tcp</option>
+									<option value="udp">udp</option>
+								</select>
+              </div>
+              <div class="form-group col-xs-1">
+                <span style="padding-top:27px;" class="glyphicon glyphicon-minus-sign glyphicon-action-remove" aria-hidden="true" ng-click="removeParameter('externalaccess',$index);"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+      <form ng-show="stepObj.current == 'relationship'" autocomplete="off">
+        <div class="row">
+          <h4 class="component-title">{{'service.connect' | translate}}</h4>
+          <div class="form-group col-xs-11">
+            <select class="form-control" ng-model="dependency.selectedComponent" ng-change="changeDependency()">
+							<option ng-repeat="item in componentList" value="{{item.app.id}}">{{item.app.id}}</option>
+						</select>
+          </div>
+          <div class="col-xs-1" style="padding-top:9px;text-align:right;">
+            <span class="glyphicon glyphicon-plus-sign glyphicon-action-add" aria-hidden="true" ng-click="addParameter('relationship');" ng-hide="componentList.length == 0"></span>
+          </div>
+        </div>
+        <div class="row">
+          <h4 class="component-title" ng-if="relationshipArray.length>0">{{'service.selectedReference' | translate}}</h4>
+          <h4 class="component-title" ng-if="relationshipArray.length==0">{{'service.noReference' | translate}}</h4>
+        </div>
+        <div class="row" style="margin-top:15px;">
+          <div class="col-xs-12" ng-repeat="item in relationshipArray" style="margin:8px 0">
+
+            <span class="label label-info" style="font-size:14px;">{{item}}</span>
+
+            <span class="glyphicon glyphicon-minus-sign glyphicon-action-remove" aria-hidden="true" ng-click="removeParameter('relationship',$index);" style="margin-left:1px;font-size:13px"></span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-xs-11">
+            <span style="font-size: 12px;display:block;padding-top:10px;" ng-if="dependency.selectedComponent">
+							{{'service.createComponentInfo.Connection' | translate}}:
+							<ol type=1>
+								<li ng-show="dependency.show" ng-repeat="item in dependency.servicePort track by $index">{{'service.createComponentInfo.first' | translate}}:marathonlb-lb-linkerdns.marathon.mesos:{{item.servicePort}}</li>
+								<li ng-repeat="item in dependency.domain track by $index">{{'network.NetworkDomain' | translate}}:{{item.value}}</li>
+							</ol>
+						</span>
+          </div>
+        </div>
+        <div class="row" ng-if="setEnv()">
+          <h4 class="component-title">{{'service.createComponentInfo.env' | translate}}<span class="glyphicon glyphicon-plus-sign glyphicon-action-add" aria-hidden="true" uib-tooltip="{{'common.add' | translate}}" ng-click="addParameter('envRelation',dependency.selectedComponent);"></span></h4>
+        </div>
+        <div class="row" ng-if="setEnv()" ng-repeat="item in envArray.relationship[dependency.selectedComponent]">
+          <div class="form-group col-xs-5">
+            <label>{{'common.key' | translate}}</label>
+            <input type="text" class="form-control" ng-model="item.key">
+          </div>
+          <div class="form-group col-xs-5">
+            <label>{{'common.value' | translate}}</label>
+            <input type="text" class="form-control" ng-model="item.value">
+          </div>
+          <div class="form-group col-xs-2" style="padding-top:27px;text-align:right;">
+            <span class="glyphicon glyphicon-minus-sign glyphicon-action-remove" aria-hidden="true" ng-click="removeParameter('envRelation',$index,dependency.selectedComponent);"></span>
+          </div>
+        </div>
+      </form>
+      <form ng-show="stepObj.current == 'healthCheck'" name="healthCheckForm" autocomplete="off">
+				<h3 class="component-title">{{'service.healthChecks' | translate}}<span class="glyphicon glyphicon-plus-sign glyphicon-action-add" aria-hidden="true" uib-tooltip="{{'common.add' | translate}}" ng-click="addHealthCheck()"></span></h3>
+        <div ng-repeat="item in component.app.healthChecks track by $index">
+					<div class="row">
+						<h4 class="component-title col-xs-10" style="margin-left: 0;">{{'service.healthCheck' | translate}} {{ ($index + 1) + ' - ' + item.protocol }}</h4>
+            <div class="col-xs-2" style="padding: 10px;">
+              <span class="glyphicon glyphicon-plus-sign glyphicon-action-add" aria-hidden="true" uib-tooltip="{{'common.add' | translate}}" ng-click="addHealthCheck()"></span>
+              <span class="glyphicon glyphicon-minus-sign glyphicon-action-remove" aria-hidden="true" ng-click="removeHealCheck( $index );"></span>
+            </div>
+					</div>
+					<hr/>
+					<div class="row">
+						<div class="form-group col-xs-4">
+							<label>{{'service.protocol' | translate}}</label>
+							<select class="form-control" ng-model="item.protocol" ng-change="changeHealthCheck($index, item.protocol)">
+								<option value="COMMAND">COMMAND</option>
+								<option value="HTTP">HTTP</option>
+								<option value="TCP">TCP</option>
+							</select>
+						</div>
+					</div>
+					<div ng-if="item.protocol=='HTTP'">
+						<div class="row">
+							<div class="form-group col-xs-12">
+								<label>{{'service.path' | translate}}</label>
+								<input class="form-control" type="string" name="path" ng-model="item.path" required/>
+								<span style="color: rgb(191, 197, 205);">Example: "/path/to/health".</span>
+                <div class="form-error" ng-if="healthCheckForm.$submitted || healthCheckForm.path.$touched">
+                  <span ng-if="healthCheckForm.path.$error.required">{{'service.healthCheckRequired.pathRequired' | translate}}</span>
+                </div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="form-group col-xs-4">
+								<label>{{'service.gracePeriod' | translate}}</label>
+								<input class="form-control" type="number" name="gracePeriodSeconds" ng-model="item.gracePeriodSeconds" required/>
+                <span style="color: rgb(191, 197, 205);">{{'service.seconds' | translate}}</span>
+                <div class="form-error" ng-if="healthCheckForm.$submitted || healthCheckForm.gracePeriodSeconds.$touched">
+                  <span ng-if="healthCheckForm.gracePeriodSeconds.$error.required">{{'service.healthCheckRequired.gracePeriodSecondsRequired' | translate}}</span>
+                </div>
+							</div>
+							<div class="form-group col-xs-2" style="padding: 0;">
+								<label>{{'service.interval' | translate}}</label>
+								<input class="form-control" type="number" name="intervalSeconds" ng-model="item.intervalSeconds" required/>
+                <span style="color: rgb(191, 197, 205);">{{'service.seconds' | translate}}</span>
+                <div class="form-error" ng-if="healthCheckForm.$submitted || healthCheckForm.intervalSeconds.$touched">
+                  <span ng-if="healthCheckForm.intervalSeconds.$error.required">{{'service.healthCheckRequired.intervalSecondsRequired' | translate}}</span>
+                </div>
+							</div>
+							<div class="form-group col-xs-3">
+								<label>{{'service.timeout' | translate}}</label>
+								<input class="form-control" type="number" name="timeoutSeconds" ng-model="item.timeoutSeconds" required/>
+                <span style="color: rgb(191, 197, 205);">{{'service.seconds' | translate}}</span>
+                <div class="form-error" ng-if="healthCheckForm.$submitted || healthCheckForm.timeoutSeconds.$touched">
+                  <span ng-if="healthCheckForm.timeoutSeconds.$error.required">{{'service.healthCheckRequired.timeoutSecondsRequired' | translate}}</span>
+                </div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="form-group col-xs-4">
+								<label>{{'service.maxConsecutiveFailures' | translate}}</label>
+								<input class="form-control" type="number" name="maxConsecutiveFailures" ng-model="item.maxConsecutiveFailures" required/>
+                <div class="form-error" ng-if="healthCheckForm.$submitted || healthCheckForm.maxConsecutiveFailures.$touched">
+                  <span ng-if="healthCheckForm.maxConsecutiveFailures.$error.required">{{'service.healthCheckRequired.maxConsecutiveFailuresRequired' | translate}}</span>
+                </div>
+							</div>
+							<div class="form-group col-xs-2" ng-if="item.portType=='PORT_INDEX'" style="padding: 0;">
+								<label>{{'service.portIndex' | translate}}</label>
+								<input class="form-control" type="number" name="portIndex" ng-model="item.portIndex" required/>
+                <div class="form-error" ng-if="healthCheckForm.$submitted || healthCheckForm.portIndex.$touched">
+                  <span ng-if="healthCheckForm.portIndex.$error.required">{{'service.healthCheckRequired.portIndexRequired' | translate}}</span>
+                </div>
+							</div>
+							<div class="form-group col-xs-2" ng-if="item.portType=='PORT_NUMBER'" style="padding: 0;">
+								<label>{{'service.port' | translate}}</label>
+								<input class="form-control" type="number" name="port" ng-model="item.port" required/>
+                <div class="form-error" ng-if="healthCheckForm.$submitted || healthCheckForm.port.$touched">
+                  <span ng-if="healthCheckForm.port.$error.required">{{'service.healthCheckRequired.portRequired' | translate}}</span>
+                </div>
+							</div>
+							<div class="form-group col-xs-3">
+								<label>{{'service.portType' | translate}}</label>
+								<select class="form-control" ng-model="item.portType" ng-change="changePortType( item )">
+									<option value="PORT_INDEX">{{'service.portIndex' | translate}}</option>
+									<option value="PORT_NUMBER">{{'service.port' | translate}}</option>
+								</select>
+							</div>
+						</div>
+						<div class="row">
+							<div class="form-group checkbox col-xs-12">
+								<label>
+									<input type="checkbox" style="margin-top:1px" ng-model="item.ignoreHttp1xx">
+									{{'service.ignoreHttp1xx' | translate}}
+								</label>
+							</div>
+						</div>
+					</div>
+					<div ng-if="item.protocol=='COMMAND'">
+						<div class="row">
+							<div class="form-group col-xs-12">
+								<label>{{'service.command' | translate}}</label>
+								<input class="form-control" type="string" name="command" ng-model="item.command.value" required/>
+								<span style="color: rgb(191, 197, 205);">Example: "curl -f -X GET http://$HOST:$PORT0/health"</span>
+                <div class="form-error" ng-if="healthCheckForm.$submitted || healthCheckForm.command.$touched">
+                  <span ng-if="healthCheckForm.command.$error.required">{{'service.healthCheckRequired.commandRequired' | translate}}</span>
+                </div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="form-group col-xs-4">
+								<label>{{'service.gracePeriod' | translate}}</label>
+								<input class="form-control" type="number" name="gracePeriodSeconds" ng-model="item.gracePeriodSeconds" required/>
+                <span style="color: rgb(191, 197, 205);">{{'service.seconds' | translate}}</span>
+                <div class="form-error" ng-if="healthCheckForm.$submitted || healthCheckForm.gracePeriodSeconds.$touched">
+                  <span ng-if="healthCheckForm.gracePeriodSeconds.$error.required">{{'service.healthCheckRequired.gracePeriodSecondsRequired' | translate}}</span>
+                </div>
+							</div>
+							<div class="form-group col-xs-2" style="padding: 0;">
+								<label>{{'service.interval' | translate}}</label>
+								<input class="form-control" type="number" name="intervalSeconds" ng-model="item.intervalSeconds" required/>
+                <span style="color: rgb(191, 197, 205);">{{'service.seconds' | translate}}</span>
+                <div class="form-error" ng-if="healthCheckForm.$submitted || healthCheckForm.intervalSeconds.$touched">
+                  <span ng-if="healthCheckForm.intervalSeconds.$error.required">{{'service.healthCheckRequired.intervalSecondsRequired' | translate}}</span>
+                </div>
+							</div>
+							<div class="form-group col-xs-3">
+								<label>{{'service.timeout' | translate}}</label>
+								<input class="form-control" type="number" name="timeoutSeconds" ng-model="item.timeoutSeconds" required/>
+                <span style="color: rgb(191, 197, 205);">{{'service.seconds' | translate}}</span>
+                <div class="form-error" ng-if="healthCheckForm.$submitted || healthCheckForm.timeoutSeconds.$touched">
+                  <span ng-if="healthCheckForm.timeoutSeconds.$error.required">{{'service.healthCheckRequired.timeoutSecondsRequired' | translate}}</span>
+                </div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="form-group col-xs-4">
+								<label>{{'service.maxConsecutiveFailures' | translate}}</label>
+								<input class="form-control" type="number" name="maxConsecutiveFailures" ng-model="item.maxConsecutiveFailures" required/>
+                <div class="form-error" ng-if="healthCheckForm.$submitted || healthCheckForm.maxConsecutiveFailures.$touched">
+                  <span ng-if="healthCheckForm.maxConsecutiveFailures.$error.required">{{'service.healthCheckRequired.maxConsecutiveFailuresRequired' | translate}}</span>
+                </div>
+							</div>
+						</div>
+					</div>
+					<div ng-if="item.protocol=='TCP'">
+						<div class="row">
+							<div class="form-group col-xs-4">
+								<label>{{'service.gracePeriod' | translate}}</label>
+								<input class="form-control" type="number" name="gracePeriodSeconds" ng-model="item.gracePeriodSeconds" required/>
+                <span style="color: rgb(191, 197, 205);">{{'service.seconds' | translate}}</span>
+                <div class="form-error" ng-if="healthCheckForm.$submitted || healthCheckForm.gracePeriodSeconds.$touched">
+                  <span ng-if="healthCheckForm.gracePeriodSeconds.$error.required">{{'service.healthCheckRequired.gracePeriodSecondsRequired' | translate}}</span>
+                </div>
+							</div>
+							<div class="form-group col-xs-2" style="padding: 0;">
+								<label>{{'service.interval' | translate}}</label>
+								<input class="form-control" type="number" name="intervalSeconds" ng-model="item.intervalSeconds" required/>
+                <span style="color: rgb(191, 197, 205);">{{'service.seconds' | translate}}</span>
+                <div class="form-error" ng-if="healthCheckForm.$submitted || healthCheckForm.intervalSeconds.$touched">
+                  <span ng-if="healthCheckForm.intervalSeconds.$error.required">{{'service.healthCheckRequired.intervalSecondsRequired' | translate}}</span>
+                </div>
+							</div>
+							<div class="form-group col-xs-3">
+								<label>{{'service.timeout' | translate}}</label>
+								<input class="form-control" type="number" name="timeoutSeconds" ng-model="item.timeoutSeconds" required/>
+                <span style="color: rgb(191, 197, 205);">{{'service.seconds' | translate}}</span>
+                <div class="form-error" ng-if="healthCheckForm.$submitted || healthCheckForm.timeoutSeconds.$touched">
+                  <span ng-if="healthCheckForm.timeoutSeconds.$error.required">{{'service.healthCheckRequired.timeoutSecondsRequired' | translate}}</span>
+                </div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="form-group col-xs-4">
+								<label>{{'service.maxConsecutiveFailures' | translate}}</label>
+								<input class="form-control" type="number" name="maxConsecutiveFailures" ng-model="item.maxConsecutiveFailures" required/>
+                <div class="form-error" ng-if="healthCheckForm.$submitted || healthCheckForm.maxConsecutiveFailures.$touched">
+                  <span ng-if="healthCheckForm.maxConsecutiveFailures.$error.required">{{'service.healthCheckRequired.maxConsecutiveFailuresRequired' | translate}}</span>
+                </div>
+							</div>
+							<div class="form-group col-xs-2" ng-if="item.portType=='PORT_INDEX'" style="padding: 0;">
+								<label>{{'service.portIndex' | translate}}</label>
+								<input class="form-control" type="number" name="portIndex" ng-model="item.portIndex" required/>
+                <div class="form-error" ng-if="healthCheckForm.$submitted || healthCheckForm.portIndex.$touched">
+                  <span ng-if="healthCheckForm.portIndex.$error.required">{{'service.healthCheckRequired.portIndexRequired' | translate}}</span>
+                </div>
+							</div>
+							<div class="form-group col-xs-2" ng-if="item.portType=='PORT_NUMBER'" style="padding: 0;">
+								<label>{{'service.port' | translate}}</label>
+								<input class="form-control" type="number" name="port" ng-model="item.port" required/>
+                <div class="form-error" ng-if="healthCheckForm.$submitted || healthCheckForm.port.$touched">
+                  <span ng-if="healthCheckForm.port.$error.required">{{'service.healthCheckRequired.portRequired' | translate}}</span>
+                </div>
+							</div>
+							<div class="form-group col-xs-3">
+								<label>{{'service.portType' | translate}}</label>
+								<select class="form-control" ng-model="item.portType" ng-change="changePortType( item )">
+									<option value="PORT_INDEX">{{'service.portIndex' | translate}}</option>
+									<option value="PORT_NUMBER">{{'service.port' | translate}}</option>
+								</select>
+							</div>
+						</div>
+					</div>
+        </div>
+      </form>
+      <form ng-show="stepObj.current == 'advanced'" autocomplete="off">
+        <div class="row">
+          <h4 class="component-title">{{'common.port' | translate}}<span class="glyphicon glyphicon-plus-sign glyphicon-action-add" aria-hidden="true" uib-tooltip="{{'common.add' | translate}}" ng-click="addParameter('port');"></span></h4>
+        </div>
+        <div class="row" ng-repeat="item in portArray">
+          <div class="form-group col-xs-3">
+            <label>{{'service.componentPort' | translate}}</label>
+            <input type="number" class="form-control" ng-model="item.containerPort">
+          </div>
+          <div class="form-group col-xs-2" style="padding: 0;">
+            <label>{{'service.hostPort' | translate}}</label>
+            <input type="number" class="form-control" ng-model="item.hostPort">
+          </div>
+          <div class="form-group col-xs-2" style="padding-right: 0;">
+            <label>{{'service.servicePort' | translate}}</label>
+            <input type="number" class="form-control" ng-model="item.servicePort">
+          </div>
+          <div class="form-group col-xs-2" style="padding-right: 0;">
+            <label>{{'service.name' | translate}}</label>
+            <input type="string" class="form-control" ng-model="item.name">
+          </div>
+          <div class="form-group col-xs-2" style="padding-right: 0;">
+            <label>{{'service.protocol' | translate}}</label>
+            <select class="form-control" ng-model="item.protocol">
+							<option value="tcp">tcp</option>
+							<option value="udp">udp</option>
+						</select>
+          </div>
+          <div class="form-group col-xs-1" style="padding-top:27px;text-align:right;">
+            <span class="glyphicon glyphicon-minus-sign glyphicon-action-remove" aria-hidden="true" ng-click="removeParameter('port',$index);"></span>
+          </div>
+        </div>
+        <hr/>
+        <div class="row">
+          <h4 class="component-title">{{'common.env' | translate}}<span class="glyphicon glyphicon-plus-sign glyphicon-action-add" aria-hidden="true" uib-tooltip="{{'common.add' | translate}}" ng-click="addParameter('envAdvanced');"></span></h4>
+        </div>
+        <div class="row" ng-repeat="item in envArray.advanced">
+          <div class="form-group col-xs-5">
+            <label>{{'common.key' | translate}}</label>
+            <input type="text" class="form-control" ng-model="item.key">
+          </div>
+          <div class="form-group col-xs-5">
+            <label>{{'common.value' | translate}}</label>
+            <input type="text" class="form-control" ng-model="item.value">
+          </div>
+          <div class="form-group col-xs-2" style="padding-top:27px;text-align:right;">
+            <span class="glyphicon glyphicon-minus-sign glyphicon-action-remove" aria-hidden="true" ng-click="removeParameter('envAdvanced',$index);"></span>
+          </div>
+        </div>
+        <hr/>
+        <div class="row">
+          <h4 class="component-title">{{'common.parameters' | translate}}<span class="glyphicon glyphicon-plus-sign glyphicon-action-add" aria-hidden="true" uib-tooltip="{{'common.add' | translate}}" ng-click="addParameter('parameters');"></span></h4>
+        </div>
+        <div class="row" ng-repeat="item in paramsArray">
+          <div class="form-group col-xs-5">
+            <label>{{'common.key' | translate}}</label>
+            <input type="text" class="form-control" ng-model="item.key">
+          </div>
+          <div class="form-group col-xs-5">
+            <label>{{'common.value' | translate}}</label>
+            <input type="text" class="form-control" ng-model="item.value">
+          </div>
+          <div class="form-group col-xs-2" style="padding-top:27px;text-align:right;">
+            <span class="glyphicon glyphicon-minus-sign glyphicon-action-remove" aria-hidden="true" ng-click="removeParameter('parameters',$index);"></span>
+          </div>
+        </div>
+        <hr/>
+        <div class="row">
+          <h4 class="component-title">{{'common.tag' | translate}}<span class="glyphicon glyphicon-plus-sign glyphicon-action-add" aria-hidden="true" uib-tooltip="{{'common.add' | translate}}" ng-click="addParameter('label');"></span></h4>
+        </div>
+        <div class="row" ng-repeat="item in labelArray">
+          <div class="form-group col-xs-5">
+            <label>{{'common.key' | translate}}</label>
+            <input type="text" class="form-control" ng-model="item.key">
+          </div>
+          <div class="form-group col-xs-5">
+            <label>{{'common.value' | translate}}</label>
+            <input type="text" class="form-control" ng-model="item.value">
+          </div>
+          <div class="form-group col-xs-2" style="padding-top:27px;text-align:right;">
+            <span class="glyphicon glyphicon-minus-sign glyphicon-action-remove" aria-hidden="true" ng-click="removeParameter('label',$index);"></span>
+          </div>
+        </div>
+        <hr/>
+        <div class="row">
+          <h4 class="component-title">{{'common.volume' | translate}}<span class="glyphicon glyphicon-plus-sign glyphicon-action-add" aria-hidden="true" uib-tooltip="{{'common.add' | translate}}" ng-click="addParameter('volume');"></span></h4>
+        </div>
+        <div class="row" ng-repeat="item in volumeArray">
+          <div class="form-group col-xs-4">
+            <label>{{'service.containerDir' | translate}}</label>
+            <input type="text" class="form-control" ng-model="item.containerPath">
+          </div>
+          <div class="form-group col-xs-4">
+            <label>{{'service.volumeDir' | translate}}</label>
+            <input type="text" class="form-control" ng-model="item.hostPath">
+          </div>
+          <div class="form-group col-xs-3">
+            <label>{{'common.rwMode' | translate}}</label>
+            <select class="form-control" ng-model="item.mode">
+							<option value="RO">{{'common.readOnly' | translate}}</option>
+							<option value="RW">{{'common.rw' | translate}}</option>
+						</select>
+          </div>
+          <div class="form-group col-xs-1" style="padding-top:27px;text-align:right;">
+            <span class="glyphicon glyphicon-minus-sign glyphicon-action-remove" aria-hidden="true" ng-click="removeParameter('volume',$index);"></span>
+          </div>
+        </div>
+        <hr/>
+        <div class="row">
+          <h4 class="component-title">Command</h4>
+          <div class="form-group col-xs-12">
+            <textarea class="form-control" ng-model="component.app.cmd"></textarea>
+          </div>
+        </div>
+        <hr/>
+        <div class="row">
+          <h4 class="component-title">Arguments<span class="glyphicon glyphicon-plus-sign glyphicon-action-add" aria-hidden="true" uib-tooltip="{{'common.add' | translate}}" ng-click="addParameter('arg');"></span></h4>
+        </div>
+        <div class="row" ng-repeat="item in argArray">
+          <div class="form-group col-xs-11">
+            <input type="text" class="form-control" ng-model="item.value">
+          </div>
+          <div class="form-group col-xs-1" style="padding-top:9px;text-align:right;">
+            <span class="glyphicon glyphicon-minus-sign glyphicon-action-remove" aria-hidden="true" ng-click="removeParameter('arg',$index);"></span>
+          </div>
+        </div>
+        <hr/>
+        <div class="row">
+          <h4 class="component-title">{{'service.deployConstraint' | translate}}<span class="glyphicon glyphicon-plus-sign glyphicon-action-add" aria-hidden="true" uib-tooltip="{{'common.add' | translate}}" ng-click="addParameter('constraint');"></span></h4>
+        </div>
+        <div class="row" ng-repeat="item in constraintArray">
+          <div class="form-group col-xs-4">
+            <label>{{'common.key' | translate}}</label>
+            <input type="text" class="form-control" ng-model="item.key">
+          </div>
+          <div class="form-group col-xs-3">
+            <label>{{'common.constraint' | translate}}</label>
+            <select class="form-control" ng-model="item.constraint">
+							<option value="UNIQUE">Unique</option>
+							<option value="CLUSTER">Cluster</option>
+							<option value="GROUP_BY">GroupBy</option>
+							<option value="LIKE">Like</option>
+							<option value="UNLIKE">Unlike</option>
+						</select>
+          </div>
+          <div class="form-group col-xs-4">
+            <label>{{'common.value' | translate}}</label>
+            <input type="text" class="form-control" ng-model="item.value">
+          </div>
+          <div class="form-group col-xs-1" style="padding-top:27px;text-align:right;">
+            <span class="glyphicon glyphicon-minus-sign glyphicon-action-remove" aria-hidden="true" ng-click="removeParameter('constraint',$index);"></span>
+          </div>
+        </div>
+        <div class="row">
+          <h4 class="component-title">URIs</h4>
+          <div class="form-group col-xs-12">
+            <input type="string" class="form-control" ng-model="component.app.uris"></input>
+            <span style="color: rgb(191, 197, 205);">Comma-separated list of valid URIs.</span>
+          </div>
+        </div>
+        <div class="row">
+          <h4 class="component-title">Executor</h4>
+          <div class="form-group col-xs-12">
+            <input type="string" class="form-control" ng-model="component.app.executor"></input>
+            <span style="color: rgb(191, 197, 205);">Executor must be the string '//cmd', a string containing only single slashes ('/'), or blank.</span>
+          </div>
+        </div>
+        <div class="row">
+          <h4 class="component-title">Accepted Resource Roles</h4>
+          <div class="form-group col-xs-12">
+            <input type="string" class="form-control" ng-model="component.app.acceptedResourceRoles"></input>
+            <span style="color: rgb(191, 197, 205);">Comma-separated list of resource roles. We considers only resource offers with roles in this list for launching tasks of this app.</span>
+          </div>
+        </div>
+        <div class="row">
+          <h4 class="component-title">{{'common.alarm' | translate}}</h4>
+          <div class="checkbox col-xs-12">
+            <label>
+	                        <input type="checkbox" style="margin-top:1px;" ng-model="advance.isAlarm">
+	                        {{'common.overrunAlarm' | translate}}
+						</label>
+          </div>
+        </div>
+        <div class="row" ng-if="advance.isAlarm">
+          <div class="form-group col-xs-3">
+            <label> {{'common.upperLimit' | translate}}</label>
+            <input type="text" class="form-control" ng-model="alarmObj.upperLimit">
+          </div>
+          <div class="form-group col-xs-3">
+            <label>{{'service.cpuUpperLimit' | translate}}</label>
+            <input type="text" class="form-control" ng-model="alarmObj.cpuUpperLimit">
+          </div>
+          <div class="form-group col-xs-3">
+            <label>{{'service.memoryUpperLimit' | translate}}</label>
+            <input type="text" class="form-control" ng-model="alarmObj.memoryUpperLimit">
+          </div>
+          <div class="form-group col-xs-3">
+            <label>{{'service.SCALED_APP_ID' | translate}}</label>
+            <select class="form-control" ng-model="alarmObj.SCALED_APP_ID">
+							<option ng-repeat="item in ScaledAppIds" value="{{item}}">{{item}}</option>
+						</select>
+          </div>
+        </div>
+        <div class="row" ng-if="advance.isAlarm">
+          <div class="form-group col-xs-3">
+            <label>{{'common.lowerLimit' | translate}}</label>
+            <input type="text" class="form-control" ng-model="alarmObj.lowerLimit">
+          </div>
+          <div class="form-group col-xs-3">
+            <label>{{'service.cpuLowerLimit' | translate}}</label>
+            <input type="text" class="form-control" ng-model="alarmObj.cpuLowerLimit">
+          </div>
+          <div class="form-group col-xs-3">
+            <label>{{'service.memoryLowerLimit' | translate}}</label>
+            <input type="text" class="form-control" ng-model="alarmObj.memoryLowerLimit">
+          </div>
+          <div class="form-group col-xs-3">
+            <label>{{'service.SCALE_NUMBER' | translate}}</label>
+            <input type="text" class="form-control" ng-model="alarmObj.SCALE_NUMBER">
+          </div>
+        </div>
+      </form>
+      <nav style="margin-top:50px;">
+        <ul class="pager">
+          <li ng-class="{previous:true, disabled:stepObj.previous==''}" ng-click="goPrevious(stepObj.current)"><a>&nbsp;<span class="glyphicon glyphicon-triangle-left" ></span>{{'common.previous' | translate}}</a></li>
+          <li ng-class="{next:true, disabled:stepObj.next==''}" ng-click="goNext(stepObj.current)"><a>{{'common.next' | translate}}&nbsp;<span class="glyphicon glyphicon-triangle-right" ></span></a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" ng-click="close('execute')" ng-disabled="BasicForm.$invalid || NetworkForm.$invalid || healthCheckForm.$invalid">{{'common.save' | translate}}</button>
+    <button class="btn btn-warning" ng-click="close('close')">{{'common.cancel' | translate}}</button>
+  </div>
+</div>

@@ -1,0 +1,57 @@
+{
+  "id": "/tensorflow-docker",
+  "env": {},
+  "instances": 1,
+  "cpus": 0.5,
+  "mem": 4096,
+  "disk": 0,
+  "gpus": 1,
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "tensorflow/tensorflow:latest-gpu",
+      "network": "BRIDGE",
+      "privileged": true,
+      "portMappings": [
+        {
+          "containerPort": 8888,
+          "hostPort": 0,
+          "servicePort": 8888,
+          "protocal": "tcp"
+        }
+      ],
+      "parameters": [
+        {
+          "key": "volume-driver",
+          "value": "nvidia-docker"
+        },
+        {
+          "key": "device",
+          "value": "/dev/nvidiactl"
+        },
+        {
+          "key": "device",
+          "value": "/dev/nvidia-uvm"
+        },
+        {
+          "key": "device",
+          "value": "/dev/nvidia-uvm-tools"
+        },
+        {
+          "key": "device",
+          "value": "/dev/nvidia0"
+        }
+      ]
+    },
+    "volumes": [
+      {
+        "containerPath": "/usr/local/nvidia",
+        "hostPath": "nvidia_driver_367.57",
+        "mode": "RO"
+      }
+    ]
+  },
+  "labels": {
+    "HAPROXY_GROUP": "linkermgmt"
+  }
+}

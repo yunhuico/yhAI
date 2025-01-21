@@ -1,0 +1,47 @@
+<style>
+    .detail-message-area{
+        background:#f5f5f5;
+        height:100px;
+        overflow:auto;
+        padding:8px;
+        border-radius:3px;
+        border:1px solid #ccc;
+        margin-top:8px;
+        word-break:break-all;
+    }
+</style>
+<div>
+  <div class="modal-header">
+     <button type="button" class="close" aria-label="Close" ng-click="close('close')"><span aria-hidden="true">&times;</span></button>
+    <h4>{{message.title | translate}}</h4>
+  </div>
+  <div class="modal-body">
+    <div class="modal-icon-area">
+      <span class="failed-icon glyphicon glyphicon-remove-sign" aria-hidden="true" ></span>
+    </div>
+    <div class="modal-font-area">
+      <span > {{'error.' + message.content.code | translate}}</span>
+    </div>
+    <br/>
+    <br/>
+    <div class="modal-detail-area" style="padding:5px 10px;">
+      <div ng-click="toggleDetail()">
+        <span ng-show="!detailStatus" class="glyphicon glyphicon-triangle-right"></span><span ng-show="detailStatus" class="glyphicon glyphicon-triangle-bottom" ></span><a >{{'common.detail' | translate}}</a>
+     </div>
+      <div ng-show="detailStatus" class="detail-message-area">
+         <span ng-show="message.content.code!=400&&message.content.code!=401&&message.content.code!=405&&message.content.code!=500&&message.content.code!=404&&message.content.code!=502&&message.content.code!=409">{{message.content.errormsg}}</span>
+         <span ng-show="message.content.code==400&&message.content.errormsg=='Bad Request'">Parameter Request Failed</span>
+         <span ng-show="message.content.code==400&&message.content.errormsg!=='Bad Request'">{{message.content.errormsg}}</span>
+         <span ng-show="message.content.code==401">Access Not Authorized</span>
+         <span ng-show="message.content.code==405">Method Not Allowed</span>
+         <span ng-show="message.content.code==500">Internal Server Error</span>
+         <span ng-show="message.content.code==404">Not Found</span>
+         <span ng-show="message.content.code==502">Gateway Timeout</span>
+         <span ng-show="message.content.code==409">Framework has been installed</span>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" ng-click="close('close')">{{'common.close' | translate}}</button>
+  </div>
+</div>

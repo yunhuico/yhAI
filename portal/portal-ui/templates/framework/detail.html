@@ -1,0 +1,45 @@
+<div>
+	<div class="col-xs-12" style="margin-bottom:40px;">
+		<div class="row">
+			<img ng-src="{{images['icon-medium']}}" class="pull-left" title="{{description.name}}"  alt="{{description.name}}" style="width:90px;height:90px;border-radius:20px;border:1px solid #ddd;"/>
+			<div style="display:block;margin-left:20px;" class="pull-left">
+				<p style="font-size:18px;font-weight:bold;" ng-bind="description.name" ></p>
+				<p><span ng-if="description.selected" class="selected">{{'framework.selected' | translate}}</span><span ng-if="!description.selected" class="selected">{{'framework.community' | translate}}</span><span ng-bind="description.version"></span></p>
+				<button class="btn btn-success" type="button"  ng-click="beforePrimaryInstall()" ng-disabled="primaryInstallIsDisabled === 'disabled'">{{'framework.oneClickInstall' | translate}}</button>
+				<button class="btn btn-success" type="button" ng-click="advancedInstallType()">{{'framework.advancedInstall' | translate}}</button>
+			</div>
+			<a ui-sref="framework" class="pull-left action-link"><span class="glyphicon glyphicon-hand-left" aria-hidden="true"></span> {{'framework.gobackToFramework'|translate}} </a>
+		</div>
+	</div>
+	<div class="col-xs-12">
+		<div class="row">
+			<dl>
+				<dt><h5>{{'framework.description' | translate}}</h5></dt>
+				<dd ng-bind="description.description"></dd>
+			</dl>
+			<dl>
+				<dt><h5>{{'framework.preInstall' | translate}}</h5></dt>
+				<dd ng-bind="description.preInstallNotes"></dd>
+			</dl>
+			<dl>
+				<dt><h5>{{'framework.postInstallNotes' | translate}}</h5></dt>
+				<dd ng-bind="description.postInstallNotes"></dd>
+			</dl>
+			<dl>
+				<dt><h5>{{'framework.postUninstallNotes' | translate}}</h5></dt>
+				<dd ng-bind="description.postUninstallNotes"></dd>
+			</dl>
+			<dl>
+				<dt><h5>{{'framework.information' | translate}}</h5></dt>
+				<dd><span>SCM</span>&nbsp;&nbsp;&nbsp;&nbsp;<a ng-href="{{description.scm}}" ng-bind="description.scm" class="text-info"></a></dd>
+				<dd><span>Maintainer</span>&nbsp;&nbsp;&nbsp;&nbsp;<span ng-bind="description.maintainer" class="text-info"></span></dd>
+			</dl>
+			<dl>
+				<dt><h5>License</h5></dt>
+				<dd ng-repeat="item in description.licenses">
+					<span ng-bind="item.name"></span>&nbsp;&nbsp;&nbsp;&nbsp;<a ng-href="{{item.url}}" ng-bind="item.url" class="text-info"></a>
+				</dd>
+			</dl>
+		</div>
+	</div>
+</div>

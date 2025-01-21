@@ -1,0 +1,116 @@
+<div class="modal-header">
+	 <button type="button" class="close" aria-label="Close" ng-click="close('close')"><span aria-hidden="true">&times;</span></button>
+	<h4>{{'network.addNetwork'| translate}}</h4>
+</div>
+<div class="modal-body">
+	<form class="form-horizontal" name="createNetwork" novalidate autocomplete="off">		
+		<div class="form-group">
+			<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'network.driverType' | translate}}</label>
+			<div class="col-sm-6">				
+				<select class="form-control" ng-model="network.network.driver">
+					<option value="{{item.value}}" ng-repeat="item in driverTypes track by $index">{{item.name | translate}}</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-group" ng-if="network.network.driver === 'ovs'">
+			<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'network.clustHostName' | translate}}</label>
+			<div class="col-sm-6">				
+				<select class="form-control" ng-model="network.clust_host_name">
+					<option value="{{item.hostName}}" ng-repeat="item in network.sharedClusters track by $index">{{item.hostName | translate}}</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'network.networkName' | translate}}</label>
+			<div class="col-sm-6">				
+				<input type="text" name="networkname" ng-model="network.network.name" ng-pattern="/^[A-Za-z0-9]+$/" ng-change="validateName()" required ng-class="{'form-control':true,'input-error':!(validate)}">
+				<span class="form-error" ng-if="createNetwork.networkname.$touched">
+					<span ng-if="!(validate)">{{'network.NameDuplicate' | translate}}</span>
+					<span ng-if="createNetwork.networkname.$error.pattern">{{'cluster.CreateCluster.NetWorkPattern' | translate}}</span>
+					<span ng-if="createNetwork.networkname.$error.required">{{'network.networkName' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+				</span>
+			</div>
+		</div>
+		<div class="form-group" ng-if="network.network.driver === 'overlay'">
+			<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'network.scope' | translate}}</label>
+			<div class="col-sm-6">
+				<div class="col-sm-6" style="height: 34px;padding: 6px 12px;font-size: 14px;line-height: 1.42857143;">
+					<input type="radio" value="false" ng-model="network.network.internal">&nbsp&nbsp{{'network.external' | translate}}
+				</div>
+				<div class="col-md-6" style="height: 34px;padding: 6px 12px;font-size: 14px;line-height: 1.42857143;">
+					<input type="radio" value="true" ng-model="network.network.internal">&nbsp&nbsp{{'network.internal' | translate}}
+				</div>
+			</div>
+		</div>
+		<!--<div class="form-group">
+			<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'network.networkdriver' | translate}}</label>
+			<div class="col-sm-6">
+				<div class="col-sm-6" style="height: 34px;padding: 6px 12px;font-size: 14px;line-height: 1.42857143;">
+					<input type="radio" value="overlay" ng-model="network.network.driver">&nbsp&nbspOverlay
+				</div>
+				<div class="col-md-6" style="height: 34px;padding: 6px 12px;font-size: 14px;line-height: 1.42857143;">
+					<input type="radio" value="bridge" ng-model="network.network.driver">&nbsp&nbspBridge
+				</div>
+			</div>
+		</div>-->
+		<div class="form-group">
+			<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'network.subnet' | translate}}</label>
+			<div class="col-sm-6">
+				<input type="text" name="subnet" ng-model="network.network.subnet[0]" ng-trim="false"  ng-pattern="/^((25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(\.)){3}(25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\/(3[0-2]|[12]\d|[1-9]|0)$/" required ng-class="{'form-control':true}">
+				<span class="form-error" ng-if="createNetwork.subnet.$touched">
+					<span ng-if="createNetwork.subnet.$error.required">{{'network.subnet' | translate}}{{'network.NetworkError' | translate}}</span>
+					<span ng-if="createNetwork.subnet.$error.pattern">{{'network.subnet' | translate}}{{'network.NetworkError' | translate}}</span>
+					<span ng-if="subnetcheck">{{'network.subnet' | translate}}{{'network.NetworkError' | translate}}</span>
+				</span>
+			</div>
+		</div>
+		<div ng-if="network.network.driver === 'ovs'">
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'network.bridgeService' | translate}}</label>
+				<div class="col-sm-6">
+					<select name="bridge" class="form-control" ng-model="network.network.options['linker.net.ovs.bridge.type']" required>
+						<option value="none">none</option>
+						<option value="{{item.bridge_value}}" ng-repeat="item in driverTypes track by $index">{{item.bridge_name}}</option>
+					</select>
+					<span class="form-error" ng-if="createNetwork.bridge.$touched">
+						<span ng-if="createNetwork.bridge.$error.required">{{'network.bridgeService' | translate}} {{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label">{{'network.bindInterface' | translate}}</label>
+				<div class="col-sm-6">
+					<input type="text" name="bindInterface" ng-model="network.network.options['linker.net.ovs.bridge.bind_interface']" ng-trim="false" ng-class="{'form-control':true}">
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 control-label">{{'network.gateway' | translate}}</label>
+			<div class="col-sm-6">
+				<input type="text" name="gateway" ng-model="network.network.gateway[0]" ng-trim="false" ng-pattern="/^((25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)($|(?!\.$)\.)){4}$/" ng-class="{'form-control':true}">
+				<span class="form-error" ng-if="createNetwork.gateway.$touched">
+					<span ng-if="createNetwork.gateway.$error.pattern">{{'network.gateway' | translate}}{{'network.NetworkError' | translate}}</span>
+					<span ng-if="!createNetwork.gateway.$error.pattern && gatewaysame">{{'network.gateway' | translate}}{{'network.NetworkError' | translate}}</span>
+				</span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 control-label">{{'network.iprange' | translate}}</label>
+			<div class="col-sm-6">
+				<input type="text" name="iprange" ng-model="network.network.iprange[0]" ng-trim="false" ng-pattern="/^((25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(\.)){3}(25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\/(3[0-2]|[12]\d|[1-9])$/" ng-class="{'form-control':true}">
+				<span class="form-error" ng-if="createNetwork.iprange.$touched">
+					<span ng-if="createNetwork.iprange.$error.pattern">{{'network.iprange' | translate}}{{'network.NetworkError' | translate}}</span>
+					<span ng-if="!createNetwork.gateway.$error.pattern && ( mask || iprangesame )">{{'network.iprange' | translate}}{{'network.NetworkError' | translate}}</span>
+				</span>
+			</div>
+		</div>
+
+		
+	</form>
+</div>
+<div class="modal-footer">
+	<button ng-click="close('execute')" class="btn btn-primary" ng-disabled="createNetwork.$invalid|| !(validate) || subnetcheck ||mask || iprangesame || gatewaysame">
+		{{'common.create' | translate}}
+	</button>
+	<button class="btn btn-warning" ng-click="close('close')">{{'common.cancel' | translate}}</button>
+</div>

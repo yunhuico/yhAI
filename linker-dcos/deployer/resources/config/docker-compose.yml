@@ -1,0 +1,106 @@
+version: '2'
+services:
+  mesosmaster:
+    image: {registry}/linkerrepository/mesos-master:latest-1.2.1
+    network_mode: host
+    command: /entrypoint.sh
+    env_file: .env
+    volumes:
+     - /var/lib/mesos:/var/lib/mesos
+    privileged: true
+    restart: always
+    environment:
+     - MESOS_LOG_DIR=/var/log/mesos
+     #- MESOS_REGISTRY=in_memory
+     - MESOS_WORK_DIR=/var/lib/mesos/master
+     - "constraint:master==true"
+     - "affinity:container!=*mesosmaster*"
+
+  marathon:
+    image: {registry}/linkerrepository/marathon:latest-1.4.2
+    network_mode: host
+    command: /entrypoint.sh
+    env_file: .env
+    privileged: true
+    restart: always
+    environment:
+     - MARATHON_MESOS_LEADER_UI_URL=/mesos
+     - MARATHON_ZK_MAX_VERSIONS=100
+     - MARATHON_ZK_TIMEOUT=30000
+     - MARATHON_ZK_SESSION_TIMEOUT=30000
+     - MARATHON_TASK_LAUNCH_TIMEOUT=900000
+     - MARATHON_MESOS_ROLE=slave_public
+     - MARATHON_MESOS_AUTHENTICATION_PRINCIPAL=dcos_marathon
+     - MESOS_ENABLE_FEATURES=vips,task_killing,external_volumes
+     - "constraint:master==true"
+     - "affinity:container!=*marathon*"
+
+  dnsserver:
+    image: {registry}/linkerrepository/linker_mesos_dns:latest
+    volumes:
+    - /linker/config:/linker/config
+    network_mode: host
+    env_file: .env
+    privileged: true
+    restart: always
+    environment:
+     - "constraint:master==true"
+     - "affinity:container!=*dnsserver*"
+
+  adminrouter:
+    image: {registry}/linkerrepository/linker_router:latest
+    volumes:
+    - /etc/resolv.conf:/etc/resolv.conf
+    network_mode: host
+    env_file: .env
+    depends_on:
+     - genresolvconf
+    volumes:
+     - /etc/resolv.conf:/etc/resolv.conf
+    restart: always
+    environment:
+     - "constraint:master==true"
+     - "constraint:adminrouter==true"
+     - "affinity:container!=*adminrouter*"
+
+  genresolvconf:
+    image: {registry}/linkerrepository/linker_resolver:latest
+    volumes:
+    - /etc/resolv.conf:/etc/resolv.conf
+    network_mode: host
+    env_file: .env
+    depends_on:
+     - dnsserver
+    restart: always
+    environment:
+     - RESOLVERS=8.8.8.8
+     - "affinity:container!=*genresolvconf*"
+
+  mesosslave:
+    image: {registry}/linkerrepository/mesos-slave:latest-1.2.1
+    volumes:
+     - /sys/fs/cgroup:/sys/fs/cgroup
+     - /var/run/docker.sock:/var/run/docker.sock
+     - /usr/local/bin:/usr/local/bin
+     - /var/lib/mesos:/var/lib/mesos
+     - /tmp:/tmp
+     - /opt/mesosphere:/opt/mesosphere
+    network_mode: host
+    command: /entrypoint.sh
+    env_file: .env
+    privileged: true
+    restart: always
+    environment:
+     - MESOS_CONTAINERIZERS=docker,mesos
+     - MESOS_IMAGE_PROVIDERS=DOCKER
+     - MESOS_LOG_DIR=/var/log/mesos
+     - MESOS_ISOLATION=cgroups/cpu,cgroups/mem,disk/du,filesystem/linux,docker/runtime,docker/volume
+     - MESOS_IMAGE_PROVIDERS=docker
+     - MESOS_SLAVE_SUBSYSTEMS=cpu,memory
+     - MESOS_CGROUPS_ENABLE_CFS=true
+     - MESOS_WORK_DIR=/var/lib/mesos/slave
+     - MESOS_LOGGING_LEVEL=INFO
+     - MESOS_EXECUTOR_REGISTRATION_TIMEOUT=15mins
+     - "constraint:slave==true"
+     - "affinity:container!=*mesosslave*"
+

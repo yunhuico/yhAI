@@ -1,0 +1,36 @@
+<div class="login-area">
+	<div style="text-align:center;margin-bottom:50px;">
+		<img src="img/linker.png"></img>
+	</div>
+	<form name="LoginForm" novalidate >
+		<div class="form-group" >
+			<div class="input-group">
+				<span class="input-group-addon">
+					<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+				</span>
+				<input type="text" class="form-control" placeholder="{{'common.userName' | translate}}" ng-model="user.username" ng-pattern="/^[A-Za-z0-9\-]+$/" ng-maxlength="10" name="usernameInput" required autofocus>
+			</div>
+			<span class="form-error" ng-show="LoginForm.$submitted || LoginForm.usernameInput.$touched" style="margin-left:42px">
+				<span ng-show="LoginForm.usernameInput.$error.required">{{'user.usernameRequired' | translate}}</span>
+				<span ng-show="LoginForm.usernameInput.$error.pattern">{{'common.userNamePattern' | translate}}</span>
+				<span ng-show="LoginForm.usernameInput.$error.maxlength">{{'user.userNameMaxLength' | translate}}</span>
+			</span>
+		</div>
+		<div class="form-group" >
+			<div class="input-group">
+				<span class="input-group-addon">
+					<span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
+				</span>
+				<input type="password" class="form-control" placeholder="{{'common.password' | translate}}" ng-model="user.password" name="passwordInput" required="">
+			</div>
+			<span class="form-error" ng-show="LoginForm.$submitted || LoginForm.passwordInput.$touched">
+				<span ng-show="LoginForm.passwordInput.$error.required" style="margin-left:42px;">{{'user.passwordRequired' | translate}}</span>
+			</span>
+		</div>
+		<div class="forgetPassword" style="text-align:right;">
+			<a ui-sref="forgetPassword">{{'common.forgetPassword' | translate}}</a>
+		</div>
+		<br/>
+		<button class="btn btn-primary btn-block" ng-click="login();" ng-disabled="LoginForm.$invalid">{{'common.login' | translate}}</button>
+	</form>
+</div>

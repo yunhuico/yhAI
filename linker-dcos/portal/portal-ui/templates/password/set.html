@@ -1,0 +1,26 @@
+<div class="forget-area" style="width: 45%;margin: 6% auto;padding: 4% 7%;">
+	<h3 style="text-align:center;">{{'common.resetPassword' | translate}}</h3>
+	<form name="setPassword" novalidate style="box-shadow:1px 2px 4px rgba(0,0,0,.16),-1px -1px 4px rgba(0,0,0,.23);padding:30px;margin-top:30px;">
+		<div class="form-group">
+			<label for="userName"><span>{{'common.userName' | translate}}</span></label>
+			<input type="text" class="form-control" id="userName" placeholder="{{'common.userName' | translate}}" ng-model="username" name="usernameInput" required disabled>	
+		</div>	
+		<div class="form-group">
+			<label for="newPassword"><span>{{'common.newPassword' | translate}}</span></label>	
+			<input type="password" placeholder="{{'common.newPassword' | translate}}" required autofocus ng-model="passwords.newpassword" class="form-control" id="newPassword" name="newPassword"/>
+			<span ng-show="setPassword.$submit || setPassword.newPassword.$touched" class="form-error">
+				<span ng-show="setPassword.newPassword.$error.required">{{'user.newPasswordRequired' | translate}}</span>
+			</span>
+		</div>
+		<div class="form-group">
+			<label for="confirmPassword"><span>{{'common.confirmPassword' | translate}}</span></label>	
+			<input type="password" placeholder="{{'common.confirmPassword' | translate}}" required confirmpassword ng-model="passwords.confirmpassword" class="form-control" id="confirmPassword" name="confirmPassword"/>
+			<span ng-show="setPassword.$submit || setPassword.confirmPassword.$touched" class="form-error">
+				<span ng-show="setPassword.confirmPassword.$error.required">{{'user.confirmPasswordRequired' | translate}}</span>
+				<span ng-show="setPassword.confirmPassword.$error.confirmpassword">{{'user.confirmPasswordError' | translate}}</span>
+			</span>
+		</div>
+		<br/>	
+		<button class="btn btn-primary btn-block" ng-disabled="setPassword.$invalid" ng-click="resetPassword();">{{'common.resetPassword' | translate}}</button>	
+	</form>
+</div>

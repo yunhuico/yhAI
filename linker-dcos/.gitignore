@@ -1,0 +1,7 @@
+# exclude everything except directory src/linkernetworks.com
+docker/data/*
+docker/log/*
+docker/docker/*
+docker/swarm/*
+test/*
+.DS_Store

@@ -1,0 +1,43 @@
+<style>
+    .detail-message-area{
+        background:#f5f5f5;
+        height:100px;
+        overflow:auto;
+        padding:8px;
+        border-radius:3px;
+        border:1px solid #ccc;
+        margin-top:8px;
+        word-break:break-all;
+    }
+</style>
+<div>
+	<div class="modal-header">
+		<button class="close" type="button" aria-label="Close" ng-click="close('close')"><span aria-hidden="true">&times;</span></button>
+		<h3>{{message.title | translate}}</h3>
+	</div>
+	
+	<div class="modal-body">
+		<div class="modal-icon-area">
+	      <span class="success-icon glyphicon glyphicon-ok-sign" aria-hidden="true" ng-show="!button"></span>
+	      <span class="confirm-icon glyphicon glyphicon-question-sign" aria-hidden="true" ng-show="button"></span>
+	    </div>
+	    <div class="modal-font-area">
+	      <span>{{message.content | translate}}</span>
+	    </div>
+	    <br/>
+	    <br/>
+	    <div class="modal-detail-area" style="padding:5px 10px;">
+	      <div ng-click="toggleDetail()">
+	        <span ng-show="!detailStatus" class="glyphicon glyphicon-triangle-right"></span><span ng-show="detailStatus" class="glyphicon glyphicon-triangle-bottom" ></span><a >{{'common.detail' | translate}}</a>
+	      </div>
+	      <div ng-show="detailStatus" class="detail-message-area">
+	         <span>{{message.prompt_message}}</span>
+	      </div>
+	    </div>
+	</div>
+  	<div class="modal-footer">
+  		<button class="btn btn-primary" ng-click="doAction('close',button.action)" ng-show="button">{{button.text | translate}}</button>
+  		<button class="btn btn-primary" ng-click="close('close')" ng-show="button">{{'common.cancel' | translate}}</button>
+    		<button class="btn btn-primary" ng-click="close('close')" ng-show="!button">{{'common.close' | translate}}</button>
+  	</div>
+</div>

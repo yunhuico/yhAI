@@ -1,0 +1,29 @@
+FROM golang:1.6-alpine
+
+RUN apk add --no-cache --virtual git
+
+RUN go get -d github.com/Sirupsen/logrus \
+	&& go get -d github.com/magiconair/properties \
+	&& go get -d github.com/emicklei/go-restful \
+	&& go get -d github.com/compose/mejson \
+	&& go get -d github.com/jmoiron/jsonq \
+	&& go get -d github.com/LinkerNetworks/go-marathon \
+	&& go get -d github.com/bmizerany/assert \
+	&& git clone https://github.com/wordnik/swagger-ui.git /go/bin/swagger-ui
+
+COPY . /go/src/linkernetworks.com/dcos-backend
+
+WORKDIR /go/src/linkernetworks.com/dcos-backend/scale
+
+RUN go build -v -o /go/bin/scale \
+	&& chmod u+x /go/bin/scale
+
+RUN cp ./linkerdcos_scale.properties /go/bin \
+	&& sed -i 's/"http:\/\/petstore.swagger.io\/v2\/swagger.json"/"\/apidocs.json"/g' /go/bin/swagger-ui/dist/index.html
+
+# remove source codes
+RUN apk del git \
+    && rm -rf /go/src/*
+
+WORKDIR /go/bin/
+ENTRYPOINT ["/go/bin/scale"]

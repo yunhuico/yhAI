@@ -1,0 +1,3 @@
+metrics-collector
+vendor/*
+!vendor/vendor.json

@@ -1,0 +1,35 @@
+<div class="modal-header">
+	 <button type="button" class="close" aria-label="Close" ng-click="close('close')"><span aria-hidden="true">&times;</span></button>
+	<h4>{{'Change Node Type' | translate}}</h4>
+</div>
+<div class="modal-body" style="max-height:500px;overflow:auto;">
+  <form name="addNode" class="form-horizontal" novalidate autocomplete="off">
+    <div class="form-group">
+      <label class="radio-inline col-sm-3 col-sm-offset-3">
+        <input type="radio" name="type" ng-model="node.nodeStatus" value="start" checked> {{'START' | translate}}
+      </label>
+      <label class="radio-inline">
+        <input type="radio" name="type" ng-model="node.nodeStatus" value="stop">{{'STOP' | translate}}
+      </label>
+    </div>
+    <div class="form-group" ng-show="node.nodeStatus == 'start'">
+      <label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'Number of node' | translate}}</label>
+      <div class="col-sm-4">
+        <input type="number" ng-model="node.nodeNum" min="0" max={{maxStart}} required ng-class="{'form-control':true}">
+      </div>
+      <div class="col-sm-2 control-label">
+        / {{maxStart}}
+      </div>
+    </div>
+    <div class="form-group" ng-show="node.nodeStatus == 'stop'">
+      <label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'Node Tag' | translate}}</label>
+      <div class="col-sm-6">
+        <select ng-model="node.tag" required ng-class="{'form-control':true}" ng-options="tag.name as tag.name for tag in tags">
+        </select>
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-danger" ng-click="close('close')">Cancel</button>
+  <button class="btn btn-success" ng-click="close('finish')">Finish</button>
+</div>

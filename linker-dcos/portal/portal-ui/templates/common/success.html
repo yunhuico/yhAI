@@ -1,0 +1,17 @@
+<div>
+  <div class="modal-header">   
+   
+    <h4>{{title | translate}}</h4>
+  </div>
+  <div class="modal-body">
+    <div class="modal-icon-area">
+      <span class="success-icon glyphicon glyphicon-ok-sign" aria-hidden="true" ></span> 
+    </div>
+    <div class="modal-font-area">
+      <span>{{message | translate}}</span> 
+    </div> 
+  </div>
+  <div class="modal-footer">  
+       <button class="btn btn-primary" ng-click="doAction('close',button.action)">{{button.text | translate}}</button>
+  </div>
+</div>

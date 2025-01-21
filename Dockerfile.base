@@ -1,0 +1,70 @@
+FROM python:3.4-alpine
+
+# docker build -t jiezhang/python:3.4-go-1.6-alpine -f Dockerfile.base .
+MAINTAINER jzhang@linkernetworks.com
+
+# Install golang
+ENV GOLANG_VERSION 1.6.4
+ENV GOLANG_SRC_URL https://golang.org/dl/go$GOLANG_VERSION.src.tar.gz
+ENV GOLANG_SRC_SHA256 8796cc48217b59595832aa9de6db45f58706dae68c9c7fbbd78c9fdbe3cd9032
+
+COPY deployer/golang/no-pic.patch /
+
+RUN set -ex \
+    && apk add --no-cache --virtual .build-deps \
+        bash \
+        gcc \
+        musl-dev \
+        openssl \
+        go \
+    \
+    && export GOROOT_BOOTSTRAP="$(go env GOROOT)" \
+    \
+    && wget -q "$GOLANG_SRC_URL" -O golang.tar.gz \
+    && echo "$GOLANG_SRC_SHA256  golang.tar.gz" | sha256sum -c - \
+    && tar -C /usr/local -xzf golang.tar.gz \
+    && rm golang.tar.gz \
+    && cd /usr/local/go/src \
+    && patch -p2 -i /no-pic.patch \
+    && ./make.bash \
+    \
+    && rm -rf /*.patch \
+    && apk del .build-deps
+
+ENV GOPATH /go
+ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+
+RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
+WORKDIR $GOPATH
+
+COPY deployer/golang/go-wrapper /usr/local/bin/
+
+# install docker tools
+RUN mkdir -p /opt/local/bin \
+    && apk add --no-cache --virtual curl
+
+ENV DOCKER_VERSION=1.12.0
+ENV MACHINE_VERSION=0.9.0
+ENV COMPOSE_VERSION=1.8.1
+
+# Download docker-machine
+RUN curl -L https://github.com/docker/machine/releases/download/v${MACHINE_VERSION}/docker-machine-`uname -s`-`uname -m` >/opt/local/bin/docker-machine-${MACHINE_VERSION} && \
+    chmod +x /opt/local/bin/docker-machine-${MACHINE_VERSION}
+
+# Download docker
+RUN curl -L https://get.docker.com/builds/Linux/x86_64/docker-${DOCKER_VERSION}.tgz > /tmp/docker-${DOCKER_VERSION}.tgz && \
+    cd /tmp && tar -xzf ./docker-${DOCKER_VERSION}.tgz && \
+    rm /tmp/docker-${DOCKER_VERSION}.tgz && \
+    mv /tmp/docker/docker /opt/local/bin/docker-${DOCKER_VERSION} && \
+    chmod +x /opt/local/bin/docker-${DOCKER_VERSION}
+
+# Download docker-compose
+# docker-compose depend on glibc, need install it by pip
+RUN apk --update add py-pip py-yaml \
+    && pip install -U docker-compose==${COMPOSE_VERSION}
+
+RUN ln -s /opt/local/bin/docker-${DOCKER_VERSION} /opt/local/bin/docker \
+    && ln -s /opt/local/bin/docker-machine-${MACHINE_VERSION} /opt/local/bin/docker-machine \
+    && ln -s /opt/local/bin/docker-compose-${COMPOSE_VERSION} /opt/local/bin/docker-compose
+
+ENV PATH=/opt/local/bin:$PATH

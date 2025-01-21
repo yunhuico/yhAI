@@ -1,0 +1,23 @@
+<div>
+    <div class="pull-left full-width">
+        <button type="button" class="btn btn-info btn-sm btn-control" ng-click="refresh()" ><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> {{'common.refresh' | translate}}</button>
+        <table class="table table-striped">
+            <tr>
+                <th>{{'common.action' | translate }}</th>
+                <th>{{'common.user' | translate }}</th>
+                <th>{{'common.createdTime' | translate }}</th>  
+                <th>{{'common.comments' | translate }}</th>              
+                <th width="100px;">{{'common.status' | translate }}</th>
+                
+            </tr>
+            <tr ng-repeat="item in logs track by item._id">
+                <td>{{'log.'+item.operateType | translate}}</td>              
+                <td>{{item.userName}}</td>
+                <td>{{item.time_create}}</td>               
+                <td>{{item.comments}}</td>
+                <td><status type="{{item.status}}"></status></td>
+            </tr>
+        </table>
+        <paginations present="currentPage" length="totalPage" total="totalRecords"></paginations>
+    </div>
+</div>

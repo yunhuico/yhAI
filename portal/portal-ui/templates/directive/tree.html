@@ -1,0 +1,52 @@
+<div ng-repeat="(key, item) in data.properties">
+    <div class="form-group" ng-show="!(item.type == 'object')" style="padding:0 0 15px;">
+        <ul class="list-inline" ng-show="!(item.type=='array')">
+            	<li><span ng-bind="key" style="color:#E38D13;font-weight:bold;font-size: 16px"></span></span>
+			<li style="margin-left:-8px;">
+				<label ng-if="isRequired(data.required, key)"><span class="glyphicon glyphicon-asterisk" style="color:red;font-size:10px;"></span></label>
+			</li>
+            <li>
+                <show-message is-show="isShow" ng-show="item.description"></show-message>
+            </li>
+        </ul>
+        <p class="text-primary" ng-if="isShow" ng-bind="item.description"></p>
+        <input type="text" ng-if="item.type == 'string' || !item.type" ng-model="item.default" class="form-control" ng-required="isRequired(data.required, key)" name="{{itemName+key}}" id="{{itemName+key}}" regex="{{item.pattern}}" />
+        <input type="checkbox" ng-if="item.type == 'boolean'" ng-model="item.default" name="{{itemName+key}}" id="{{itemName+key}}" />
+        <input type="number" ng-if="item.type == 'number'" min="{{item.minimum}}" max="{{item.maximum}}" ng-model="item.default" class="form-control" ng-required="isRequired(data.required, key)" name="{{itemName+key}}" id="{{itemName+key}}" regex="{{item.pattern}}" />
+        <input type="number" integer ng-if="item.type == 'integer'" min="{{item.minimum ? item.minimum : '-2147483648'}}" max="{{item.maximum ? item.maximum : '2147483648'}}" ng-model="item.default" class="form-control" ng-required="isRequired(data.required, key)" name="{{itemName+key}}" id="{{itemName+key}}" regex="{{item.pattern}}" />
+        <div style="padding-top:15px;" ng-show="item.type=='array'">
+	        <h4 ng-bind="key"></h4>
+	        <p ng-bind="item.description" style="margin: 0 0 30px;"></p>
+	        <div ng-show="!(item.items.type == 'object' || item.items.type == 'array')">
+	        		<input type="text" ng-if="item.items.type == 'string'" ng-model="item.items.default" class="form-control" name="{{itemName+key}}" id="{{itemName+key}}" regex="{{item.items.pattern}}" ng-trim="false" />
+		        <input type="checkbox" ng-if="item.items.type == 'boolean'" ng-model="item.items.default" name="{{itemName+key}}" id="{{itemName+key}}" />
+		        <input type="number" ng-if="item.items.type == 'number'" min="{{item.items.minimum}}" max="{{item.items.maximum}}" ng-model="item.items.default" class="form-control" name="{{itemName+key}}" id="{{itemName+key}}" regex="{{item.items.pattern}}" />
+		        <input type="number" integer ng-if="item.items.type == 'integer'" min="{{item.items.minimum ? item.items.minimum : '-2147483648'}}" max="{{item.items.maximum ? item.items.maximum : '2147483648'}}" ng-model="item.items.default" class="form-control" name="{{itemName+key}}" id="{{itemName+key}}" regex="{{item.items.pattern}}" />
+	        </div>
+	        <div ng-show="item.items.type == 'object' || item.items.type == 'array'">
+	        		<tree data="item.items" item-name="key" submitform="submitform"></tree>
+	        </div>
+	    </div>
+        <div class="form-error" ng-show="submitform.$submit || submitform['{{itemName+key}}'].$touched">
+            <span ng-show="item.type == 'integer'">
+								<span ng-show="submitform['{{itemName+key}}'].$error.min || submitform['{{itemName+key}}'].$error.max">
+									{{itemName + ' ' + key}}&nbsp;{{'framework.require' | translate}}&nbsp;{{item.minimum ? item.minimum : '-2147483648'}}~{{item.maximum ? item.maximum : '2147483648'}}
+								</span>
+            </span>
+            <span ng-show="item.type == 'number'">
+								<span ng-show="submitform['{{itemName+key}}'].$error.min || submitform['{{itemName+key}}'].$error.max">
+									{{itemName + ' ' + key}}&nbsp;{{'framework.require' | translate}}&nbsp;{{item.minimum ? item.minimum : '-∞'}}~{{item.maximum ? item.maximum : '+∞'}}
+								</span>
+            </span>
+            <span ng-show="submitform['{{itemName+key}}'].$error.required">{{itemName + ' ' + key}}&nbsp;{{'framework.isRequired' | translate}}</span>
+            <span ng-show="submitform['{{itemName+key}}'].$error.integer">{{itemName + ' ' + key}}&nbsp;{{'framework.isInteger' | translate}}</span>
+            <span ng-show="submitform['{{itemName+key}}'].$error.number">{{itemName + ' ' + key}}&nbsp;{{'framework.isNumber' | translate}}</span>
+            <span ng-show="submitform['{{itemName+key}}'].$error.regex">{{itemName + ' ' + key}}&nbsp;{{'framework.regex' | translate}}</span>
+        </div>
+    </div>
+    <div style="padding-top:15px;" ng-show="item.type=='object'">
+        <h4 ng-bind="key"></h4>
+        <p ng-bind="item.description" style="margin: 0 0 30px;"></p>
+        <tree data="item" item-name="key" submitform="submitform"></tree>
+    </div>
+</div>

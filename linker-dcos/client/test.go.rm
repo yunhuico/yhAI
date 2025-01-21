@@ -1,0 +1,568 @@
+package main
+
+import (
+	"encoding/json"
+	"errors"
+
+	"bytes"
+	"encoding/gob"
+	"fmt"
+	marathon "github.com/LinkerNetworks/go-marathon"
+	"github.com/Sirupsen/logrus"
+	"linkernetworks.com/dcos-backend/common/httpclient"
+	"os"
+	"strings"
+)
+
+var (
+	Client marathon.Marathon
+)
+
+func deepCopy(dst, src interface{}) error {
+	var buf bytes.Buffer
+	if err := gob.NewEncoder(&buf).Encode(src); err != nil {
+		return err
+	}
+	return gob.NewDecoder(bytes.NewBuffer(buf.Bytes())).Decode(dst)
+}
+
+func deepCopy2(dst, src interface{}) error {
+	srcbytes, err := json.Marshal(src)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(srcbytes, dst)
+}
+
+/**
+ * return the parent group name of an app
+ *      appID:			the id of the app (absolute path)
+ */
+func getParent(appID string) (
+	appPath string, errorCode string, err error) {
+	if !strings.HasPrefix(appID, "/") {
+		return "", "", errors.New("appID must be absolute path.")
+	}
+	appPaths := strings.Split(appID, "/")
+	if len(appPaths) < 3 {
+		return "", "", errors.New("Invalid appID")
+	}
+	appPaths[len(appPaths)-1] = ""
+	return strings.Join(appPaths, "/"), "", nil
+}
+
+/**
+ * for each app running on marathon, we should delete the dependency when we delete the application
+ */
+func convertDependency(app *marathon.Application) {
+	for i, dependency := range app.Dependencies {
+		if !strings.HasPrefix(dependency, "/") {
+			parentPath, _, _ := getParent(app.ID)
+			app.Dependencies[i] = parentPath + dependency
+		}
+	}
+}
+
+func main() {
+	// appjson := `{
+	//   "id": "/nginx2/nginx",
+	//   "cmd":"",
+	//   "container": {
+	//     "type": "DOCKER",
+	//     "docker": {
+	//       "forcePullImage": true,
+	//       "image": "nginx",
+	//       "network": "BRIDGE",
+	//       "portMappings": [
+	//         {
+	//           "containerPort": 80,
+	//           "hostPort": 0,
+	//           "servicePort": 10011,
+	//           "protocol": "tcp"
+	//         }
+	//       ],
+	//       "privileged": false
+	//     }
+	//   },
+	//   "cpus": 0.1,
+	//   "env": {
+	//     "APPSET_OBJ_ID": "57625df81ae919002447f0b8",
+	//     "ENV_APPSET_APP_ID": "/nginx2/nginx",
+	//     "ENV_APPSET_GROUP_ID": "/nginx2",
+	//     "ENV_APPSET_OBJ_ID": "57625df81ae919002447f0b8",
+	//     "ENV_APPSET_TEMPLATE_ID": "nginx2",
+	//     "LINKER_APP_ID": "/nginx2/nginx",
+	//     "LINKER_GROUP_ID": "/nginx2",
+	//     "LINKER_REPAIR_TEMPLATE_ID": "nginx2"
+	//   },
+	//   "instances": 0,
+	//   "mem": 128,
+	//   "ports": null,
+	//   "dependencies": null,
+	//   "uris": null,
+	//   "labels": {
+	//     "HAPROXY_GROUP": "linkermgmt"
+	//   },
+	//   "fetch": null,
+	//   "constraints":[]
+	// }`
+
+	// var app marathon.Application
+	// err := json.Unmarshal([]byte(appjson), &app)
+	// if err != nil {
+	// 	logrus.Errorf("unmarshal app json failed, %v", err)
+	// }
+	// app.Dependencies = []string{"abc", "/abd", "../abc", "./def"}
+	// logrus.Infof("app.Dependencies=%v", app.Dependencies)
+	// convertDependency(&app)
+	// logrus.Infof("app.Dependencies=%v", app.Dependencies)
+
+	// 	// logrus.Infof("app=%v", &app)
+	// 	logrus.Infof("app.Cmd=%v", app.Cmd)
+	// 	logrus.Infof("app.Container.Docker.Privileged=%v", app.Container.Docker.Privileged)
+	// 	logrus.Infof("app.Instances=%v", app.Instances)
+	// 	logrus.Infof("app.Constraints=%v", app.Constraints)
+	// 	var copiedApp marathon.Application
+	// 	err = deepCopy2(&copiedApp, &app)
+	// 	if err != nil {
+	// 		logrus.Errorf("deepcopy app failed, %v", err)
+	// 	}
+	// 	// logrus.Infof("copiedApp=%v", &copiedApp)
+	// 	logrus.Infof("copiedApp.Cmd=%v", *copiedApp.Cmd)
+	// 	logrus.Infof("copiedApp.Container.Docker.Privileged=%v", *copiedApp.Container.Docker.Privileged)
+	// 	logrus.Infof("copiedApp.Instances=%v", *copiedApp.Instances)
+	// 	logrus.Infof("copiedApp.Constraints=%v", *copiedApp.Constraints)
+	// group, err := Client.GroupBy("/iot", &marathon.GetGroupOpts{
+	// 	Embed: []string{
+	// 		"group.groups",
+	// 		"group.apps",
+	// 		"group.apps.tasks",
+	// 		"group.apps.counts",
+	// 		"group.apps.deployments",
+	// 		"group.apps.lastTaskFailure",
+	// 		"gorup.apps.taskStats",
+	// 	},
+	// })
+	// if err != nil {
+	// 	logrus.Errorf("get group failed, %v", err)
+	// }
+	// logrus.Debugf("received group is %v", *group)
+	// group := marathon.Group{}
+	// endpoint := strings.Join([]string{"54.169.247.199:8080", "/v2/groups", "/iot?",
+	// 	"embed=group.groups&",
+	// 	"embed=group.apps&",
+	// 	"embed=group.apps.counts",
+	// }, "")
+	// resp, err := httpclient.Http_get(endpoint, "",
+	// 	httpclient.Header{"Content-Type", "application/json"})
+	// if err != nil {
+	// 	logrus.Errorf("get group failed, %v", err)
+	// }
+	// err = json.NewDecoder(resp.Body).Decode(&group)
+	// if err != nil {
+	// 	logrus.Errorf("decode group failed, %v", err)
+	// }
+	// logrus.Infof("get group, %v", group)
+	appsetstr := `{
+  "name": "iot",
+  "description": "iot device management system",
+  "created_by_json": true,
+  "group": {
+    "id": "/iot",
+    "apps": [
+      {
+        "id": "/iot/couchdb",
+        "constraints": [
+          [
+            "lb",
+            "UNLIKE",
+            "enable"
+          ]
+        ],
+        "container": {
+          "type": "DOCKER",
+          "docker": {
+            "forcePullImage": true,
+            "image": "couchdb",
+            "network": "BRIDGE",
+            "parameters": [
+              {
+                "key": "net",
+                "value": "iot-external"
+              },
+              {
+                "key": "hostname",
+                "value": "iot-couchdb"
+              },
+              {
+                "key": "net-alias",
+                "value": "iot-couchdb"
+              }
+            ],
+            "portMappings": [
+              {
+                "containerPort": 5984,
+                "hostPort": 0,
+                "servicePort": 5984,
+                "protocol": "tcp"
+              }
+            ],
+            "privileged": true
+          },
+          "volumes": [
+            {
+              "containerPath": "/var/lib/couchdb",
+              "hostPath": "/data/couchdb",
+              "mode": "RW"
+            }
+          ]
+        },
+        "cpus": 0.1,
+        "env": {
+          "COUCHDB_PASSWORD": "1234qwer",
+          "COUCHDB_USER": "admin"
+        },
+        "instances": 1,
+        "mem": 1024,
+        "ports": [],
+        "dependencies": [],
+        "uris": null,
+        "labels": {
+          "HAPROXY_GROUP": "linkermgmt"
+        },
+        "fetch": []
+      },
+      {
+        "id": "/iot/server",
+        "constraints": [
+          [
+            "lb",
+            "UNLIKE",
+            "enable"
+          ]
+        ],
+        "container": {
+          "type": "DOCKER",
+          "docker": {
+            "forcePullImage": true,
+            "image": "linkeriot/iot-server",
+            "network": "BRIDGE",
+            "parameters": [
+              {
+                "key": "net",
+                "value": "iot-external"
+              },
+              {
+                "key": "hostname",
+                "value": "iot-server"
+              },
+              {
+                "key": "net-alias",
+                "value": "iot-server"
+              }
+            ],
+            "portMappings": [
+              {
+                "containerPort": 3000,
+                "hostPort": 0,
+                "servicePort": 3000,
+                "protocol": "tcp"
+              }
+            ],
+            "privileged": true
+          },
+          "volumes": []
+        },
+        "cpus": 0.1,
+        "env": {
+          "SECRET": "linkeriot@linkernetworks",
+          "WEB_NONCE": "linkeriot@forportal",
+          "WEB_SECRET": "3a8ef67d5ad4fb0ab4ef382006d337470c7fb53b0c434742b93fddb92e0dab54"
+        },
+        "instances": 1,
+        "mem": 1024,
+        "ports": [],
+        "dependencies": [
+          "/iot/couchdb"
+        ],
+        "uris": null,
+        "labels": {
+          "HAPROXY_GROUP": "linkermgmt"
+        },
+        "fetch": []
+      },
+      {
+        "id": "/iot/portal",
+        "constraints": [
+          [
+            "lb",
+            "UNLIKE",
+            "enable"
+          ]
+        ],
+        "container": {
+          "type": "DOCKER",
+          "docker": {
+            "forcePullImage": true,
+            "image": "linkeriot/portal",
+            "network": "BRIDGE",
+            "parameters": [
+              {
+                "key": "net",
+                "value": "iot-external"
+              },
+              {
+                "key": "hostname",
+                "value": "iot-portal"
+              },
+              {
+                "key": "net-alias",
+                "value": "iot-portal"
+              }
+            ],
+            "portMappings": [
+              {
+                "containerPort": 6688,
+                "hostPort": 0,
+                "servicePort": 6688,
+                "protocol": "tcp"
+              }
+            ],
+            "privileged": true
+          },
+          "volumes": []
+        },
+        "cpus": 0.1,
+        "env": {
+          "DB_PORT": "27017",
+          "DB_SERVER": "iot-mongodb",
+          "LINKER_IOT_SERVER": "http://iot-server:3000"
+        },
+        "instances": 1,
+        "mem": 1024,
+        "ports": [],
+        "dependencies": [
+          "/iot/mongodb",
+          "/iot/server"
+        ],
+        "uris": null,
+        "labels": {
+          "HAPROXY_GROUP": "linkermgmt"
+        },
+        "fetch": []
+      },
+      {
+        "id": "/iot/mongodb",
+        "constraints": [
+          [
+            "lb",
+            "UNLIKE",
+            "enable"
+          ]
+        ],
+        "container": {
+          "type": "DOCKER",
+          "docker": {
+            "forcePullImage": true,
+            "image": "mongo",
+            "network": "BRIDGE",
+            "parameters": [
+              {
+                "key": "net",
+                "value": "iot-external"
+              },
+              {
+                "key": "hostname",
+                "value": "iot-mongodb"
+              },
+              {
+                "key": "net-alias",
+                "value": "iot-mongodb"
+              }
+            ],
+            "portMappings": [
+              {
+                "containerPort": 27017,
+                "hostPort": 0,
+                "servicePort": 27017,
+                "protocol": "tcp"
+              },
+              {
+                "containerPort": 27018,
+                "hostPort": 0,
+                "servicePort": 27018,
+                "protocol": "tcp"
+              }
+            ],
+            "privileged": true
+          },
+          "volumes": [
+            {
+              "containerPath": "/data/db",
+              "hostPath": "/data/mongodb",
+              "mode": "RW"
+            }
+          ]
+        },
+        "cpus": 0.1,
+        "instances": 1,
+        "mem": 512,
+        "ports": [],
+        "dependencies": [],
+        "uris": null,
+        "labels": {
+          "HAPROXY_GROUP": "linkermgmt"
+        },
+        "fetch": []
+      },
+      {
+        "id": "/iot/log-gateway",
+        "constraints": [
+          [
+            "lb",
+            "UNLIKE",
+            "enable"
+          ]
+        ],
+        "container": {
+          "type": "DOCKER",
+          "docker": {
+            "forcePullImage": true,
+            "image": "linkeriot/log-gateway",
+            "network": "BRIDGE",
+            "parameters": [
+              {
+                "key": "net",
+                "value": "iot-external"
+              },
+              {
+                "key": "hostname",
+                "value": "iot-log-gateway"
+              },
+              {
+                "key": "net-alias",
+                "value": "iot-log-gateway"
+              }
+            ],
+            "portMappings": [
+              {
+                "containerPort": 24224,
+                "hostPort": 0,
+                "servicePort": 24224,
+                "protocol": "tcp"
+              },
+              {
+                "containerPort": 24284,
+                "hostPort": 0,
+                "servicePort": 24284,
+                "protocol": "tcp"
+              },
+              {
+                "containerPort": 9880,
+                "hostPort": 0,
+                "servicePort": 9880,
+                "protocol": "tcp"
+              },
+              {
+                "containerPort": 5140,
+                "hostPort": 0,
+                "servicePort": 5140,
+                "protocol": "tcp"
+              }
+            ],
+            "privileged": true
+          },
+          "volumes": []
+        },
+        "cpus": 0.1,
+        "env": {
+          "LOGSERVER": "broker-0.kafka.mesos:9093"
+        },
+        "instances": 1,
+        "mem": 1024,
+        "ports": [],
+        "dependencies": [],
+        "uris": null,
+        "labels": {
+          "HAPROXY_GROUP": "linkermgmt"
+        },
+        "fetch": []
+      }
+    ],
+    "dependencies": [],
+    "groups": []
+  }
+}`
+	// var iot_group marathon.Group
+	// err := json.Unmarshal([]byte(appsetstr), &iot_group)
+	// if err != nil {
+	// 	logrus.Errorf("unmarshal group json failed, %v", err)
+	// }
+	marathons := []string{
+		"47.88.188.205",
+		"47.88.189.189",
+		"47.88.194.205",
+		"47.88.194.170",
+		"47.88.195.54",
+		"47.88.188.23",
+		"47.88.188.127",
+		"47.88.194.207",
+		"47.88.188.78",
+		"47.88.194.185",
+		"47.88.195.111",
+		"47.88.188.116",
+		"47.88.194.3",
+		"47.88.189.37",
+		"47.88.189.115",
+		"47.88.195.171",
+		"47.88.195.167",
+		"47.88.195.170",
+		"47.88.188.187",
+		"47.88.195.124",
+	}
+
+	for _, host := range marathons {
+		// init marathon client
+		// config := marathon.NewDefaultConfig()
+		// config.URL = fmt.Sprintf("http://%s/marathon", endpoint)
+		// client, err := marathon.NewClient(config)
+		// if err != nil {
+		// 	logrus.Fatalf("Failed to create a client for marathon, error: %s", err)
+		// }
+		// logrus.Infof("call marathon endpoint:%v", client.GetMarathonURL())
+		// // Client = client
+		// _, err = client.UpdateGroup("/iot", &iot_group, true)
+		// if err != nil {
+		// 	logrus.Errorf("Failed to update group on %v, error: %v", endpoint, err)
+		// 	continue
+		// }
+		// logrus.Infof("updated iot on marathon:%v", endpoint)
+		endpoint := fmt.Sprintf("%s:10004/v1/appsets/iot", host)
+		_, err := httpclient.Http_put(endpoint, appsetstr,
+			httpclient.Header{"Content-Type", "application/json"})
+		if err != nil {
+			logrus.Errorf("update appset failed, %v", err)
+		}
+		// err = json.NewDecoder(resp.Body).Decode(&group)
+		// if err != nil {
+		// 	logrus.Errorf("decode group failed, %v", err)
+		// }
+		logrus.Infof("updated appset on %v", endpoint)
+	}
+
+}
+
+func init() {
+	logrus.SetFormatter(&logrus.TextFormatter{})
+	logrus.SetOutput(os.Stdout)
+	logrus.SetLevel(logrus.DebugLevel)
+
+	// init marathon client
+	config := marathon.NewDefaultConfig()
+	config.URL = "http://54.169.247.199:8080"
+	client, err := marathon.NewClient(config)
+	if err != nil {
+		logrus.Fatalf("Failed to create a client for marathon, error: %s", err)
+	}
+	Client = client
+}

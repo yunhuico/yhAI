@@ -1,0 +1,113 @@
+<div>
+    <div class="main-nav-header">
+        <div class="pull-left">
+            <h3>{{'main_nav.configmgt' | translate}}</h3>
+        </div>     
+    </div>
+    <div class="pull-left full-width">
+        <uib-tabset>
+            <uib-tab heading="{{'config.key.tab' | translate}}" active="tabcontrol.keypair" select="changeTab('key')" style="width:200px">
+                <button class="btn btn-success btn-sm btn-control" ng-click="createKeyPair()">
+                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> {{'config.key.createBtn' | translate }}
+                </button>
+                <button class="btn btn-success btn-sm btn-control" ng-click="uploadKeyPair()">
+                  	<span class="glyphicon glyphicon-upload" aria-hidden="true"></span> {{'config.key.uploadBtn' | translate }}
+                </button>
+                <table class="table table-striped">
+                    <tr>
+                        <th width="100px">{{'common.name' | translate }}</th>
+                        <th>{{'config.key.publickey' | translate }}</th>
+                        <th width="100px">{{'common.action' | translate }}</th>
+                    </tr>
+                    <tr ng-repeat="item in keypairs track by item._id">
+                        <td>{{item.name}}</td>
+                        <td>{{item.pubkeyValue}}</td>
+                        <td>
+                            <button type="button" class="btn btn-default btn-xs" aria-label="Delete" ng-click="confirmDeleteKey(item)" uib-tooltip="{{'common.delete' | translate}}" ng-disabled="item.isuse" >
+                                <span ng-class="{'disabled-cursor':item.isuse}" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+                <paginations present="$parent.$parent.currentPage" length="totalPage" total="totalrecords"></paginations>
+            </uib-tab>
+            <uib-tab heading="{{'config.smtp.name' | translate}}" active="tabcontrol.smtp" select="changeTab('smtp')" style="width:200px" ng-if="rolename === 'sysadmin'">
+            	<button class="btn btn-success btn-sm btn-control" ng-click="addSMTPServer()" ng-if="smtpservers.length == 0">
+                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> {{'config.smtp.add' | translate }}
+                </button>
+                <table class="table table-striped">
+                    <tr>
+                        <th>{{'config.smtp.address' | translate }}</th>
+                        <th>{{'config.platform.username' | translate }}</th>
+                        <th width="100px">{{'common.action' | translate }}</th>
+                    </tr>
+                    <tr ng-repeat="item in smtpservers track by item._id">
+                        <td>{{item.address}}</td>
+                        <td>{{item.name}}</td>
+                        <td>
+                            <button type="button" class="btn btn-default btn-xs" aria-label="Edit" ng-click="editSMTPServer(item)" uib-tooltip="{{'common.edit' | translate}}" >
+                                <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-default btn-xs" aria-label="Delete" ng-click="confirmDeleteSMTPServer(item)" uib-tooltip="{{'common.delete' | translate}}" >
+                    	        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+				<paginations present="$parent.$parent.currentPage" length="totalPage" total="totalrecords"></paginations>
+            </uib-tab>
+            <uib-tab heading="{{'config.platform.name' | translate}}" active="tabcontrol.platform" select="changeTab('platform')" style="width:200px">
+				<button class="btn btn-success btn-sm btn-control" ng-click="createPlatform()">
+					<span class="glyphicon glyphicon-edit" aria-hidden="true"></span> {{'config.platform.addplatform' | translate }}
+				</button>
+				<table class="table table-striped">
+					<tr>
+						<th>{{'common.type' | translate }}</th>
+						<th >{{'common.name' | translate }}</th>
+						<th width="100px">{{'common.action' | translate }}</th>
+					</tr>
+					<tr ng-repeat="item in platforms track by $index">
+						<td>{{item.type}}</td>
+						<td>{{item.name}}</td>
+						<td>
+							<button type="button" class="btn btn-default btn-xs" aria-label="Edit" ng-click="editPlatform(item);" uib-tooltip="{{'common.edit' | translate}}">
+								<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							</button>
+							<button type="button" class="btn btn-default btn-xs" aria-label="Delete" ng-click="deletePlatform(item)" uib-tooltip="{{'common.delete' | translate}}" ng-disabled="item.isuse==true">
+								<span ng-class="{'disabled-cursor': (item.isuse==true)}" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+							</button>
+						</td>
+					</tr>
+				</table>
+				<paginations present="$parent.$parent.currentPage" length="totalPage" total="totalrecords"></paginations>
+            </uib-tab>
+            <uib-tab heading="{{'config.registry.title' | translate}}" active="tabcontrol.registry" select="changeTab('registry')" style="width:200px">
+				<button class="btn btn-success btn-sm btn-control" ng-click="createRegistry()">
+					<span class="glyphicon glyphicon-edit" aria-hidden="true"></span> {{'config.registry.create' | translate }}
+				</button>
+				<table class="table table-striped">
+					<tr>
+						<th>{{'common.name' | translate }}</th>
+						<th>{{'config.registry.registryUrl'| translate}}</th>
+						<th>{{'common.secure' | translate }}</th>
+						<th width="100px">{{'common.action' | translate }}</th>
+					</tr>
+					<tr ng-repeat="item in registries track by $index">
+						<td>{{item.name}}</td>
+						<td>{{item.registry}}</td>
+						<td>{{item.secure}}</td>
+						<td>
+							<button type="button" class="btn btn-default btn-xs" aria-label="Delete" ng-click="detailRegistry(item)" uib-tooltip="{{'common.detail' | translate}}">
+								<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+							</button>
+							<button type="button" class="btn btn-default btn-xs" aria-label="Delete" ng-click="deleteRegistry(item)" uib-tooltip="{{'common.delete' | translate}}" ng-disabled="item.isUse==true">
+								<span ng-class="{'disabled-cursor': (item.isUse==true)}" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+							</button>
+						</td>
+					</tr>
+				</table>
+				<paginations present="$parent.$parent.currentPage" length="totalPage" total="totalrecords"></paginations>
+            </uib-tab>
+        </uib-tabset>
+    </div>
+</div>

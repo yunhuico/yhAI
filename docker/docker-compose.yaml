@@ -1,0 +1,96 @@
+version: '2'
+services:
+  # linker components
+  mongodb:
+    image: linkerrepository/linkerdcos_mongodb_repl:latest
+    ports: 
+      - 27017:27017
+    volumes:
+      - ${PWD}/data:/data
+    privileged: true
+    restart: always
+    environment:
+      - MONGODB_NODES=127.0.0.1
+      - "affinity:container!=*mongodb*"
+
+  usermgmt:
+    build: 
+      context: ../
+      dockerfile: Dockerfile.user
+    image: linkerrepository/linkerdcos_usermgmt:latest
+    command: ./entrypoint.sh
+    ports: 
+      - 10001:10001
+    volumes:
+      - ${PWD}/log:/var/log
+    privileged: true
+    restart: always
+    extra_hosts:
+      - "marathonlb-lb-linkerdns.marathon.mesos:${local_ip}"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGODB_NODES=marathonlb-lb-linkerdns.marathon.mesos
+      - "affinity:container!=*usermgmt*"
+
+  clustermgmt:
+    build: 
+      context: ../
+      dockerfile: Dockerfile.cluster
+    image: linkerrepository/linkerdcos_clustermgmt:latest
+    command: ./entrypoint.sh
+    ports: 
+      - 10002:10002
+    volumes:
+      - ${PWD}/log:/var/log
+    privileged: true
+    restart: always
+    extra_hosts:
+      - "marathonlb-lb-linkerdns.marathon.mesos:${local_ip}"
+    depends_on:
+      - mongodb
+      - deployer
+    environment:
+      - MONGODB_NODES=marathonlb-lb-linkerdns.marathon.mesos
+      - "affinity:container!=*clustermgmt*"
+  
+  deployer:
+    build: 
+      context: ../
+      dockerfile: Dockerfile.deployer
+    image: linkerrepository/linker_dcos_deployer:latest
+    command: ./entrypoint.sh
+    ports:
+      - 10003:10003
+    volumes: 
+      - ${PWD}/docker:/linker/docker
+      - ${PWD}/swarm:/linker/swarm
+      - ${PWD}/log:/var/log
+    privileged: true
+    restart: always
+    extra_hosts:
+      - "marathonlb-lb-linkerdns.marathon.mesos:${local_ip}"
+    environment:
+      - "affinity:container!=*deployer*"
+
+  portal:
+    build:
+      context: ../
+      dockerfile: Dockerfile.portal
+    image: linkerrepository/linker_dcos_portal:latest
+    command: ./entrypoint.sh
+    ports:
+      - 3000:3000
+    volumes:
+      - ${PWD}/log:/var/log
+      #- ${PWD}/../portal/portal-ui:/usr/src/app/portal/target/portal-ui
+      #- ${PWD}/../portal/portal-server:/usr/src/app/portal/target/portal-server
+    restart: always
+    extra_hosts:
+      - "marathonlb-lb-linkerdns.marathon.mesos:${local_ip}"
+    depends_on:
+      - clustermgmt
+      - usermgmt
+    environment:
+      - ENVIRONMENT=dev
+      - "affinity:container!=*portal*"

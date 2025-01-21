@@ -1,0 +1,51 @@
+{
+  "name": "jessie-test",
+  "description": "hello",
+  "created_by_json": true,
+  "group": {
+    "id": "jessie-test",
+    "apps": [
+      {
+        "id": "/zyj-wordpress/mysql",
+        "cmd": null,
+        "args": null,
+        "user": null,
+        "env": {
+          "MYSQL_DATABASE": "wordpress",
+          "LINKER_APP_ID": "/zyj-wordpress/mysql",
+          "MYSQL_ROOT_PASSWORD": "password",
+          "APPSET_OBJ_ID": "574c13b0526644002aa1a6d4",
+          "LINKER_REPAIR_TEMPLATE_ID": "zyj-wordpress",
+          "LINKER_GROUP_ID": "/zyj-wordpress"
+        },
+        "instances": 1,
+        "cpus": 0.1,
+        "mem": 128,
+        "disk": 0,
+        "container": {
+          "type": "DOCKER",
+          "volumes": [],
+          "docker": {
+            "image": "mysql",
+            "network": "BRIDGE",
+            "portMappings": [
+              {
+                "containerPort": 3306,
+                "hostPort": 0,
+                "servicePort": 0,
+                "protocol": "tcp",
+                "labels": {}
+              }
+            ],
+            "privileged": true,
+            "parameters": [],
+            "forcePullImage": true
+          }
+        },
+        "labels": {
+          "HAPROXY_GROUP": "linkermgmt"
+        }
+      }
+    ]
+  }
+}

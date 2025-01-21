@@ -1,0 +1,21 @@
+<div>
+    <div class="modal-header">
+         <button type="button" class="close" aria-label="Close" ng-click="close('close')"><span aria-hidden="true">&times;</span></button>
+        <h4>{{'cluster.chooseClusterDelete'|translate}}</h4>
+    </div>
+    <div class="modal-body">
+        <div class="modal-icon-area">
+            <span class="warning-icon glyphicon glyphicon-alert" aria-hidden="true" style="line-height:2.2"></span>
+        </div>
+        <div class="modal-font-area">
+            <label class="control-label" style="margin-right:10px;">{{'cluster.chooseClusterDelete'|translate}}</label>
+            <select class="form-control" ng-model="selectedCluster">
+                <option value="{{cluster._id}}" ng-repeat="cluster in clusters track by $index|orderBy:'name'">{{cluster.name}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="close('execute')">{{'common.delete' | translate}}</button>
+        <button class="btn btn-warning" ng-click="close('close')">{{'common.cancel' | translate}}</button>
+    </div>
+</div>

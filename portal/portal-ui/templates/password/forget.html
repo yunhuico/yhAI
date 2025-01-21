@@ -1,0 +1,16 @@
+<div class="forget-area" style="width: 45%;margin: 6% auto;padding: 4% 7%;">
+	<h3 style="text-align:center;">{{'common.searchPassword' | translate}}</h3>
+	<form name="ForgetPassword" novalidate style="box-shadow:1px 2px 4px rgba(0,0,0,.16),-1px -1px 4px rgba(0,0,0,.23);padding:30px;margin-top:30px;">
+		<div class="form-group">
+			<label><span>{{'common.inputUser' | translate}}</span></label>
+			<div>
+				<input type="text" class="form-control" placeholder="{{'common.userName' | translate}}" ng-model="username" name="usernameInput" required autofocus>	
+			</div>
+			<span class="form-error" ng-show="ForgetPassword.$submitted || ForgetPassword.usernameInput.$touched">	
+				<span ng-show="ForgetPassword.usernameInput.$error.required">{{'user.usernameRequired' | translate}}</span>	
+			</span>	
+		</div>	
+		<br/>	
+		<button class="btn btn-primary btn-block" ng-disabled="ForgetPassword.$invalid" ng-click="forgetPassword();">{{'common.send' | translate}}</button>	
+	</form>
+</div>

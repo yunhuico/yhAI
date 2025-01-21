@@ -1,0 +1,31 @@
+<div class="modal-header">
+   <button type="button" class="close" aria-label="Close" ng-click="close('close')"><span aria-hidden="true">&times;</span></button>
+  <h4>{{'node.updatePublickey' | translate}}</h4>
+</div>
+<div class="modal-body">
+  <form class="form-horizontal" name="addPublickey" novalidate autocomplete="off">
+    <div class="form-group">
+      <label class="col-sm-4 control-label" ><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'node.selectPublickey' | translate}}</label>
+      <div class="col-sm-6" style="margin-top: 5px;">
+      	<div ng-show=" ! publicKeys">Loading ...</div>
+        <label class="row" ng-repeat="item in publicKeys track by $index" style="display: block;">
+          <input
+            class="col-sm-1"
+            style="margin-top: 4px;"
+            type="checkbox"
+            name="addPublickey[]"
+            value="{{item._id}}"
+            ng-checked="item.checked"
+            ng-click="toggleSelection(item)"
+          > <div class="col-sm-11" style="word-wrap: break-word;">{{item.name}}</div>
+        </label>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button ng-click="close('execute');" class="btn btn-primary">
+    {{'common.save' | translate}}
+  </button>
+  <button class="btn btn-warning" ng-click="close('close')">{{'common.cancel' | translate}}</button>
+</div>

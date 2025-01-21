@@ -1,0 +1,245 @@
+version: '2'
+services:
+  mesosmaster:
+    image: {registry}/linkerrepository/mesos-master:latest-1.2.1
+    network_mode: host
+    command: /entrypoint.sh
+    env_file: .env
+    volumes:
+     - /var/lib/mesos:/var/lib/mesos
+     - /var/log/mesos:/var/log/mesos
+    privileged: true
+    restart: always
+    environment:
+     - MESOS_LOG_DIR=/var/log/mesos
+     #- MESOS_REGISTRY=in_memory
+     - MESOS_WORK_DIR=/var/lib/mesos/master
+     - "constraint:master==true"
+     - "affinity:container!=*_mesosmaster_*"
+
+  marathon:
+    image: {registry}/linkerrepository/marathon:latest-1.4.2
+    volumes:
+     - /etc/resolv.conf:/etc/resolv.conf
+    network_mode: host
+    command: /entrypoint.sh
+    env_file: .env
+    privileged: true
+    restart: always
+    environment:
+     - MARATHON_MESOS_LEADER_UI_URL=/mesos
+     - MARATHON_ZK_MAX_VERSIONS=100
+     - MARATHON_ZK_TIMEOUT=30000
+     - MARATHON_ZK_SESSION_TIMEOUT=30000
+     - MARATHON_TASK_LAUNCH_TIMEOUT=900000
+     - MARATHON_EVENT_SUBSCRIBER=http_callback
+     - MARATHON_MESOS_ROLE=slave_public
+     - MARATHON_MESOS_AUTHENTICATION_PRINCIPAL=dcos_marathon
+     - MARATHON_ENABLE_FEATURES=task_killing,external_volumes,gpu_resources
+     - "constraint:master==true"
+     - "affinity:container!=*_marathon_*"
+
+  cosmos:
+    image: {registry}/linkerrepository/cosmos:latest-0.1.5
+    volumes:
+     - /etc/resolv.conf:/etc/resolv.conf
+    network_mode: host
+    env_file: .env
+    depends_on:
+     - marathon
+    privileged: true
+    restart: always
+    environment:
+     - "constraint:master==true"
+     - "affinity:container!=*_cosmos_*"
+
+  dnsserver:
+    image: {registry}/linkerrepository/linker_mesos_dns:latest
+    volumes:
+    - /linker/config:/linker/config
+    network_mode: host
+    env_file: .env
+    privileged: true
+    restart: always
+    environment:
+     - "constraint:master==true"
+     - "affinity:container!=*_dnsserver_*"
+
+  universenginx:
+    image: {registry}/linkerrepository/universe:latest
+    env_file: .env
+    command: nginx -g "daemon off;"
+    network_mode: bridge
+    ports:
+     - "8082:80"
+    depends_on:
+     - dnsserver
+    privileged: true
+    restart: always
+    environment:
+     - "constraint:master==true"
+     - "affinity:container!=*_universenginx_*"
+
+  universeregistry:
+    image: {registry}/linkerrepository/universe:latest
+    env_file: .env
+    command: registry serve /etc/docker/registry/config.yml
+    network_mode: bridge
+    ports:
+     - "5000:5000"
+    depends_on:
+     - dnsserver
+    privileged: true
+    restart: always
+    environment:
+     - REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt
+     - REGISTRY_HTTP_TLS_KEY=/certs/domain.key
+     - "constraint:master==true"
+     - "affinity:container!=*_universeregistry_*"
+
+  adminrouter:
+    image: {registry}/linkerrepository/linker_router:latest
+    volumes:
+     - /etc/resolv.conf:/etc/resolv.conf
+    network_mode: host
+    env_file: .env
+    depends_on:
+     - genresolvconf
+    restart: always
+    environment:
+     - "constraint:master==true"
+     - "constraint:adminrouter==true"
+     - "affinity:container!=*_adminrouter_*"
+
+
+  prometheus:
+    image: {registry}/linkerrepository/prometheus:latest-v1.0.0
+    network_mode: host
+    entrypoint: /bin/prometheus
+    command: -alertmanager.url=http://localhost:9093 -config.file=/etc/prometheus/prometheus.yml -query.staleness-delta 30s -query.timeout 25s
+    volumes:
+    - /linker/prometheus:/etc/prometheus
+    env_file: .env
+    privileged: true
+    restart: always
+    environment:
+     - "constraint:monitor==true"
+     - "affinity:container!=*_prometheus_*"
+
+  alertmanager:
+    image: {registry}/linkerrepository/alertmanager:latest-v0.3.0
+    network_mode: host
+    volumes:
+    - /linker/alertmanager:/etc/alertmanager
+    env_file: .env
+    privileged: true
+    restart: always
+    environment:
+     - "constraint:monitor==true"
+     - "affinity:container!=*_alertmanager_*"
+
+  mongodb:
+    image: {registry}/linkerrepository/linkerdcos_mongodb_repl:latest
+    network_mode: host
+    volumes:
+    - /opt:/data
+    env_file: .env
+    privileged: true
+    restart: always
+    environment:
+     - "constraint:master==true"
+     - "affinity:container!=*_mongodb_*"
+
+  dcosclient:
+    image: {registry}/linkerrepository/linkerdcos_client:latest
+    network_mode: host
+    volumes:
+     - /etc/resolv.conf:/etc/resolv.conf
+     - /linker/docker:/linker/docker
+     - /var/log:/var/log
+     - /root/.docker:/root/.docker:ro
+    env_file: .env
+    privileged: true
+    restart: always
+    depends_on:
+     - mongodb
+     - dnsserver
+    entrypoint: /linker/dbcheck.sh
+    command: /linker/entrypoint.sh
+    environment:
+     - "constraint:master==true"
+     - "constraint:dcosclient==true"
+     - "affinity:container!=*_dcosclient_*"
+
+  genresolvconf:
+    image: {registry}/linkerrepository/linker_resolver:latest
+    volumes:
+     - /etc/resolv.conf:/etc/resolv.conf
+    network_mode: host
+    env_file: .env
+    depends_on:
+     - dnsserver
+    restart: always
+    environment:
+     - RESOLVERS=8.8.8.8
+     - "affinity:container!=*_genresolvconf_*"
+
+  cadvisormonitor:
+    image: {registry}/linkerrepository/linker_cadvisor:latest
+    volumes:
+     - /var/run/docker.sock:/var/run/docker.sock:rw
+     - /:/rootfs:ro
+     - /sys:/sys:ro
+     - /var/lib/mesos/slave:/tmp/mesos:ro
+     - /var/run:/var/run:rw
+     - /var/lib/docker:/var/lib/docker:ro
+    network_mode: host
+    env_file: .env
+    privileged: true
+    restart: always
+    environment:
+      - "constraint:slave==true"
+      - "affinity:container!=*_cadvisormonitor_*"
+
+  webconsole:
+    image: {registry}/linkerrepository/linker_webconsole:latest
+    volumes:
+     - /linker/docker/${CLUSTER_OWNER}/${CLUSTER_NAME}/certs:/usr/local/bin/certs:ro
+    network_mode: host
+    env_file: .env
+    privileged: true
+    restart: always
+    command: /usr/local/bin/entrypoint.sh
+    environment:
+     - "constraint:master==true"
+     - "affinity:container!=*_webconsole_*"
+
+  metricscollector:
+    image: {registry}/linkerrepository/metrics-collector:latest
+    network_mode: host
+    env_file: .env
+    privileged: true
+    restart: always
+    environment:
+     - DAEMON_MODE=onrequest
+     - ENABLE_UPDATER=true
+     - ADDR_UPDATE_SEC=60
+     - MESOS_ENDPOINT=master.mesos/mesos
+     - ENABLE_HOST_MONITOR=true
+     - "constraint:master==true"
+     - "affinity:container!=*_metricscollector_*"
+
+  rulegen:
+      image: {registry}/linkerrepository/rulegen:latest
+      network_mode: host
+      env_file: .env
+      privileged: true
+      restart: always
+      volumes:
+       - /linker/prometheus/generated:/linker/prometheus/generated:rw
+      environment:
+       - LISTEN_ADDR=0.0.0.0
+       - LISTEN_PORT=10006
+       - RULE_FILE=/linker/prometheus/generated/hostcpumem.rules
+       - "constraint:master==true"
+       - "affinity:container!=*_rulegen_*"

@@ -1,0 +1,129 @@
+<div>
+  <div class="modal-body clearfix">
+    <div>
+      <button type="button" class="close" aria-label="Close" ng-click="close('close')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <h4>{{container.Name.substring(1)}}</h4>
+    </div>
+    <uib-tabset type="pills">
+      <uib-tab heading="{{'service.containerInfo.details' | translate}}" select="getDetail()" active="true">
+        <div class="scrollable margin-top" style="height: 500px">
+          <div class="row">
+            <div class="col-xs-6">
+              <p>{{'node.image'|translate}}:&nbsp;&nbsp;{{container.Config.Image}}</p>
+              <p>{{'cmd'}}:&nbsp;&nbsp;{{container.Config.Cmd}}</p>
+            </div>
+            <div class="col-xs-6">
+              <p>{{'arguments'}}:&nbsp;&nbsp;{{container.Args}}</p>
+              <p>{{'common.network'|translate}}:&nbsp;&nbsp;{{container.HostConfig.NetworkMode}}</p>
+            </div>    
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">{{'common.env'|translate}}</h3>
+            </div>
+            <table class="table">
+              <tr>
+                <th>{{'common.key'|translate}}</th>
+                <th>{{'common.value'|translate}}</th>             
+              </tr>
+              <tr ng-if="envCondition" ng-repeat="item in envArray track by $index">
+                <td>{{item.key}}</td>              
+                <td>{{item.value}}</td>
+              </tr>
+              <tr ng-if="!envCondition" >
+                <td colspan="3" style="text-align:center;font-style:oblique">
+                  {{"service.noEnv" | translate}}
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">{{'common.volume'|translate}}</h3>
+            </div>
+            <table class="table">
+              <tr>
+                <th>{{'service.containerDir'|translate}}</th>
+                <th>{{'service.volumeDir'|translate}}</th> 
+                <th>{{'common.rwMode'|translate}}</th>             
+              </tr>
+              <tr ng-if="volumeCondition" ng-repeat="item in volumeArray track by $index">
+                <td>{{item.containerPath}}</td>              
+                <td>{{item.hostPath}}</td>
+                <td>{{item.mode}}</td>
+              </tr>
+              <tr ng-if="!volumeCondition" >
+                <td colspan="3" style="text-align:center;font-style:oblique">
+                  {{"service.noMapping" | translate}}
+                </td>                 
+              </tr>
+            </table>
+          </div>
+        </div>
+      </uib-tab>
+      <uib-tab heading="{{'service.containerInfo.files' | translate}}" select="backToFolder(0)">
+        <div class="font-16 panel-default">
+          <div class="margin-top panel-heading">
+            <a href="" class="padding-horizontal" ng-click="backToFolder(0)"> / </a>
+            <span ng-repeat="folder in currentFolder track by $index">
+              <a href="" class="padding-horizontal" ng-bind="::folder" ng-click="backToFolder($index + 1)"></a>
+              <span>/</span>
+            </span>
+          </div>
+          <div class="col-md-12 font-bold margin-top panel-heading">
+            <div class="col-md-2">mode</div>
+            <div class="col-md-1">nlink</div>
+            <div class="col-md-1">uid</div>
+            <div class="col-md-1">gid</div>
+            <div class="col-md-2">size</div>
+            <div class="col-md-2">mtime</div>
+            <div class="col-md-2"></div>
+            <div class="col-md-1"></div>
+          </div>
+          <div class="scrollable fit-width" style="height: 500px">
+            <div class="col-md-12 margin-top fit-width" ng-repeat="file in files">
+              <div class="col-md-2" ng-bind="::file.mode"></div>
+              <div class="col-md-1" ng-bind="::file.nlink"></div>
+              <div class="col-md-1" ng-bind="::file.uid"></div>
+              <div class="col-md-1" ng-bind="::file.gid"></div>
+              <div class="col-md-2" ng-bind="::file.size"></div>
+              <div class="col-md-2" ng-bind="::file.mtime"></div>
+              <div class="col-md-2">
+                <span ng-bind="::file.name" ng-if="file.nlink === 1"></span>
+                <a href="" ng-bind="::file.name" ng-if="file.nlink > 1" ng-click="browseFolder(file.name, file.path)"></a>
+              </div>
+              <div class="col-md-1">
+                <span class="glyphicon glyphicon-download-alt" ng-click="downloadFile(file.path)" ng-if="file.nlink === 1"></span>
+              </div>
+            </div>
+          </div>      
+        </div>
+      </uib-tab>
+      <uib-tab heading="{{'service.containerInfo.logs' | translate}}" select="getLogs()">
+          <div class="text-align-right">
+            <span class="btn-group">
+              <label class="btn btn-default font-12" ng-model="log.type" uib-btn-radio="'stdout'" ng-change="changeLogType()">
+                {{'service.containerInfo.stdout' | translate}}
+              </label>
+              <label class="btn btn-default font-12" ng-model="log.type" uib-btn-radio="'stderr'" ng-change="changeLogType()">
+                {{'service.containerInfo.stderr' | translate}}
+              </label>
+            </span>
+            <button class="btn btn-default glyphicon glyphicon-download-alt" ng-click="downloadLogs()"></button>
+          </div>
+          <div class="margin-top scrollable" id="logs" style="height: 500px">
+            <div ng-repeat="data in log.content track by $index">
+              {{data}}
+            </div>
+          </div>
+      </uib-tab>
+    </uib-tabset>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-warning" ng-click="close('close')">
+      {{'common.close' | translate}}
+    </button>
+  </div>
+</div>

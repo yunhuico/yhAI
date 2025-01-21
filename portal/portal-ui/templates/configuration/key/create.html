@@ -1,0 +1,32 @@
+
+<div class="modal-header">
+	 <button type="button" class="close" aria-label="Close" ng-click="close('close')"><span aria-hidden="true">&times;</span></button>
+	<h4>{{'config.key.createBtn' | translate}}</h4>
+</div>
+<div class="modal-body">
+	<form class="form-horizontal" name="createKeyPair" novalidate autocomplete="off">
+		<div class="form-group">
+			<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'common.name' | translate}}</label>
+			<div class="col-sm-6">
+				<input type="text" name="name" ng-model="keypair.name" required ng-pattern="/^[A-Za-z0-9]+$/" ng-class="{'form-control':true}">
+				<span class="form-error" ng-if="createKeyPair.name.$touched">
+					<span ng-if="createKeyPair.name.$error.required">{{'config.key.formError.nameIsRequired' | translate}}</span>
+					<span ng-if="createKeyPair.name.$error.pattern">{{'config.key.formError.nameIsInvalid' | translate}}</span>
+				</span>
+			</div>
+		</div>
+		<!-- <div class="form-group">
+			<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'common.owner' | translate}}</label>
+			<div class="col-sm-6">
+				<select ng-model="keypair.user_id" required ng-class="{'form-control':true}" ng-options="user._id as user.username for user in users">
+				</select>
+			</div>
+		</div> -->
+	</form>
+</div>
+<div class="modal-footer">
+	<button ng-click="close('execute')" class="btn btn-primary" ng-disabled="createKeyPair.$invalid">
+	{{'common.create' | translate}}
+	</button>
+	<button class="btn btn-warning" ng-click="close('close')">{{'common.cancel' | translate}}</button>
+</div>

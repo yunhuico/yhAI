@@ -1,0 +1,33 @@
+ALERT HighMemoryAlert
+  IF container_memory_usage_high_result > 1
+  FOR 30s
+  ANNOTATIONS {
+    summary = "High Memory usage alert for container",
+    description = "High Memory usage for linker container on {{$labels.image}} for container {{$labels.name}} (current value: {{$value}})",
+  }
+
+
+ALERT LowMemoryAlert
+  IF (container_memory_usage_low_result < 1 AND container_memory_usage_low_result > 0)
+  FOR 1m
+  ANNOTATIONS {
+    summary = "Low Memory usage alert for container",
+    description = "Low Memory usage for linker container on {{$labels.image}} for container {{$labels.name}} (current value: {{$value}})",
+  }
+
+ALERT HighCPUAlert
+  IF container_cpu_usage_high_result > 1
+  FOR 30s
+  ANNOTATIONS {
+    summary = "High CPU usage alert for container",
+    description = "High CPU usage for linker container on {{$labels.image}} for container {{$labels.name}} (current value: {{$value}})",
+  }
+
+
+ALERT LowCPUAlert
+  IF (container_cpu_usage_low_result < 1 AND container_cpu_usage_low_result > 0)
+  FOR 1m
+  ANNOTATIONS {
+    summary = "Low CPU usage alert for container",
+    description = "Low CPU usage for linker container on {{$labels.image}} for container {{$labels.name}} (current value: {{$value}})",
+  }

@@ -1,0 +1,25 @@
+{
+  "id": "/tensorflow",
+  "env": {},
+  "instances": 1,
+  "cpus": 0.5,
+  "mem": 4096,
+  "disk": 0,
+  "gpus": 1,
+  "container": {
+    "type": "MESOS",
+    "docker": {
+      "image": "tensorflow/tensorflow:latest-gpu"
+    }
+  },
+  "labels": {
+    "HAPROXY_GROUP": "linkermgmt"
+  },
+  "portDefinitions": [
+    {
+      "port": 8888,
+      "protocol": "tcp",
+      "labels": {}
+    }
+  ]
+}

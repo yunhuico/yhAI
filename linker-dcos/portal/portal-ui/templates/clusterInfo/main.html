@@ -1,0 +1,69 @@
+<div>
+  <div class="pull-left" style="width:100%" ng-if="nodes.length > 0">
+    <div style="height:80%;margin-top:20px" ng-show="hasMonitorData">
+      <div class="panel col-sm-12" ng-show="hascpu">
+        <div class="panel-heading" style="border-bottom:1px solid">
+          <h4>CPU</h4>
+        </div>
+        <div class="panel-body">
+          <h5>{{'monitor.totolUsage' | translate}}</h5>
+          <div class="loader" ng-show="hasLoadingCpu"></div>
+          <div id="cpu-total-usage-chart"></div>
+        </div>
+      </div>
+      <div class="panel col-sm-12" ng-show="hasmemory">
+        <div class="panel-heading" style="border-bottom:1px solid">
+          <h4>{{'monitor.memory' | translate}}</h4>
+        </div>
+        <div class="panel-body">
+          <h5>{{'monitor.totolUsage' | translate}}</h5>
+          <div class="loader" ng-show="hasLoadingMemory"></div>
+          <div id="memory-usage-chart"></div>
+          <div class="auto-scale">
+            <table>
+              <tr ng-if="hasAlarm" ng-repeat="item in alarm.mem track by $index">
+                <td>Alarm: {{ item.Alarm + ' ' + getTime( item.Time ) }} </td>
+              </tr>
+              <tr ng-if="!hasAlarm">
+                <td>Alarm: </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="panel col-sm-12" ng-show="hasdiskusage">
+        <div class="panel-heading" style="border-bottom:1px solid">
+          <h4>{{'monitor.diskUsage' | translate}}</h4>
+        </div>
+        <div class="panel-body">
+          <h5>{{'monitor.totolUsage' | translate}}</h5>
+          <div class="loader" ng-show="hasLoadingDisk"></div>
+          <div id="disk-usage-chart"></div>
+        </div>
+      </div>
+      <div class="panel col-sm-12" ng-show="hasdiskusage">
+        <div class="panel-heading" style="border-bottom:1px solid">
+          <h4>Auto scale status</h4>
+        </div>
+        <div class="panel-body">
+          <div class="auto-scale">
+            <table>
+              <tr ng-repeat="history in historys" >
+                <td ng-class="history.status == 'extend' ? 'extend' : ''">{{history.status}} : {{history.message}}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pull-left" style="width:100%;margin-top:30px;margin-left:15px" ng-show="!hasMonitorData">
+      {{'monitor.dataNotFound' | translate}}
+    </div>
+  </div>
+  <div class="pull-left" style="width:100%;margin-left:15px" ng-if="nodes.length == 0">
+    {{'monitor.nodesNotFound' | translate}}
+  </div>
+  <div class="pull-left" style="width:100%;margin-left:15px" ng-if="nocluster">
+    {{'monitor.clusterNotFound' | translate}}
+  </div>
+</div>

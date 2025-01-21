@@ -1,0 +1,51 @@
+<div>
+    <div class="pull-left full-width">
+      <div class="dropdown" style="display: inline-block;">
+          <button class="btn btn-info btn-sm btn-control dropdown-toggle" type="button" id="dropdownMenuName" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+            {{'alert.searchByName' | translate}}
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuName">
+            <li><a ng-click="searchByName('')">---</a></li>
+            <li><a ng-click="searchByName('HighMemoryAlert')">HighMemoryAlert</a></li>
+            <li><a ng-click="searchByName('LowMemoryAlert')">LowMemoryAlert</a></li>
+            <li><a ng-click="searchByName('HighCpuAlert')">HighCpuAlert</a></li>
+            <li><a ng-click="searchByName('LowCpuAlert')">LowCpuAlert</a></li>
+          </ul>
+        </div>
+        <div class="dropdown" style="display: inline-block;">
+          <button class="btn btn-info btn-sm btn-control dropdown-toggle" type="button" id="dropdownMenuAction" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+            {{'alert.searchByAction' | translate}}
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuAction">
+            <li><a ng-click="searchByAction('')">---</a></li>
+            <li><a ng-click="searchByAction('REPAIR_ACTION_SUCCESS_IN')">REPAIR_ACTION_SUCCESS_IN</a></li>
+            <li><a ng-click="searchByAction('REPAIR_ACTION_SUCCESS_OUT')">REPAIR_ACTION_SUCCESS_OUT</a></li>
+            <li><a ng-click="searchByAction('REPAIR_ACTION_DONOTHING_MIN')">REPAIR_ACTION_DONOTHING_MIN</a></li>
+            <li><a ng-click="searchByAction('REPAIR_ACTION_DONOTHING_MAX')">REPAIR_ACTION_DONOTHING_MAX</a></li>
+            <li><a ng-click="searchByAction('REPAIR_FAILED')">REPAIR_FAILED</a></li>
+          </ul>
+        </div>
+          <button type="button" class="btn btn-info btn-sm btn-control" ng-click="refresh()" ><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> {{'common.refresh' | translate}}</button>
+      <table class="table table-striped">
+          <tr>
+              <th>{{'common.name' | translate }}</th>
+              <th>{{'common.action' | translate }}</th>
+              <th>{{'common.service' | translate }}</th>
+              <th>{{'common.cluster' | translate }}</th>  
+              <th>{{'common.updatedTime' | translate }}</th>
+          </tr>
+          <tr ng-repeat="item in alerts track by item._id">
+              <td>{{item.alert_name}}</td>
+              <td>{{item.action}}</td>
+              <td>{{item.app_id}}</td>
+              <td>{{item.group_id}}</td>
+              <td>{{item.time_update}}</td>
+          </tr>
+      </table>
+      <paginations present="currentPage" length="totalPage" total="totalRecords"></paginations>
+    </div>
+</div>

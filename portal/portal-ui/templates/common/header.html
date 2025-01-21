@@ -1,0 +1,52 @@
+<div>
+  <div class="main-nav-header">
+    <div class="pull-left">
+      <h3>{{'header.'+ $state.current.name | translate}}</h3>
+    </div>
+    <div class="pull-right btn-area">
+
+      <label class="control-label" style="margin-right:10px;">{{'cluster.switch'|translate}}</label>
+      <select ng-model="selectCluster" ng-change="setCluster()" class="form-control select-control-header input-sm" style="height:29px;">
+        <option value="{{cluster}}" ng-repeat="cluster in clusters track by $index |orderBy:'name'">{{cluster.name}}</option>
+      </select>
+      <button ng-if="!$storage.cluster.setProjectvalue.cmi" type="button" class="btn btn-info btn-sm" ng-click="toggleCMI()"><i class="glyphicon glyphicon-eye-open"></i>
+        {{'cluster.openCMI' | translate }}
+      </button>
+      <button ng-if="$storage.cluster.setProjectvalue.cmi" type="button" class="btn btn-default btn-sm" ng-click="toggleCMI()"><i class="glyphicon glyphicon-eye-close"></i>
+        {{'cluster.closeCMI' | translate }}
+      </button>
+      <button type="button" class="btn btn-info btn-sm" ng-click="init()"><i class="icon-refresh"></i>
+        {{'cluster.Refresh' | translate }}
+      </button>
+      <div class="btn-group">
+        <button type="button" class="btn btn-info btn-sm">{{'common.action' | translate }}</button>
+        <button type="button" class="btn btn-info btn-sm dropdown-toggle " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="caret"></span>
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-right" style="font-size:12px;">
+          <!-- <li ng-click="init()"><a>
+
+                    <i class="icon-refresh"></i>
+                {{'cluster.Refresh' | translate }}</a></li> -->
+          <li ng-click="createCluster()"><a><i class="icon-pencil"></i>
+                {{'cluster.NewCluster' | translate}}</a></li>
+          <li role="separator" class="divider"></li>
+          <li ng-if="!deleteClusters || deleteClusters.length== 0" class="disabled">
+            <a>
+              <!-- <span ng-class="{'disabled-cursor':(deleteClusters.length== 0)}" class="glyphicon glyphicon-trash" aria-hidden="true"></span>  -->
+              <i class="icon-trash" ng-class="{'disabled-cursor':(deleteClusters.length== 0)}"></i> {{'cluster.DeleteCluster' | translate }}</a>
+          </li>
+          <li ng-if="deleteClusters.length > 0" ng-click="deleteCluster()">
+            <a>
+              <!-- <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>  -->
+              <i class="icon-trash"></i> {{'cluster.DeleteCluster' | translate }}</a>
+          </li>
+
+        </ul>
+      </div>
+
+    </div>
+  </div>
+  <ui-view name="main"></ui-view>
+</div>

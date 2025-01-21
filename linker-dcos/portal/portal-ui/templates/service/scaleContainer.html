@@ -1,0 +1,55 @@
+<div>
+    <div class="modal-header">
+        <button type="button" class="close" aria-label="Close" ng-click="close('close')"><span aria-hidden="true">&times;</span></button>
+        <h4>{{'service.scaleContainer' | translate }}</h4>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" name="ScaleContainerForm" novalidate autocomplete="off">           
+            <div class="form-group">
+                <div class="col-sm-offset-1 col-sm-10">
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="optionsRadios" checked value="increase" ng-model="container.operationType"> {{'common.increase' | translate}}{{'common.container' | translate}}
+
+                    </label>
+                  </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">{{'service.increaseNum'|translate}}</label>
+                <div class="col-sm-6">
+                    <input type="number" class="form-control" id="increase" ng-model="container.increaseNum" name="increaseNumInput" min="1" required ng-if='container.operationType == "increase"'>
+                    <input type="number" class="form-control" id="increase" ng-model="container.increaseNum" name="increaseNumInput" min="1" ng-if='container.operationType == "decrease"'>
+                     <span class="form-error" ng-show='(ScaleContainerForm.$submitted || ScaleContainerForm.increaseNumInput.$touched) && container.operationType == "increase"'>
+                        <span ng-if="ScaleContainerForm.increaseNumInput.$error.required">{{'service.increaseNumRequired' | translate}}</span>
+                     
+                    </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-1 col-sm-10">
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="optionsRadios" id="decrease" value="decrease" ng-model="container.operationType">  {{'common.decrease' | translate}}{{'common.container' | translate}}
+                    </label>
+                  </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">{{'service.decreaseNum'|translate}}</label>
+                <div class="col-sm-6">
+                    <input type="number" class="form-control" ng-model="container.decreaseNum" name="decreaseNumInput" min="1" required ng-if='container.operationType == "decrease"'>
+                    <input type="number" class="form-control" ng-model="container.decreaseNum" name="decreaseNumInput" min="1" ng-if='container.operationType == "increase"'>
+                    <span class="form-error" ng-show='(ScaleContainerForm.$submitted || ScaleContainerForm.decreaseNumInput.$touched) && container.operationType == "decrease"'>
+                        <span ng-if="ScaleContainerForm.decreaseNumInput.$error.required">{{'service.decreaseNumRequired' | translate}}</span>
+                     
+                    </span>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="close('execute')" ng-disabled="ScaleContainerForm.$invalid || ScaleContainerForm.$pending">{{'common.save' | translate}}</button>
+        <button class="btn btn-warning" ng-click="close('close')">{{'common.cancel' | translate}}</button>
+    </div>
+</div>

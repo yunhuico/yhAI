@@ -1,0 +1,51 @@
+<div>
+    <div class="pull-left full-width">
+        <div class="row" ng-if="!endPointAvailable">
+          <div class="col-xs-12">
+           <div ng-class="{'alert':true,'alert-danger': true}" role="alert" style="font-weight:500;color:#555">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>&nbsp;{{'error.EndPoint.Unavailable' | translate}}
+            <span ng-if="$storage.cluster.status !=='INSTALLING'&&$storage.cluster.status !=='TERMINATING'&&$storage.cluster.status !=='FAILED'&&$storage.cluster.status !=='MODIFYING'&&$storage.cluster.status !=='TERMINATED'&&$storage.cluster.status !=='RUNNING'">{{'cluster.needCreateCluster' | translate}}</span>
+            <span ng-if="$storage.cluster.status ==='INSTALLING'">{{'cluster.installingCluster' | translate}}</span>
+            <span ng-if="$storage.cluster.status ==='TERMINATING'">{{'cluster.terminatingCluster' | translate}}</span>
+            <span ng-if="$storage.cluster.status ==='FAILED'">{{'cluster.failedCluster' | translate}}</span>
+            <span ng-if="$storage.cluster.status ==='MODIFYING'">{{'cluster.modifyingCluster' | translate}}</span>
+            <span ng-if="$storage.cluster.status ==='TERMINATED'">{{'cluster.terminatedCluster' | translate}}</span>
+            </div>
+          </div>
+       </div>
+        <button type="button" class="btn btn-success btn-sm btn-control" ng-click="createService()" ng-disabled="!endPointAvailable"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> {{'service.create' | translate}}</button>
+        <button type="button" class="btn btn-info btn-sm btn-control" ng-click="refresh()" ng-disabled="!endPointAvailable"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> {{'common.refresh' | translate}}</button>
+        
+        <table class="table table-striped">
+            <tr>
+                <th>{{'common.name' | translate }}</th>
+                <!-- <th>{{'common.cluster' | translate }}</th> -->
+                <th>{{'common.status' | translate }}</th>
+                <!-- <th>{{'service.address' | translate }}</th> -->
+                <th>{{'common.createdTime' | translate }}</th>
+                <th width="80px">{{'common.action' | translate }}</th>
+            </tr>
+            <tr ng-repeat="item in services">
+                <td><a ui-sref="service.detail({serviceName:item.name,serviceStatus:item.status})" ng-click="showDetail(item.name)" uib-tooltip="{{'common.detail' | translate}}" >{{item.name}}</a></td>
+                <!-- <td>{{$storage.cluster.name}}</td> -->
+                <td>
+                    <status type="{{item.status}}"></status>
+                </td>
+                <!-- <td>{{item.endpoint}}</td> -->
+                <td>{{item.time_create}}</td>
+                <td>
+                    <button type="button" class="btn btn-default btn-xs" aria-label="Edit" ng-click="stopService(item)" uib-tooltip="{{'common.stop' | translate}}"  ng-if="item.status != 'IDLE'">
+                        <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-default btn-xs" aria-label="Edit" ng-click="startService(item)" uib-tooltip="{{'common.bootstrap' | translate}}"  ng-if="item.status == 'IDLE'">
+                        <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="btn btn-default btn-xs" aria-label="Delete" ng-click="confirmDelete(item)" uib-tooltip="{{'common.delete' | translate}}">
+                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    </button>
+                </td>
+            </tr>
+        </table>
+        <paginations present="currentPage" length="totalPage" total="totalrecords"></paginations>
+    </div>
+</div>

@@ -1,0 +1,84 @@
+<div style="clear: both;"></div>
+<div>
+	<div class="row">
+		<div class="col-xs-12">
+			<span class="title-font">{{nodeInfo.hostName}}</span>
+			<a ui-sref="node" class="action-link"><span class="glyphicon glyphicon-hand-left" aria-hidden="true"></span> {{'node.returnNode' | translate}}</a>
+			<a class="action-link" ng-click="confirmDelete()" ng-hide="($storage.cluster.status!='RUNNING')||nodeInfo.isMasterNode||(nodeInfo.status=='TERMINATING')||(nodeInfo.status=='INSTALLING')">
+				<span ng-class="{'disabled-cursor':($storage.cluster.status!='RUNNING')||nodeInfo.isMasterNode||nodeInfo.isSharedNode||(nodeInfo.status=='TERMINATING')||(nodeInfo.status=='INSTALLING')}" class="glyphicon glyphicon-trash" aria-hidden="true"></span> {{'common.delete' | translate}}
+			</a>
+			<a class="action-link" ng-if="nodeInfo.isSlaveNode && nodeInfo.status!='TERMINATING' && nodeInfo.status!='INSTALLING'" type="button" ng-click="goToMonitoring()">
+				<span class="glyphicon glyphicon-bell" aria-hidden="true"></span> {{'node.MonitoringInformation' | translate}}</a>
+		</div>
+	</div>
+	<div class="row" style="margin-top: 10px;">
+		<div class="col-xs-4">{{'node.role' | translate}}&nbsp:&nbsp
+			<span ng-if="nodeInfo.isMasterNode">{{'node.masterNode' | translate}}</span>
+			<span ng-if="nodeInfo.isSlaveNode && nodeInfo.isSharedNode">{{'node.childNode' | translate}}({{'node.shared' | translate}})</span>
+			<span ng-if="nodeInfo.isSlaveNode && !nodeInfo.isSharedNode">{{'node.childNode' | translate}}</span>
+		</div>
+		<div class="col-xs-4">IP&nbsp:&nbsp{{nodeInfo.ip}}</div>
+		<div class="col-xs-4">{{'common.status' | translate}}&nbsp:&nbsp
+			<status type="{{nodeInfo.status}}"></status>
+		</div>
+	</div>
+	<div class="row" style="margin-top: 10px;">
+		<div class="col-xs-4">CPU: 
+			<span ng-if="nodeInfo.cpu==0">-</span>
+			<span ng-if="nodeInfo.cpu!=0">{{nodeInfo.cpu}}</span>
+		</div>
+		<div class="col-xs-4">{{'common.memory' | translate}}: 
+			<span ng-if="nodeInfo.memory==0">-</span>
+			<span ng-if="nodeInfo.memory!=0">{{nodeInfo.memory}}</span>
+		MB</div>
+		<div class="col-xs-4">{{'common.createdTime' | translate}}: {{nodeInfo.time_create}}</div>
+	</div>
+	<div class="row" style="margin-top: 10px;">
+		<div class="col-xs-4">{{'cluster.CreateCluster.LoginKey' | translate}}&nbsp:&nbsp{{nodeInfo.pubkeyName}}</div>
+		<div class="col-xs-4">{{'cluster.CreateCluster.provider_name' | translate}}&nbsp:&nbsp{{provider_name}}</div>
+	</div>
+	<uib-tabset style="margin-top: 40px;">
+		<uib-tab heading="{{'common.container' | translate}}" select="changeType('container')" active="true">
+			<table class="table table-striped">
+				<tr>
+					<th style="width:30px">#</th>
+					<th>{{'common.name' | translate}}</th>
+					<th>{{'common.service' | translate}}</th>
+					<th>{{'service.component' | translate}}</th>
+					
+					<th>{{'common.createdTime' | translate}}</th>
+					<th style="width:80px">{{'common.status' | translate}}</th>
+				</tr>
+				<tr ng-repeat="item in containers track by $index">
+					<td>{{$index+1}}</td>
+					<td>{{item.name}}</td>
+					<td>{{item.appId.split("/")[1]}}</td>
+					<td>{{item.appId.substring(item.appId.substring(1).indexOf("/")+2)}}</td>
+					
+					<td>{{item.startedAt}}</td>
+					<td> <status type="{{item.startedAt != '' ? 'RUNNING':'DEPLOYING'}}"></status></td>
+				</tr>
+			</table>
+			<!-- <paginations present="$parent.$parent.checkdata.currentPage" length="totalPage" total="totalrecords"></paginations> -->
+		</uib-tab>
+		<uib-tab heading="{{'common.framework' | translate}}" select="changeType('framework')">
+			<table class="table table-striped">
+				<tr>
+					<th style="width:30px">#</th>
+					<th>{{'node.taskID' | translate}}</th>
+					<th style="width: 120px">{{'node.taskName' | translate}}</th>
+					<th>{{'common.createdTime' | translate}}</th>
+					<th style="width:80px">{{'common.status' | translate}}</th>
+				</tr>
+				<tr ng-repeat="item in tasks track by $index">
+					<th>{{$index+1}}</th>
+					<td>{{item.task_id}}</td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.time_start}}</td>
+                    <td><status type="{{item.status}}"></status></td>
+				</tr>
+			</table>
+			<paginations present="$parent.$parent.checkdata.currentPage" length="totalPage" total="totalrecords"></paginations>
+		</uib-tab>
+	</uib-tabset>
+</div>

@@ -1,0 +1,7 @@
+ALERT HighMemoryAlert
+  IF container_memory_usage_high_result > 1
+  FOR 30s
+  ANNOTATIONS {
+    description = "High Memory usage for linker container on {{$labels.image}} for container {{$labels.name}} (current value: {{$value}})",
+    summary = "High Memory usage alert for container",
+  }

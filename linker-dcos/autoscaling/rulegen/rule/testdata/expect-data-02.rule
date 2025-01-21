@@ -1,0 +1,7 @@
+ALERT LowMemoryAlert
+  IF (container_memory_usage_low_result < 1 AND container_memory_usage_low_result > 0)
+  FOR 1m
+  ANNOTATIONS {
+    description = "Low Memory usage for linker container on {{$labels.image}} for container {{$labels.name}} (current value: {{$value}})",
+    summary = "Low Memory usage alert for container",
+  }

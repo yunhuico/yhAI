@@ -1,0 +1,66 @@
+<div class="modal-header">
+	<h4>{{'common.detail' | translate}}</h4>
+</div>
+<div class="modal-body">
+	<form class="form-horizontal" name="createRegistry" novalidate autocomplete="off">
+		<div class="form-group">
+			<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'common.name' | translate}}</label>
+			<div class="col-sm-6">
+				<input disabled type="text" name="name" ng-model="registry.name" ng-pattern="/^[A-Za-z0-9]+$/" ng-model-options='{ debounce: 500 }' required ng-trim="false" ng-class="{'form-control':true}">
+				<span class="form-error" ng-if="createRegistry.name.$touched">
+					<span ng-if="createRegistry.name.$error.required">{{'config.registry.empty' | translate}}</span>
+					<span ng-if="createRegistry.name.$error.pattern">{{'config.key.formError.nameIsInvalid' | translate}}</span>
+				</span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'config.registry.registryUrl' | translate}}</label>
+			<div class="col-sm-6">
+				<input disabled type="text" name="registry" ng-model="registry.registry" required ng-pattern="/^[A-Za-z0-9]([A-Za-z0-9-]{0,}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,}[A-Za-z0-9])?){0,}(:\d+)?$/" ng-class="{'form-control':true}">
+				<span class="form-error" ng-if="createRegistry.registry.$touched">					
+					<span ng-if="createRegistry.registry.$error.required">{{'config.registry.registryUrl' | translate}} {{'config.platform.formError.notEmpty' | translate}}</span>
+					<span ng-if="createRegistry.registry.$error.pattern">{{'network.NetworkError' | translate}}</span>
+				</span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'common.secure'|translate}}</label>
+			<div class="col-sm-6">
+				<label class="radio-inline col-sm-6">
+					<input disabled type="radio" name="type" ng-model="registry.secure" ng-value="true" checked> True
+				</label>
+				<label class="radio-inline">
+					<input disabled type="radio" name="type" ng-model="registry.secure" ng-value="false">False
+				</label>
+			</div>
+		</div>
+		<div class="form-group" ng-if="registry.secure">
+			<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'common.certificate' | translate}}</label>
+			<div class="col-sm-6">
+				<textarea disabled class="form-control" ng-if="registry.secure" ng-model="registry.ca_text" name="ca_text" required style="height:200px">
+				</textarea>
+				<span class="form-error" ng-if="createRegistry.ca_text.$touched">
+				</span>
+			</div>
+		</div>
+		<div class="form-group" ng-if="registry.username">
+			<label class="col-sm-4 control-label">{{'common.userName'|translate}}</label>
+			<div class="col-sm-6">
+				<input disabled type="text" autocomplete="off" name="username" ng-model="registry.username" ng-trim="false" ng-class="{'form-control':true}">
+				<span class="form-error">
+				</span>
+			</div>
+		</div>
+		<div class="form-group" ng-if="registry.password">
+			<label class="col-sm-4 control-label">{{'common.password'|translate}}</label>
+			<div class="col-sm-6">
+				<input disabled type="password" autocomplete="new-password" name="password" ng-model="registry.password" ng-trim="false" ng-class="{'form-control':true}">
+				<span class="form-error" ng-if="createRegistry.password.$touched">
+				</span>
+			</div>
+		</div>
+	</form>
+</div>
+<div class="modal-footer">
+	<button class="btn btn-warning" ng-click="close('close')">{{'common.close' | translate}}</button>
+</div>

@@ -1,0 +1,626 @@
+<div class="modal-header">
+	<button type="button" class="close" aria-label="Close" ng-click="close('close')"><span aria-hidden="true">&times;</span></button>
+	<h4>{{'cluster.NewCluster' | translate}}</h4>
+</div>
+<div class="modal-body" style="max-height:500px;overflow:auto;">
+	<form class="form-horizontal" name="createCluster" novalidate autocomplete="off">
+		<label class="col-sm-offset-1 col-sm-10 form-border-bottom" style="padding-bottom:10px;">{{'user.platform' | translate}}</label>
+		<div class="form-group">
+			<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'cluster.CreateCluster.providerType' | translate}}</label>
+			<div class="col-sm-6">
+				<select class="form-control" ng-model="cluster.type">
+					<option value="{{item.value}}" ng-repeat="item in ClusterTypes track by $index">{{'common.'+item.value | translate}}</option>
+				</select>
+			</div>
+		</div>
+		<div ng-switch="cluster.type">
+			<div ng-switch-when="amazonec2">
+				<div class="form-group">
+					<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'cluster.CreateCluster.providerAccount' | translate}}</label>
+					<div class="col-sm-6">
+						<select class="form-control" ng-model="cluster.providerId" required>
+							<option value="{{item._id}}" ng-repeat="item in Providers track by $index">{{item.name}}</option>
+						</select>
+						<span class="form-error" ng-if="Providers.length==0">
+							{{'cluster.CreateCluster.providerNone'| translate}}
+						</span>
+					</div>
+				</div>
+			</div>
+			<div ng-switch-when="openstack">
+				<div class="form-group">
+					<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'cluster.CreateCluster.providerAccount' | translate}}</label>
+					<div class="col-sm-6">
+						<select class="form-control" ng-model="cluster.providerId" required>
+							<option value="{{item._id}}" ng-repeat="item in Providers track by $index">{{item.name}}</option>
+						</select>
+						<span class="form-error" ng-if="Providers.length==0">
+							{{'cluster.CreateCluster.providerNone'| translate}}
+						</span>
+					</div>
+				</div>
+			</div>
+			<div ng-switch-when="google">
+				<div class="form-group">
+					<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'cluster.CreateCluster.providerAccount' | translate}}</label>
+					<div class="col-sm-6">
+						<select class="form-control" ng-model="cluster.providerId" required>
+							<option value="{{item._id}}" ng-repeat="item in Providers track by $index">{{item.name}}</option>
+						</select>
+						<span class="form-error" ng-if="Providers.length==0">
+							{{'cluster.CreateCluster.providerNone'| translate}}
+						</span>
+					</div>
+				</div>
+			</div>
+			<div ng-switch-when="customized">
+				<div class="form-group">
+					<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'config.platform.privateKey' | translate}}</label>
+					<div class="col-sm-6">
+						<textarea type="text" name="privateKey" ng-model="cluster.createNode.privateKey" required ng-class="{'form-control':true}"></textarea>
+						<span class="form-error" ng-if="createCluster.privateKey.$touched">
+						<span ng-if="createCluster.privateKey.$error.required">{{'config.platform.privateKey' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 control-label">{{ 'common.Registry' | translate}}
+				<span popover-is-open='$parent.RegistryIsOpen' popover-placement="right"  popover-template="'selectRegistry.html'" ng-if="Registries.length" style="border: none;box-shadow:none;cursor:pointer;position:absolute;top:5px;" class="glyphicon glyphicon-plus-sign glyphicon-action-add"></span>
+			</label>
+			<div class="col-sm-6" style="padding-top:7px;">
+				<span class="form-error" ng-if="Registries.length==0&&cluster.dockerRegistries.length==0">
+					{{'cluster.CreateCluster.registryNone'| translate}}
+				</span>
+			</div>
+		</div>
+		<script type="text/ng-template" id="selectRegistry.html">
+			<span ng-click="closeRegistrySelect()" style="margin-bottom:7px;margin-top:-7px;border: none;box-shadow:none;cursor:pointer;position:relative;top:5px;" class="glyphicon glyphicon-remove glyphicon-action-remove pull-right"></span>
+			<div style="clear:both;max-height:120px;overflow-x:hidden;">
+				<table style="width:200px" class="table table-hover">
+					<tr ng-repeat="item in Registries track by $index">
+						<td>
+							<div ng-click="pushRegistry($index)" style="cursor: pointer;">{{item.name}}</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</script>
+		<div style="margin: 0 -15px;">
+			<div ng-repeat="item in cluster.dockerRegistries track by $index">
+				<div class="form-group" style="margin-left: 0px;width:100%;">
+					<label class="col-sm-4 control-label">Registry{{$index+1}}</label>
+					<div class="col-sm-6">
+						<input type="text" disabled ng-model="item.name" ng-class="{'form-control':true}">
+					</div>
+					<div class="col-sm-1" style="padding:0">
+						<span ng-click="popRegistry($index)" style="border:none;box-shadow:none;cursor:pointer;position:relative;top:12px;" class="glyphicon glyphicon-minus-sign glyphicon-action-remove"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div ng-switch="cluster.type">
+			<div ng-switch-when="amazonec2">
+				<label class="col-sm-offset-1 col-sm-10 form-border-bottom" style="padding-bottom:10px;">{{'common.profile' | translate}}</label>
+				<div class="form-group">
+					<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'cluster.CreateCluster.ClusterName' | translate}}</label>
+					<div class="col-sm-6">
+						<input type="text" name="name" ng-model="cluster.name" ng-maxlength="15" required ng-pattern="/^[A-Za-z0-9\-]+$/" ng-trim="false" ng-change="validateClusterForUser('cluster')" ng-class="{'form-control':true,'input-error':!(validate.fromCluster && validate.fromUser)}">
+						<span class="form-error" ng-if="createCluster.name.$touched">
+							<span ng-if="createCluster.name.$error.maxlength">{{'cluster.CreateCluster.ClusterNameLength' | translate}}</span>
+						<span ng-if="createCluster.name.$error.required">{{'cluster.CreateCluster.ClusterNameAlert' | translate}}</span>
+						<span ng-if="createCluster.name.$error.pattern">{{'cluster.CreateCluster.ClusterNamePattern' | translate}}</span>
+						<span ng-if="!(validate.fromCluster && validate.fromUser)">{{'cluster.CreateCluster.clusterNameDuplicate' | translate}}</span>
+						</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'cluster.CreateCluster.ClusterType' | translate}}</label>
+					<div class="col-sm-6">
+						<label class="radio-inline">
+							<input type="radio" name="type" ng-model="cluster.createCategory" value="compact"> {{'cluster.CreateCluster.Lite' | translate}}
+						</label>
+						</br>
+						<label class="radio-inline">
+							<input type="radio" name="type" ng-model="cluster.createCategory" value="ha">{{'cluster.CreateCluster.HA' | translate}}
+						</label>
+
+					</div>
+				</div>
+				<label class="col-sm-offset-1 col-sm-10 form-border-bottom" style="padding-bottom:10px;">{{'cluster.CreateCluster.nodeInfo' | translate}}</label>
+				<div class="form-group">
+					<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'cluster.CreateCluster.ExtraShareNodeNumber' | translate}}</label>
+					<div class="col-sm-6">
+						<input class="form-control" type="number" name="instancesShared" ng-model="cluster['sharedCount']" style="display: inline-block;width:35%;" required min="0" ng-pattern="/^([0]|[1-9]\d*)$/" ng-trim="false">
+						<div style="clear:both;"></div>
+            <span class="form-error" ng-if="createCluster.instancesShared.$touched">
+              <span ng-if="createCluster.instancesShared.$error.required">{{'cluster.CreateCluster.required' | translate}}</span>
+              <span ng-if="createCluster.instancesShared.$error.pattern">{{'cluster.CreateCluster.NodeNumberInfo' | translate}}</span>
+              <span ng-if="createCluster.instancesShared.$error.min && !createCluster.instancesShared.$error.pattern">{{'cluster.CreateCluster.NodeNumberInfo' | translate}}</span>
+              <span ng-if="createCluster.instancesShared.$error.number">{{'cluster.CreateCluster.number' | translate}}</span>
+            </span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'cluster.CreateCluster.ExtraSlaveNodeNumber' | translate}}</label>
+					<div class="col-sm-6">
+						<input class="form-control" type="number" name="instancesSlave" ng-model="cluster['pureslaveCount']" style="display: inline-block;width:35%;" required min="0" ng-pattern="/^([0]|[1-9]\d*)$/" ng-trim="false">
+						<div style="clear:both;"></div>
+            <span class="form-error" ng-if="createCluster.instancesSlave.$touched">
+              <span ng-if="createCluster.instancesSlave.$error.required">{{'cluster.CreateCluster.required' | translate}}</span>
+              <span ng-if="createCluster.instancesSlave.$error.pattern">{{'cluster.CreateCluster.NodeNumberInfo' | translate}}</span>
+              <span ng-if="createCluster.instancesSlave.$error.min && !createCluster.instancesSlave.$error.pattern">{{'cluster.CreateCluster.NodeNumberInfo' | translate}}</span>
+              <span ng-if="createCluster.instancesSlave.$error.number">{{'cluster.CreateCluster.number' | translate}}</span>
+              <span ng-if="cluster.sharedCount === 0 && cluster.pureslaveCount === 0">{{'cluster.CreateCluster.NodeBothCountZero' | translate}}</span>
+            </span>
+					</div>
+				</div>
+				<label class="col-sm-offset-1 col-sm-10 form-border-bottom" style="padding-bottom:10px;">{{'cluster.CreateCluster.advancedSetting' | translate}}</label>
+				<div class="form-group">
+					<label class="col-sm-4 control-label">{{'cluster.CreateCluster.LoginKey' | translate}}</label>
+					<div class="col-sm-6">
+						<select class="form-control" ng-model="cluster.pubkeyId">
+							<option value="">-</option>
+							<option value="{{item._id}}" ng-repeat="item in LoginKeys track by $index">{{item.name}}</option>
+						</select>
+					</div>
+				</div>
+				<script type="text/ng-template" id="group-template.html">
+					<div>
+						<div class="accordion-toggle" ng-click="toggleOpen();" uib-accordion-transclude="heading">
+							<label class="col-sm-offset-1 col-sm-10 form-border-bottom" style="padding-bottom:10px;">
+							{{'cluster.CreateCluster.Daemon' | translate}}
+
+							<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': $parent.status.open, 'glyphicon-chevron-right': !$parent.status.open}"></i>
+						</label>
+						</div>
+						<div class="panel-collapse collapse" uib-collapse="!isOpen">
+							<div class="panel-body" ng-transclude></div>
+						</div>
+					</div>
+				</script>
+				<uib-accordion>
+					<uib-accordion-group template-url="group-template.html" is-open="status.open">
+						<div ng-show="status.open">
+							<div class="form-group">
+								<div class="col-sm-4" style="text-align:right">
+									<span ng-click="pushLabel()" style="border: none;box-shadow:none;cursor:pointer;position:relative;top:5px;" class="glyphicon glyphicon-plus-sign glyphicon-action-add"></span>
+								</div>
+								<div class="col-sm-6">
+									<span style="font-size: 12px;color:#E38D13;display:block;padding-top:10px;">
+											{{'cluster.CreateCluster.DaemonInfo.tips' | translate}}:
+											<ol type=1>
+												<li>{{'cluster.CreateCluster.DaemonInfo.example' | translate}}
+													<ul>
+												      <li>key: storage-opt</li>
+												      <li>value: dm.basesize=20G</li>
+												     </ul>
+												</li>
+												<li>{{'cluster.CreateCluster.DaemonInfo.first' | translate}}</li>
+											</ol>
+										</span>
+								</div>
+							</div>
+							<div style="margin: 0 -15px;">
+								<div ng-repeat="item in cluster.engineOpts track by $index">
+									<div class="form-group" style="margin-left:0px;width:100%;background:#F0F0F0;padding:15px 0px;margin-bottom:0px;">
+										<label class="col-sm-4 control-label">Key</label>
+										<div class="col-sm-6">
+											<input type="text" name="Key{{$index}}" ng-model="item.optkey" ng-class="{'form-control':true}">
+										</div>
+									</div>
+									<div class="form-group" style="margin-left: 0px;width:100%;background:#F0F0F0;padding-bottom:15px;">
+										<label class="col-sm-4 control-label">Value</label>
+										<div class="col-sm-6">
+											<input type="text" name="Value{{$index}}" ng-model="item.optvalue" ng-class="{'form-control':true}">
+										</div>
+										<div class="col-sm-1" style="padding:0">
+											<span ng-click="popLabel($index-1)" style="border:none;box-shadow:none;cursor:pointer;position:relative;top:-16px;" class="glyphicon glyphicon-minus-sign glyphicon-action-remove"></span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</uib-accordion-group>
+				</uib-accordion>
+			</div>
+			<div ng-switch-when="google">
+				<label class="col-sm-offset-1 col-sm-10 form-border-bottom" style="padding-bottom:10px;">{{'common.profile' | translate}}</label>
+				<div class="form-group">
+					<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'cluster.CreateCluster.ClusterName' | translate}}</label>
+					<div class="col-sm-6">
+						<input type="text" name="name" ng-model="cluster.name" ng-maxlength="15" required ng-pattern="/^[a-z0-9\-]+$/" ng-trim="false" ng-change="validateClusterForUser('cluster')" ng-class="{'form-control':true,'input-error':!(validate.fromCluster && validate.fromUser)}">
+						<span class="form-error" ng-if="createCluster.name.$touched">
+							<span ng-if="createCluster.name.$error.maxlength">{{'cluster.CreateCluster.ClusterNameLength' | translate}}</span>
+						<span ng-if="createCluster.name.$error.required">{{'cluster.CreateCluster.ClusterNameAlert' | translate}}</span>
+						<span ng-if="createCluster.name.$error.pattern">{{'cluster.CreateCluster.ClusterNamePatternGoogle' | translate}}</span>
+						<span ng-if="!(validate.fromCluster && validate.fromUser)">{{'cluster.CreateCluster.clusterNameDuplicate' | translate}}</span>
+						</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'cluster.CreateCluster.ClusterType' | translate}}</label>
+					<div class="col-sm-6">
+						<label class="radio-inline">
+							<input type="radio" name="type" ng-model="cluster.createCategory" value="compact"> {{'cluster.CreateCluster.Lite' | translate}}
+						</label>
+						</br>
+						<label class="radio-inline">
+							<input type="radio" name="type" ng-model="cluster.createCategory" value="ha">{{'cluster.CreateCluster.HA' | translate}}
+						</label>
+
+					</div>
+				</div>
+				<label class="col-sm-offset-1 col-sm-10 form-border-bottom" style="padding-bottom:10px;">{{'cluster.CreateCluster.nodeInfo' | translate}}</label>
+				<div class="form-group">
+					<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'cluster.CreateCluster.ExtraShareNodeNumber' | translate}}</label>
+					<div class="col-sm-6">
+						<input class="form-control" type="number" name="instancesShared" ng-model="cluster['sharedCount']" style="display: inline-block;width:35%;" required min="0" ng-pattern="/^([0]|[1-9]\d*)$/" ng-trim="false">
+						<div style="clear:both;"></div>
+						<span class="form-error" ng-if="createCluster.instancesShared.$touched">
+							<span ng-if="createCluster.instancesShared.$error.required">{{'cluster.CreateCluster.required' | translate}}</span>
+						<span ng-if="createCluster.instancesShared.$error.pattern">{{'cluster.CreateCluster.NodeNumberInfo' | translate}}</span>
+						<span ng-if="createCluster.instancesShared.$error.min && !createCluster.instancesShared.$error.pattern">{{'cluster.CreateCluster.NodeNumberInfo' | translate}}</span>
+						<span ng-if="createCluster.instancesShared.$error.number">{{'cluster.CreateCluster.number' | translate}}</span>
+						</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'cluster.CreateCluster.ExtraSlaveNodeNumber' | translate}}</label>
+					<div class="col-sm-6">
+						<input class="form-control" type="number" name="instancesSlave" ng-model="cluster['pureslaveCount']" style="display: inline-block;width:35%;" required min="0" ng-pattern="/^([0]|[1-9]\d*)$/" ng-trim="false">
+						<div style="clear:both;"></div>
+						<span class="form-error" ng-if="createCluster.instancesSlave.$touched">
+							<span ng-if="createCluster.instancesSlave.$error.required">{{'cluster.CreateCluster.required' | translate}}</span>
+							<span ng-if="createCluster.instancesSlave.$error.pattern">{{'cluster.CreateCluster.NodeNumberInfo' | translate}}</span>
+							<span ng-if="createCluster.instancesSlave.$error.min && !createCluster.instancesSlave.$error.pattern">{{'cluster.CreateCluster.NodeNumberInfo' | translate}}</span>
+							<span ng-if="createCluster.instancesSlave.$error.number">{{'cluster.CreateCluster.number' | translate}}</span>
+              <span ng-if="cluster.sharedCount === 0 && cluster.pureslaveCount === 0">{{'cluster.CreateCluster.NodeBothCountZero' | translate}}</span>
+						</span>
+					</div>
+				</div>
+				<label class="col-sm-offset-1 col-sm-10 form-border-bottom" style="padding-bottom:10px;">{{'cluster.CreateCluster.advancedSetting' | translate}}</label>
+				<div class="form-group">
+					<label class="col-sm-4 control-label">{{'cluster.CreateCluster.LoginKey' | translate}}</label>
+					<div class="col-sm-6">
+						<select class="form-control" ng-model="cluster.pubkeyId">
+							<option value="">-</option>
+							<option value="{{item._id}}" ng-repeat="item in LoginKeys track by $index">{{item.name}}</option>
+						</select>
+					</div>
+				</div>
+				<script type="text/ng-template" id="group-template.html">
+					<div>
+						<div class="accordion-toggle" ng-click="toggleOpen();" uib-accordion-transclude="heading">
+							<label class="col-sm-offset-1 col-sm-10 form-border-bottom" style="padding-bottom:10px;">
+							{{'cluster.CreateCluster.Daemon' | translate}}
+
+							<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': $parent.status.open, 'glyphicon-chevron-right': !$parent.status.open}"></i>
+						</label>
+						</div>
+						<div class="panel-collapse collapse" uib-collapse="!isOpen">
+							<div class="panel-body" ng-transclude></div>
+						</div>
+					</div>
+				</script>
+				<uib-accordion>
+					<uib-accordion-group template-url="group-template.html" is-open="status.open">
+						<div ng-show="status.open">
+							<div class="form-group">
+								<div class="col-sm-4" style="text-align:right">
+									<span ng-click="pushLabel()" style="border: none;box-shadow:none;cursor:pointer;position:relative;top:5px;" class="glyphicon glyphicon-plus-sign glyphicon-action-add"></span>
+								</div>
+								<div class="col-sm-6">
+									<span style="font-size: 12px;color:#E38D13;display:block;padding-top:10px;">
+											{{'cluster.CreateCluster.DaemonInfo.tips' | translate}}:
+											<ol type=1>
+												<li>{{'cluster.CreateCluster.DaemonInfo.example' | translate}}
+													<ul>
+												      <li>key: storage-opt</li>
+												      <li>value: dm.basesize=20G</li>
+												     </ul>
+												</li>
+												<li>{{'cluster.CreateCluster.DaemonInfo.first' | translate}}</li>
+											</ol>
+										</span>
+								</div>
+							</div>
+							<div style="margin: 0 -15px;">
+								<div ng-repeat="item in cluster.engineOpts track by $index">
+									<div class="form-group" style="margin-left:0px;width:100%;background:#F0F0F0;padding:15px 0px;margin-bottom:0px;">
+										<label class="col-sm-4 control-label">Key</label>
+										<div class="col-sm-6">
+											<input type="text" name="Key{{$index}}" ng-model="item.optkey" ng-class="{'form-control':true}">
+										</div>
+									</div>
+									<div class="form-group" style="margin-left: 0px;width:100%;background:#F0F0F0;padding-bottom:15px;">
+										<label class="col-sm-4 control-label">Value</label>
+										<div class="col-sm-6">
+											<input type="text" name="Value{{$index}}" ng-model="item.optvalue" ng-class="{'form-control':true}">
+										</div>
+										<div class="col-sm-1" style="padding:0">
+											<span ng-click="popLabel($index-1)" style="border:none;box-shadow:none;cursor:pointer;position:relative;top:-16px;" class="glyphicon glyphicon-minus-sign glyphicon-action-remove"></span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</uib-accordion-group>
+				</uib-accordion>
+			</div>
+			<div ng-switch-when="openstack">
+				<label class="col-sm-offset-1 col-sm-10 form-border-bottom" style="padding-bottom:10px;">{{'common.profile' | translate}}</label>
+				<div class="form-group">
+					<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'cluster.CreateCluster.ClusterName' | translate}}</label>
+					<div class="col-sm-6">
+						<input type="text" name="name" ng-model="cluster.name" ng-maxlength="15" required ng-pattern="/^[A-Za-z0-9\-]+$/" ng-trim="false" ng-change="validateClusterForUser('cluster')" ng-class="{'form-control':true,'input-error':!(validate.fromCluster && validate.fromUser)}">
+						<span class="form-error" ng-if="createCluster.name.$touched">
+							<span ng-if="createCluster.name.$error.maxlength">{{'cluster.CreateCluster.ClusterNameLength' | translate}}</span>
+						<span ng-if="createCluster.name.$error.required">{{'cluster.CreateCluster.ClusterNameAlert' | translate}}</span>
+						<span ng-if="createCluster.name.$error.pattern">{{'cluster.CreateCluster.ClusterNamePattern' | translate}}</span>
+						<span ng-if="!(validate.fromCluster && validate.fromUser)">{{'cluster.CreateCluster.clusterNameDuplicate' | translate}}</span>
+						</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'cluster.CreateCluster.ClusterType' | translate}}</label>
+					<div class="col-sm-6">
+						<label class="radio-inline">
+							<input type="radio" name="type" ng-model="cluster.createCategory" value="compact"> {{'cluster.CreateCluster.Lite' | translate}}
+						</label>
+						</br>
+						<label class="radio-inline">
+							<input type="radio" name="type" ng-model="cluster.createCategory" value="ha">{{'cluster.CreateCluster.HA' | translate}}
+						</label>
+
+					</div>
+				</div>
+				<label class="col-sm-offset-1 col-sm-10 form-border-bottom" style="padding-bottom:10px;">{{'cluster.CreateCluster.nodeInfo' | translate}}</label>
+				<div class="form-group">
+					<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'cluster.CreateCluster.ExtraNodeNumber' | translate}}</label>
+					<div class="col-sm-6">
+						<input class="form-control" type="number" name="instances" ng-model="cluster.instances" style="display: inline-block;width:35%;" required min="0" ng-pattern="/^([0]|[1-9]\d*)$/" ng-trim="false">
+						<div style="clear:both;"></div>
+						<span class="form-error" ng-if="createCluster.instances.$touched">
+							<span ng-if="createCluster.instances.$error.required">{{'cluster.CreateCluster.required' | translate}}</span>
+						<span ng-if="createCluster.instances.$error.pattern">{{'cluster.CreateCluster.NodeNumberInfo' | translate}}</span>
+						<span ng-if="createCluster.instances.$error.min && !createCluster.instances.$error.pattern">{{'cluster.CreateCluster.NodeNumberInfo' | translate}}</span>
+						<span ng-if="createCluster.instances.$error.number">{{'cluster.CreateCluster.number' | translate}}</span>
+						</span>
+					</div>
+				</div>
+				<label class="col-sm-offset-1 col-sm-10 form-border-bottom" style="padding-bottom:10px;">{{'cluster.CreateCluster.advancedSetting' | translate}}</label>
+				<div class="form-group">
+					<label class="col-sm-4 control-label">{{'cluster.CreateCluster.LoginKey' | translate}}</label>
+					<div class="col-sm-6">
+						<select class="form-control" ng-model="cluster.pubkeyId">
+							<option value="">-</option>
+							<option value="{{item._id}}" ng-repeat="item in LoginKeys track by $index">{{item.name}}</option>
+						</select>
+					</div>
+				</div>
+				<script type="text/ng-template" id="group-template.html">
+					<div>
+						<div class="accordion-toggle" ng-click="toggleOpen();" uib-accordion-transclude="heading">
+							<label class="col-sm-offset-1 col-sm-10 form-border-bottom" style="padding-bottom:10px;">
+							{{'cluster.CreateCluster.Daemon' | translate}}
+
+							<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': $parent.status.open, 'glyphicon-chevron-right': !$parent.status.open}"></i>
+						</label>
+						</div>
+						<div class="panel-collapse collapse" uib-collapse="!isOpen">
+							<div class="panel-body" ng-transclude></div>
+						</div>
+					</div>
+				</script>
+				<uib-accordion>
+					<uib-accordion-group template-url="group-template.html" is-open="status.open">
+						<div ng-show="status.open">
+							<div class="form-group">
+								<div class="col-sm-4" style="text-align:right">
+									<span ng-click="pushLabel()" style="border: none;box-shadow:none;cursor:pointer;position:relative;top:5px;" class="glyphicon glyphicon-plus-sign glyphicon-action-add"></span>
+								</div>
+								<div class="col-sm-6">
+									<span style="font-size: 12px;color:#E38D13;display:block;padding-top:10px;">
+											{{'cluster.CreateCluster.DaemonInfo.tips' | translate}}:
+											<ol type=1>
+												<li>{{'cluster.CreateCluster.DaemonInfo.example' | translate}}
+													<ul>
+												      <li>key: storage-opt</li>
+												      <li>value: dm.basesize=20G</li>
+												     </ul>
+												</li>
+												<li>{{'cluster.CreateCluster.DaemonInfo.first' | translate}}</li>
+											</ol>
+										</span>
+								</div>
+							</div>
+							<div style="margin: 0 -15px;">
+								<div ng-repeat="item in cluster.engineOpts track by $index">
+									<div class="form-group" style="margin-left:0px;width:100%;background:#F0F0F0;padding:15px 0px;margin-bottom:0px;">
+										<label class="col-sm-4 control-label">Key</label>
+										<div class="col-sm-6">
+											<input type="text" name="Key{{$index}}" ng-model="item.optkey" ng-class="{'form-control':true}">
+										</div>
+									</div>
+									<div class="form-group" style="margin-left: 0px;width:100%;background:#F0F0F0;padding-bottom:15px;">
+										<label class="col-sm-4 control-label">Value</label>
+										<div class="col-sm-6">
+											<input type="text" name="Value{{$index}}" ng-model="item.optvalue" ng-class="{'form-control':true}">
+										</div>
+										<div class="col-sm-1" style="padding:0">
+											<span ng-click="popLabel($index-1)" style="border:none;box-shadow:none;cursor:pointer;position:relative;top:-16px;" class="glyphicon glyphicon-minus-sign glyphicon-action-remove"></span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</uib-accordion-group>
+				</uib-accordion>
+
+			</div>
+			<div ng-switch-when="customized">
+				<label class="col-sm-offset-1 col-sm-10 form-border-bottom" style="padding-bottom:10px;">{{'common.profile' | translate}}</label>
+				<div class="form-group">
+					<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'cluster.CreateCluster.ClusterName' | translate}}</label>
+					<div class="col-sm-6">
+						<input type="text" name="name" ng-model="cluster.name" ng-maxlength="15" required ng-pattern="/^[A-Za-z0-9\-]+$/" ng-trim="false" ng-change="validateClusterForUser('cluster')" ng-class="{'form-control':true,'input-error':!(validate.fromCluster && validate.fromUser)}">
+						<span class="form-error" ng-if="createCluster.name.$touched">
+							<span ng-if="createCluster.name.$error.maxlength">{{'cluster.CreateCluster.ClusterNameLength' | translate}}</span>
+						<span ng-if="createCluster.name.$error.required">{{'cluster.CreateCluster.ClusterNameAlert' | translate}}</span>
+						<span ng-if="createCluster.name.$error.pattern">{{'cluster.CreateCluster.ClusterNamePattern' | translate}}</span>
+						<span ng-if="!(validate.fromCluster && validate.fromUser)">{{'cluster.CreateCluster.clusterNameDuplicate' | translate}}</span>
+						</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'cluster.CreateCluster.ClusterType' | translate}}</label>
+					<div class="col-sm-6">
+						<label class="radio-inline">
+							<input type="radio" name="type" ng-model="cluster.createCategory" value="compact"> {{'cluster.CreateCluster.Lite' | translate}}
+						</label>
+						</br>
+						<label class="radio-inline">
+							<input type="radio" name="type" ng-model="cluster.createCategory" value="ha">{{'cluster.CreateCluster.HA' | translate}}
+						</label>
+					</div>
+				</div>
+				<label class="col-sm-offset-1 col-sm-10 form-border-bottom" style="padding-bottom:10px;">{{'cluster.CreateCluster.nodeInfo' | translate}}</label>
+				<div class="form-group">
+					<label class="col-sm-4 control-label">{{'common.node' | translate}}
+						<span ng-click="pushCluster()" style="border: none;box-shadow:none;cursor:pointer;margin:0px;positive:relative;top:5px;" class="glyphicon glyphicon-plus-sign glyphicon-action-add"></span>
+					</label>
+					<div class="col-sm-6">
+						<span style="font-size: 12px;color:#E38D13;display:block;padding-top:10px;">
+							{{'cluster.condition' | translate}}:
+							<ol type=1>
+								<li>{{'cluster.nodeConditions.first' | translate}}</li>
+								<li>{{'cluster.nodeConditions.second' | translate}}</li>
+								<li>{{'cluster.nodeConditions.third' | translate}}</li>
+								<li>{{'cluster.nodeConditions.forth' | translate}}</li>
+								<li>{{'cluster.nodeConditions.fifth' | translate}}</li>
+								<li>{{'cluster.nodeConditions.sixth' | translate}}</li>
+								<li>{{'cluster.nodeConditions.seventh' | translate}}</li>
+							</ol>
+						</span>
+					</div>
+				</div>
+				<div style="margin: 0 -15px;">
+					<div ng-repeat="item in cluster.createNode.nodes track by $index" style="margin-bottom: 15px;">
+						<div class="form-group" style="margin-left:0px;width:100%;background:#F0F0F0;padding:15px 0px;margin-bottom:0px;">
+							<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'cluster.CreateCluster.IP' | translate}}{{$index+1}}</label>
+							<div class="col-sm-6">
+								<input type="text" name="ip{{$index+1}}" ng-model="item.ip" required ipduplicate="cluster.createNode.nodes" ng-pattern="/^((25[0-5]|2[0-4]\d|[01]?\d\d?)($|(?!\.$)\.)){4}$/" ng-trim="false" ng-class="{'form-control':true}">
+								<span class="form-error" ng-if="createCluster['ip'+($index+1)].$touched">
+									<span ng-if="createCluster['ip'+($index+1)].$error.required">{{'cluster.CreateCluster.IP' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+								<span ng-if="createCluster['ip'+($index+1)].$error.pattern">{{'cluster.CreateCluster.ClusterIpPattern' | translate}}</span>
+								<span ng-if="createCluster['ip'+($index+1)].$error.duplicate&&!createCluster['ip'+($index+1)].$error.pattern&&!createCluster['ip'+($index+1)].$error.required">{{'cluster.CreateCluster.IpDuplicate' | translate}}</span>
+								</span>
+							</div>
+						</div>
+						<div class="form-group" style="margin-left: 0px;width:100%;background:#F0F0F0;padding-bottom:15px;margin-bottom: 0px;">
+							<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'config.platform.SshUser' | translate}}{{$index+1}}</label>
+							<div class="col-sm-6">
+								<input type="text" name="sshuser{{$index+1}}" ng-model="item.sshUser" required ng-pattern="/^[a-zA-Z_](([a-zA-Z0-9_-]{0,30})|([a-zA-Z0-9_-]{0,29}[$]))$/" ng-trim="false" ng-class="{'form-control':true}">
+								<span class="form-error" ng-if="createCluster['sshuser'+($index+1)].$touched">
+							<span ng-if="createCluster['sshuser'+($index+1)].$error.required">{{'config.platform.SshUser' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+								<span ng-if="createCluster['sshuser'+($index+1)].$error.pattern">{{'node.NodeUserNamePattern' | translate}}</span>
+								</span>
+							</div>
+							<div class="col-sm-1" style="padding:0">
+								<span ng-if="cluster.createNode.nodes.length!=4&&cluster.createCategory=='ha'" ng-click="popCluster($index)" style="border:none;box-shadow:none;cursor:pointer;position:relative;top:-16px;" class="glyphicon glyphicon-minus-sign glyphicon-action-remove"
+												aria-hidden="true"></span>
+								<span ng-if="cluster.createNode.nodes.length!=2&&cluster.createCategory=='compact'" ng-click="popCluster($index)" style="border:none;box-shadow:none;cursor:pointer;position:relative;top:-16px;" class="glyphicon glyphicon-minus-sign glyphicon-action-remove"
+												aria-hidden="true"></span>
+							</div>
+						</div>
+						<div class="form-group" ng-if="item.type !== 'master'" style="margin-left: 0px;width:100%;background:#F0F0F0;padding-bottom:15px;margin-bottom: 0px;">
+							<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>Type{{$index+1}}</label>
+							<div class="col-sm-6">
+								<select class="form-control" ng-model="item.type" ng-disabled="item.fixed" required>
+									<option value="share" ng-selected="true">Share</option>
+									<option value="slave">Slave</option>
+								</select>
+							</div>
+							<div class="col-sm-1" style="padding:0">
+							</div>
+						</div>
+					</div>
+				</div>
+				<label class="col-sm-offset-1 col-sm-10 form-border-bottom" style="padding-bottom:10px;">{{'cluster.CreateCluster.advancedSetting' | translate}}</label>
+				<div class="form-group">
+					<label class="col-sm-4 control-label">{{'config.platform.NetworkAdapter' | translate}}</label>
+					<div class="col-sm-6">
+						<input type="text" name="NetworkAdapter" ng-model="cluster.createNode.privateNicName" ng-class="{'form-control':true}">
+						<span style="font-size: 12px;color:#E38D13;display:block;padding-top:10px;">{{'cluster.CreateCluster.NetworkAdapterInfo' | translate}}</span>
+					</div>
+				</div>
+				<script type="text/ng-template" id="group-template.html">
+					<div>
+						<div class="accordion-toggle" ng-click="toggleOpen();" uib-accordion-transclude="heading">
+							<label class="col-sm-offset-1 col-sm-10 form-border-bottom" style="padding-bottom:10px;">
+							{{'cluster.CreateCluster.Daemon' | translate}}
+
+							<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': $parent.status.open, 'glyphicon-chevron-right': !$parent.status.open}"></i>
+						</label>
+						</div>
+						<div class="panel-collapse collapse" uib-collapse="!isOpen">
+							<div class="panel-body" ng-transclude></div>
+						</div>
+					</div>
+				</script>
+				<uib-accordion>
+					<uib-accordion-group template-url="group-template.html" is-open="status.open">
+						<div ng-show="status.open">
+							<div class="form-group">
+								<div class="col-sm-4" style="text-align:right">
+									<span ng-click="pushLabel()" style="border: none;box-shadow:none;cursor:pointer;position:relative;top:5px;" class="glyphicon glyphicon-plus-sign glyphicon-action-add"></span>
+								</div>
+								<div class="col-sm-6">
+									<span style="font-size: 12px;color:#E38D13;display:block;padding-top:10px;">
+											{{'cluster.CreateCluster.DaemonInfo.tips' | translate}}:
+											<ol type=1>
+												<li>{{'cluster.CreateCluster.DaemonInfo.example' | translate}}
+													<ul>
+												      <li>key: storage-opt</li>
+												      <li>value: dm.basesize=20G</li>
+												     </ul>
+												</li>
+												<li>{{'cluster.CreateCluster.DaemonInfo.first' | translate}}</li>
+											</ol>
+										</span>
+								</div>
+							</div>
+							<div style="margin: 0 -15px;">
+								<div ng-repeat="item in cluster.engineOpts track by $index">
+									<div class="form-group" style="margin-left:0px;width:100%;background:#F0F0F0;padding:15px 0px;margin-bottom:0px;">
+										<label class="col-sm-4 control-label">Key</label>
+										<div class="col-sm-6">
+											<input type="text" name="Key{{$index}}" ng-model="item.optkey" ng-class="{'form-control':true}">
+										</div>
+									</div>
+									<div class="form-group" style="margin-left: 0px;width:100%;background:#F0F0F0;padding-bottom:15px;">
+										<label class="col-sm-4 control-label">Value</label>
+										<div class="col-sm-6">
+											<input type="text" name="Value{{$index}}" ng-model="item.optvalue" ng-class="{'form-control':true}">
+										</div>
+										<div class="col-sm-1" style="padding:0">
+											<span ng-click="popLabel($index-1)" style="border:none;box-shadow:none;cursor:pointer;position:relative;top:-16px;" class="glyphicon glyphicon-minus-sign glyphicon-action-remove"></span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</uib-accordion-group>
+				</uib-accordion>
+			</div>
+		</div>
+	</form>
+</div>
+<div class="modal-footer">
+	<button ng-click="close('execute')" class="btn btn-primary" ng-disabled="createCluster.$invalid || !(validate.fromCluster && validate.fromUser) || (cluster.sharedCount === 0 && cluster.pureslaveCount === 0)">
+		{{'common.create' | translate}}
+	</button>
+	<button class="btn btn-warning" ng-click="close('close')">{{'common.cancel' | translate}}</button>
+</div>

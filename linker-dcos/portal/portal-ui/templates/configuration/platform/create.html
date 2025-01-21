@@ -1,0 +1,287 @@
+<div class="modal-header">
+	 <button type="button" class="close" aria-label="Close" ng-click="close('close')"><span aria-hidden="true">&times;</span></button>
+	<h4>{{'config.platform.addplatform'| translate}}</h4>
+</div>
+<div class="modal-body">
+	<form class="form-horizontal" name="createPlatform" novalidate autocomplete="off">
+		<div class="form-group">
+			<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'common.type' | translate}}</label>
+			<div class="col-sm-6">
+				<select ng-model="platform.type" required ng-class="{'form-control':true}" ng-options="type.name as type.name for type in types">
+				</select>
+				<div style="color:red;" ng-show="platform.type === 'amazonec2'">{{'config.platform.awsPrompt' | translate}}</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'config.platform.SshUser' | translate}}</label>
+			<div class="col-sm-6">
+				<input type="text" name="SshUser" ng-model="platform.sshUser" required ng-trim="false" ng-pattern="/^[a-zA-Z_](([a-zA-Z0-9_-]{0,30})|([a-zA-Z0-9_-]{0,29}[$]))$/" ng-class="{'form-control':true}">
+				<span class="form-error" ng-if="createPlatform.SshUser.$touched">
+					<span ng-if="createPlatform.SshUser.$error.required">{{'config.platform.SshUser' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+					<span ng-if="createPlatform.SshUser.$error.pattern">{{'node.NodeUserNamePattern' | translate}}</span>
+				</span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'common.name' | translate}}</label>
+			<div class="col-sm-6">
+				<input type="text" name="name" ng-model="platform.name" required ng-change="validateName()" ng-trim="false" ng-pattern="/^[A-Za-z0-9]+$/" ng-class="{'form-control':true,'input-error':!(validate)}">
+				<span class="form-error" ng-if="createPlatform.name.$touched">
+					<span ng-if="createPlatform.name.$error.required">{{'common.name' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+					<span ng-if="!(validate)">{{'config.platform.formError.NameDuplicate' | translate}}</span>
+					<span ng-if="createPlatform.name.$error.pattern">{{'common.name' | translate}}{{'config.platform.formError.nameIsInvalid' | translate}}</span>	
+				</span>
+			</div>
+		</div>
+		<div ng-if="platform.type=='openstack'">
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'config.platform.address' | translate}}</label>
+				<div class="col-sm-6">
+					<input type="text" name="address" ng-model="platform.openstackInfo['openstack-auth-url']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.address.$touched">
+					<span ng-if="createPlatform.address.$error.required">{{'config.platform.address' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'config.platform.username' | translate}}</label>
+				<div class="col-sm-6">
+					<input type="text" name="username" ng-model="platform.openstackInfo['openstack-username']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.username.$touched">
+					<span ng-if="createPlatform.username.$error.required">{{'config.platform.username' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'config.platform.password' | translate}}</label>
+				<div class="col-sm-6">
+					<input type="text" name="password" ng-model="platform.openstackInfo['openstack-password']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.password.$touched">
+					<span ng-if="createPlatform.password.$error.required">{{'config.platform.password' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'config.platform.TenantName' | translate}}</label>
+				<div class="col-sm-6">
+					<input type="text" name="tenantName" ng-model="platform.openstackInfo['openstack-tenant-name']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.tenantName.$touched">
+					<span ng-if="createPlatform.tenantName.$error.required">{{'config.platform.TenantName' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'config.platform.FlavorName' | translate}}</label>
+				<div class="col-sm-6">
+					<input type="text" name="flavorName" ng-model="platform.openstackInfo['openstack-flavor-name']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.flavorName.$touched">
+					<span ng-if="createPlatform.flavorName.$error.required">{{'config.platform.FlavorName' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'config.platform.imageName' | translate}}</label>
+				<div class="col-sm-6">
+					<input type="text" name="imageName" ng-model="platform.openstackInfo['openstack-image-name']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.imageName.$touched">
+					<span ng-if="createPlatform.imageName.$error.required">{{'config.platform.imageName' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'config.platform.safeGroup' | translate}}</label>
+				<div class="col-sm-6">
+					<input type="text" name="safeGroup" ng-model="platform.openstackInfo['openstack-sec-groups']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.safeGroup.$touched">
+					<span ng-if="createPlatform.safeGroup.$error.required">{{'config.platform.safeGroup' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'config.platform.IpPool' | translate}}</label>
+				<div class="col-sm-6">
+					<input type="text" name="IpPool" ng-model="platform.openstackInfo['openstack-floatingip-pool']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.IpPool.$touched">
+					<span ng-if="createPlatform.IpPool.$error.required">{{'config.platform.IpPool' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'config.platform.webName' | translate}}</label>
+				<div class="col-sm-6">
+					<input type="text" name="webName" ng-model="platform.openstackInfo['openstack-nova-network']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.webName.$touched">
+					<span ng-if="createPlatform.webName.$error.required">{{'config.platform.webName' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+		</div>
+		<div ng-if="platform.type=='amazonec2'">
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>Access Key</label>
+				<div class="col-sm-6">
+					<input type="text" name="AccessKey" ng-model="platform.awsEc2Info['amazonec2-access-key']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.AccessKey.$touched">
+					<span ng-if="createPlatform.AccessKey.$error.required">Access Key {{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>Secret Key</label>
+				<div class="col-sm-6">
+					<input type="text" name="SecretKey" ng-model="platform.awsEc2Info['amazonec2-secret-key']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.SecretKey.$touched">
+					<span ng-if="createPlatform.SecretKey.$error.required">Secret Key {{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'config.platform.imageId' | translate}}</label>
+				<div class="col-sm-6">
+					<input type="text" name="ImageId" ng-model="platform.awsEc2Info['amazonec2-ami']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.ImageId.$touched">
+					<span ng-if="createPlatform.ImageId.$error.required">{{'config.platform.imageId' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'config.platform.instanceType' | translate}}</label>
+				<div class="col-sm-6">
+					<input type="text" name="InstanceType" ng-model="platform.awsEc2Info['amazonec2-instance-type']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.InstanceType.$touched">
+					<span ng-if="createPlatform.InstanceType.$error.required">{{'config.platform.instanceType' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'config.platform.rootSize' | translate}}(GB)</label>
+				<div class="col-sm-6">
+					<input type="text" name="RootSize" ng-model="platform.awsEc2Info['amazonec2-root-size']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.RootSize.$touched">
+					<span ng-if="createPlatform.RootSize.$error.required">{{'config.platform.rootSize' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'config.platform.region' | translate}}</label>
+				<div class="col-sm-6">
+					<input type="text" name="Region" ng-model="platform.awsEc2Info['amazonec2-region']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.Region.$touched">
+					<span ng-if="createPlatform.Region.$error.required">{{'config.platform.region' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'config.platform.VPCId' | translate}}</label>
+				<div class="col-sm-6">
+					<input type="text" name="VPCID" ng-model="platform.awsEc2Info['amazonec2-vpc-id']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.VPCID.$touched">
+					<span ng-if="createPlatform.VPCID.$error.required">{{'config.platform.VPCId' | translate}}{{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+		</div>
+		<div ng-if="platform.type=='google'">
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>Google project</label>
+				<div class="col-sm-6">
+					<input type="text" name="googleProject" ng-model="platform.googleInfo['google-project']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.googleProject.$touched">
+					<span ng-if="createPlatform.googleProject.$error.required">Google project {{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>Google zone</label>
+				<div class="col-sm-6">
+					<input type="text" name="GoogleZone" ng-model="platform.googleInfo['google-zone']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.GoogleZone.$touched">
+					<span ng-if="createPlatform.GoogleZone.$error.required">Google zone {{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>Machine type</label>
+				<div class="col-sm-6">
+					<input type="text" name="GoogleMachine" ng-model="platform.googleInfo['google-machine-type']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.GoogleMachine.$touched">
+					<span ng-if="createPlatform.GoogleMachine.$error.required">Google machine type {{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>Machine image</label>
+				<div class="col-sm-6">
+					<input type="text" name="GoogleMachineImage" ng-model="platform.googleInfo['google-machine-image']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.GoogleMachineImage.$touched">
+					<span ng-if="createPlatform.GoogleMachineImage.$error.required">Google machine image {{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>Google network</label>
+				<div class="col-sm-6">
+					<input type="text" name="googleNetwork" ng-model="platform.googleInfo['google-network']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.googleNetwork.$touched">
+					<span ng-if="createPlatform.googleNetwork.$error.required">Google network image {{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>Google disk size</label>
+				<div class="col-sm-6">
+					<input type="text" name="googleDiskSize" ng-model="platform.googleInfo['google-disk-size']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.googleDiskSize.$touched">
+					<span ng-if="createPlatform.googleDiskSize.$error.required">Google disk size {{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>Google disk type</label>
+				<div class="col-sm-6">
+					<input type="text" name="googleDiskType" ng-model="platform.googleInfo['google-disk-type']" required ng-class="{'form-control':true}">
+					<span class="form-error" ng-if="createPlatform.googleDiskType.$touched">
+					<span ng-if="createPlatform.googleDiskType.$error.required">Google disk type {{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>Internal IP</label>
+				<div class="col-sm-6">
+					<label class="radio-inline">
+						<input type="radio" name="googleInternalIP" ng-model="platform.googleInfo['google-use-internal-ip']" value="true" checked>{{'cluster.internalIPOpen' | translate}}
+					</label>
+					</br>
+					<label class="radio-inline">
+						<input type="radio" name="googleInternalIP" ng-model="platform.googleInfo['google-use-internal-ip']" value="false">{{'cluster.internalIPClose' | translate}}
+					</label>
+					<span class="form-error" ng-if="createPlatform.googleInternalIP.$touched">
+					<span ng-if="createPlatform.googleInternalIP.$error.required">Google Internal IP {{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>Credentials</label>
+				<div class="col-sm-6">
+					<textarea style="height: 150px;" name="Credentials" ng-model="platform.googleInfo['google-application-credentials']" required ng-class="{'form-control':true}"></textarea>
+					<span class="form-error" ng-if="createPlatform.Credentials.$touched">
+					<span ng-if="createPlatform.Credentials.$error.required">Google Credentials {{'config.platform.formError.notEmpty' | translate}}</span>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label">Google tags</label>
+				<div class="col-sm-6">
+					<input type="text" name="googleTags" ng-model="platform.googleInfo['google-tags']" ng-class="{'form-control':true}">
+				</div>
+			</div>
+		</div><!-- end of google info -->
+	</form>
+</div>
+<div class="modal-footer">
+	<button ng-click="close('execute')" class="btn btn-primary" ng-disabled="createPlatform.$invalid|| !(validate)">
+		{{'common.create' | translate}}
+	</button>
+	<button class="btn btn-warning" ng-click="close('close')">{{'common.cancel' | translate}}</button>
+</div>

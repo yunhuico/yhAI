@@ -1,0 +1,58 @@
+<div>
+    <div class="modal-header">
+        <button type="button" class="close" aria-label="Close" ng-click="close('close')"><span aria-hidden="true">&times;</span></button>
+        <h4>{{'user.create' | translate}}</h4>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" name="CreateUserForm" novalidate autocomplete="off">
+            <div class="form-group">
+                <label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'common.name'|translate}}</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" ng-model="user.username" name="usernameInput" required="" ng-pattern="/^[A-Za-z0-9\-]+$/" ng-maxlength="10" duplicate>
+                    <span class="form-error" ng-show="CreateUserForm.$submitted || CreateUserForm.usernameInput.$touched">
+            <span ng-if="CreateUserForm.usernameInput.$error.required">{{'user.usernameRequired' | translate}}</span>
+                    <span ng-if="CreateUserForm.usernameInput.$error.duplicate">{{'user.usernameIsUsed' | translate}}</span>
+                    <span ng-if="CreateUserForm.usernameInput.$error.pattern">{{'user.userNamePattern' | translate}}</span>
+                     <span ng-if="CreateUserForm.usernameInput.$error.maxlength">{{'user.userNameMaxLength' | translate}}</span>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'common.email'|translate}}</label>
+                <div class="col-sm-6">
+                    <input type="email" class="form-control" ng-model="user.email" name="emailInput" required="">
+                    <span class="form-error" ng-show="CreateUserForm.$submitted || CreateUserForm.emailInput.$touched">
+            <span ng-if="CreateUserForm.emailInput.$error.required">{{'user.emailRequired' | translate}}</span>
+                    <span ng-if="CreateUserForm.emailInput.$error.email">{{'user.emailNotValidate' | translate}}</span>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-4 control-label">
+                <span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>
+                {{'user.roleType'|translate}}
+              </label>
+              <div class="col-sm-6">
+                <label class="radio-inline">
+                  <input type="radio" name="roleType" ng-model="user.roleType" value="sysadmin"/>
+                  sysadmin
+                </label>
+                <label class="radio-inline">
+                  <input type="radio" name="roleType" ng-model="user.roleType" value="admin"/>
+                  admin
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">{{'common.company'|translate}}</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" ng-model="user.company">
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="close('execute')" ng-disabled="CreateUserForm.$invalid || CreateUserForm.$pending">{{'common.save' | translate}}</button>
+        <button class="btn btn-warning" ng-click="close('close')">{{'common.cancel' | translate}}</button>
+    </div>
+</div>

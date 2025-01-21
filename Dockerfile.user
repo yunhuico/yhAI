@@ -1,0 +1,58 @@
+FROM golang:1.6-alpine
+
+MAINTAINER jzhang@linkernetworks.com
+
+RUN apk add --no-cache --virtual git
+RUN apk add --no-cache --virtual bash
+
+RUN go get -d github.com/Sirupsen/logrus \
+	&& go get -d github.com/magiconair/properties \
+	&& go get -d github.com/emicklei/go-restful \
+	&& go get -d github.com/emicklei/go-restful-swagger12 \
+	&& go get -d github.com/compose/mejson \
+	&& go get -d gopkg.in/mgo.v2 \
+	&& go get -d github.com/jmoiron/jsonq \
+	&& go get -d github.com/samuel/go-zookeeper/zk \
+	&& go get -d github.com/LinkerNetworks/go-marathon \
+	&& go get -d gopkg.in/gomail.v2 \
+	&& go get -d github.com/bmizerany/assert \
+	&& git clone https://github.com/wordnik/swagger-ui.git /go/bin/swagger-ui
+
+COPY . /go/src/linkernetworks.com/dcos-backend
+
+WORKDIR /go/src/linkernetworks.com/dcos-backend/user
+
+RUN go build -v -o /go/bin/user \
+	&& chmod u+x /go/bin/user
+
+RUN cp ./userPolicy.json /go/bin/ \
+	&& cp ./usermgmt.properties /go/bin \
+	&& cp ./entrypoint.sh /go/bin \
+	&& chmod u+x /go/bin/entrypoint.sh \
+	&& sed -i 's/"http:\/\/petstore.swagger.io\/v2\/swagger.json"/"\/apidocs.json"/g' /go/bin/swagger-ui/dist/index.html
+
+# remove source codes
+RUN apk del git \
+	&& rm -rf /go/src/*
+
+WORKDIR /go/bin/
+ENTRYPOINT ["/bin/bash"]
+
+#### STAGE 2 ####
+# Docker >= 17.05.0-ce
+FROM linkerrepository/alpine:3.6
+WORKDIR /go/bin/
+ENV PATH=$PATH:/go/bin
+
+COPY --from=0 /go/bin/user /go/bin/
+COPY --from=0 /go/bin/userPolicy.json /go/bin/
+COPY --from=0 /go/bin/usermgmt.properties /go/bin/
+COPY --from=0 /go/bin/entrypoint.sh /go/bin/
+COPY --from=0 /go/bin/swagger-ui /go/bin/swagger-ui
+
+RUN apk add --no-cache --virtual bash
+
+RUN apk update \
+ && apk add ca-certificates
+
+ENTRYPOINT ["/bin/sh"]

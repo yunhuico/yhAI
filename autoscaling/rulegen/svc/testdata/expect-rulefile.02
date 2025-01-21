@@ -1,0 +1,15 @@
+ALERT HostHighMemoryAlert
+  IF host_memory_usage > 81
+  FOR 15m
+  ANNOTATIONS {
+    description = "High memory usage for host machine on {{$labels.host_ip}}, (current value: {{$value}})",
+    summary = "High memory usage alert for host machine",
+  }
+
+ALERT HostLowMemoryAlert
+  IF host_memory_usage < 21
+  FOR 15m
+  ANNOTATIONS {
+    description = "Low memory usage for host machine on {{$labels.host_ip}}, (current value: {{$value}})",
+    summary = "Low memory usage alert for host machine",
+  }

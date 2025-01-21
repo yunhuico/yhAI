@@ -1,0 +1,27 @@
+FROM node:6.9
+
+RUN npm install -g grunt-cli
+
+EXPOSE 3000
+
+COPY . /usr/src/app
+
+WORKDIR /usr/src/app/portal
+
+# build then remove source codes
+RUN npm install \
+	&& grunt -v build \
+	&& rm -rf `ls /usr/src/app/portal/ | grep -v target`
+
+WORKDIR /usr/src/app/portal/target
+
+RUN chmod u+x *.sh
+
+#### Stage 2 ####
+# Docker >= 17.05.0-ce
+FROM node:6.9
+COPY --from=0 /usr/src/app/portal/target /usr/src/app/portal/target
+
+EXPOSE 3000
+WORKDIR /usr/src/app/portal/target
+RUN chmod u+x *.sh

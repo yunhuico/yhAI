@@ -1,0 +1,38 @@
+<div>
+	<div class="modal-header">
+		<button type="button" class="close" aria-label="Close" ng-click="close('close')"><span aria-hidden="true">&times;</span></button>
+
+		<div class="media">
+			<div class="media-left">
+				<img alt="{{name}}" ng-src="{{image}}" title="{{name}}" style="width:40px;height:40px;border-radius:10px;border:1px solid #ddd;" />
+			</div>
+			<div class="media-body">
+				<b ng-bind="name"></b>
+				<p ng-bind="version"></p>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal-body  clearfix">
+		<ul class="nav nav-pills nav-stacked  nav-steps pull-left" style="width:30%">
+			<li ng-repeat="(key, item) in properties" ng-class="{active:showJson[key]}">
+				<a ng-click="setShowList(key)" ng-bind="key"></a>
+			</li>
+		</ul>
+
+		<div class="pull-left wizard-body">
+			<form name="submitform" novalidate>
+				<div ng-repeat="(key, item) in properties" ng-show="showJson[key]">
+					<h3 ng-bind="key"></h3>
+					<p ng-bind="item.description" style="margin: 0 0 30px;"></p>
+					<tree data="item" item-name="key" submitform="submitform"></tree>
+				</div>
+			</form>
+		</div>
+	</div>
+	
+	<div class="modal-footer">
+		<button class="btn btn-primary" type="button" ng-disabled="submitform.$invalid" ng-click="beforeAdvancedInstall()">{{'framework.advancedInstall' | translate}}</button>
+		<button class="btn btn-warning" type="button" ng-click="close('close')">{{'common.cancel' | translate}}</button>
+	</div>
+</div>

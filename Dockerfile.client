@@ -1,0 +1,85 @@
+FROM golang:1.8
+
+# Prepare tools
+ENV DOCKER_VERSION=1.12.0
+ENV MACHINE_VERSION=0.9.0
+
+RUN mkdir -p /linker /opt/local/bin /linker/smack
+
+# Download docker-machine
+RUN curl -L https://github.com/docker/machine/releases/download/v${MACHINE_VERSION}/docker-machine-`uname -s`-`uname -m` >/opt/local/bin/docker-machine-${MACHINE_VERSION} && \
+    chmod +x /opt/local/bin/docker-machine-${MACHINE_VERSION}
+
+# Download docker
+RUN curl -L https://get.docker.com/builds/Linux/x86_64/docker-${DOCKER_VERSION}.tgz > /tmp/docker-${DOCKER_VERSION}.tgz && \
+    cd /tmp && tar -xzf ./docker-${DOCKER_VERSION}.tgz && \
+    rm /tmp/docker-${DOCKER_VERSION}.tgz && \
+    mv /tmp/docker/docker /opt/local/bin/docker-${DOCKER_VERSION} && \
+    chmod +x /opt/local/bin/docker-${DOCKER_VERSION}
+
+RUN ln -s /opt/local/bin/docker-${DOCKER_VERSION} /opt/local/bin/docker \
+    && ln -s /opt/local/bin/docker-machine-${MACHINE_VERSION} /opt/local/bin/docker-machine
+
+
+ENV PATH /opt/local/bin:$PATH
+
+# build client code
+RUN go get -d github.com/Sirupsen/logrus \
+	&& go get -d github.com/magiconair/properties \
+	&& go get -d github.com/emicklei/go-restful  \
+	&& go get -d github.com/emicklei/go-restful-swagger12 \
+	&& go get -d github.com/compose/mejson  \
+	&& go get -d github.com/LinkerNetworks/go-marathon  \
+	&& go get -d github.com/jmoiron/jsonq  \
+	&& go get -d github.com/pborman/uuid \
+	&& go get -d github.com/bmizerany/assert  \
+	&& git clone https://github.com/wordnik/swagger-ui.git /go/bin/swagger-ui
+
+COPY . /go/src/linkernetworks.com/dcos-backend
+
+WORKDIR /go/src/linkernetworks.com/dcos-backend/client
+
+RUN go build -v -o /go/bin/dcos_client /go/src/linkernetworks.com/dcos-backend/client/main.go \
+    && chmod u+x /go/bin/dcos_client
+
+# copy resource file to /linker
+RUN cp /go/bin/dcos_client /linker/  \
+    && cp -r ./resources/* /go/bin/swagger-ui /linker/ \
+    && cp ./dcos_client.properties /linker/ \
+    && cp ./entrypoint.sh /linker/ \
+    && chmod u+x /linker/*.sh \
+    && chmod u+x /linker/smack/*.sh \
+    && sed -i 's/"http:\/\/petstore.swagger.io\/v2\/swagger.json"/"\/apidocs.json"/g' /linker/swagger-ui/dist/index.html
+
+# remove source code
+RUN rm -rf /go/src/*
+
+EXPOSE 10004
+VOLUME ["/var/log", "/linker/docker"]
+
+WORKDIR /linker
+
+ENTRYPOINT ["/bin/bash"]
+
+#### STAGE 2 ####
+# Docker >= 17.05.0-ce
+FROM linkerrepository/dcos-cli:0.4.6
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends openjdk-7-jre
+
+ENV DOCKER_VERSION=1.12.0
+ENV MACHINE_VERSION=0.9.0
+ENV PATH /opt/local/bin:$PATH
+
+COPY --from=0 /opt/local/bin/docker-${DOCKER_VERSION} /opt/local/bin/
+COPY --from=0 /opt/local/bin/docker-machine-${MACHINE_VERSION} /opt/local/bin/
+COPY --from=0 /linker/ /linker
+
+RUN ln -s /opt/local/bin/docker-${DOCKER_VERSION} /opt/local/bin/docker && \
+    ln -s /opt/local/bin/docker-machine-${MACHINE_VERSION} /opt/local/bin/docker-machine
+
+EXPOSE 10004
+VOLUME ["/var/log", "/linker/docker"]
+WORKDIR /linker
+
+ENTRYPOINT ["/bin/bash"]

@@ -1,0 +1,63 @@
+<div>
+    <div class="pull-left full-width">
+        <div class="row" ng-if="!endPointAvailable">
+          <div class="col-xs-12">
+           <div ng-class="{'alert':true,'alert-danger': true}" role="alert" style="font-weight:500;color:#555">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>&nbsp;{{'error.EndPoint.Unavailable' | translate}}
+            <span ng-if="$storage.cluster.status !=='INSTALLING'&&$storage.cluster.status !=='TERMINATING'&&$storage.cluster.status !=='FAILED'&&$storage.cluster.status !=='MODIFYING'&&$storage.cluster.status !=='TERMINATED'">{{'cluster.needCreateCluster' | translate}}</span>
+            <span ng-if="$storage.cluster.status ==='INSTALLING'">{{'cluster.installingCluster' | translate}}</span>
+            <span ng-if="$storage.cluster.status ==='TERMINATING'">{{'cluster.terminatingCluster' | translate}}</span>
+            <span ng-if="$storage.cluster.status ==='FAILED'">{{'cluster.failedCluster' | translate}}</span>
+            <span ng-if="$storage.cluster.status ==='MODIFYING'">{{'cluster.modifyingCluster' | translate}}</span>
+            <span ng-if="$storage.cluster.status ==='TERMINATED'">{{'cluster.terminatedCluster' | translate}}</span>
+            </div>
+          </div>
+        </div>
+        <button ng-click="addNetwork();" ng-disabled="!$storage.cluster || !endPointAvailable" class="btn btn-success btn-sm btn-control">
+            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> {{'network.addNetwork' | translate}}</button>
+        <!-- <button ng-click="terminateAll()" ng-disabled="!$storage.cluster || !network || !endPointAvailable" class="btn btn-warning btn-sm btn-control">
+            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> {{'network.terminateAll' | translate }}</button> -->
+        <div class="card">
+                <table class="table table-striped">
+                    <tr>
+                    	<th>{{'common.name'|translate}}</th>
+                        <th>{{'common.segment'| translate}}</th>
+                        <th>{{'network.subnet' | translate}}</th>
+                        <th>{{'network.gateway' | translate}}</th>
+                        <th>{{'network.internal' | translate}}</th>
+                        <th>{{'network.clustHostName' | translate}}</th>
+                        <th>{{'network.networkdriver' | translate}}</th>
+                        <th>{{'common.createdTime' | translate}}</th>
+                        <th width="66px">{{'common.action' | translate}}</th>
+                    </tr>
+                    <tr ng-repeat="item in network track by $index">
+                    	<td>{{item.network.name}}</td>
+                        <td>
+                        	<span ng-if="!item.network.ipRange[0]">-</span>
+                        	<span ng-if="item.network.ipRange[0]">{{item.network.ipRange[0]}}</span>
+                        </td>
+                        <td>{{item.network.subnet[0]}}</td>
+                        <td>
+                        	<span ng-if="!item.network.gateway[0]">-</span>
+                        	<span ng-if="item.network.gateway[0]">{{item.network.gateway[0]}}</span>
+                        </td>
+                        <td>
+                            <span ng-if="item.network.driver === 'ovs'">-</span>
+                            <span ng-if="item.network.driver === 'overlay'">{{item.network.internal}}</span>
+                        </td>
+                        <td>
+                            <span ng-if="item.network.driver === 'ovs'">{{item.clust_host_name}}</span>
+                            <span ng-if="item.network.driver === 'overlay'">-</span>
+                        </td>
+                        <td>{{item.network.driver}}</td>
+                        <td>{{item.time_create}}</td>
+                        <td>
+                            <button type="button" class="btn btn-default btn-xs" aria-label="Delete" ng-click="terminateNetwork(item,'false')" uib-tooltip="{{'common.delete' | translate}}">
+                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
+                        </td>
+                    </tr>
+                </table>
+                <paginations present="$parent.$parent.checkdata.currentPage" length="totalPage" total="totalrecords"></paginations>
+        </div>
+    </div>
+</div>

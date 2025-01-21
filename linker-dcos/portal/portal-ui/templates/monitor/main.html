@@ -1,0 +1,95 @@
+<div>
+    <div class="pull-left" style="width:100%" ng-if="nodes.length > 0">
+    	<div style="height:40px;margin-top:10px;width:100%">
+    		<div style="width:8%;float:left"><h5>{{'monitor.filter' | translate}}</h5></div>
+    		<div class="col-sm-2">
+    			<select class="form-control" ng-model="filter.type" ng-change="changeType()">
+    				<option value="node" ng-show="nodes.length>0">{{'common.node' | translate}}</option>
+    				<!-- <option value="container" ng-show="containers.length>0">{{'common.container' | translate}}</option> -->
+    				<option value="service" ng-show="services.length>0">{{'common.service' | translate}}</option>
+				</select>
+    		</div>
+    		<div class="col-sm-6" ng-if="filter.type == 'node' && nodes.length > 0">
+    			<select class="form-control" ng-model="filter.value" ng-options="node.hostname as node.hostname for node in nodes" ng-change="changeNode()">
+				</select>
+    		</div>
+    		<!-- <div class="col-sm-6" ng-if="filter.type == 'container' && containers.length > 0">
+    			<select class="form-control" ng-model="filter.value" ng-options="container.containername as container.label for container in containers" ng-change="changeNode()">
+				</select>
+    		</div> -->
+    		<div class="col-sm-3" ng-if="filter.type == 'service' && services.length > 0">
+    			<select class="form-control" ng-model="filter.value" ng-options="service.name as service.name for service in services" ng-change="changeService()">
+				</select>
+    		</div>
+    		<div class="col-sm-1" ng-if="filter.type == 'service' && servicecontainers.length > 0" style="margin-top:10px;text-align:center">
+    			{{'common.container' | translate}}
+    		</div>
+    		<div class="col-sm-3" ng-if="filter.type == 'service' && servicecontainers.length > 0">
+    			<select class="form-control" ng-model="selectedServiceContainer.value" ng-options="container.name as container.label for container in servicecontainers" ng-change="changeNode()">
+				</select>
+    		</div>
+    	</div>
+        <div style="height:80%;margin-top:20px" ng-show="hasMonitorData">
+					<div class="panel col-sm-6" ng-show="hascpu">
+				    	<div class="panel-heading" style="border-bottom:1px solid">
+				            <h4>CPU</h4>
+				        </div>
+				        <div class="panel-body">
+				            <h5>{{'monitor.totolUsage' | translate}}</h5>
+					    	<div id="cpu-total-usage-chart"></div>
+					    </div>
+					</div>	
+					<div class="panel col-sm-6" ng-show="hasmemory">
+			        	<div class="panel-heading" style="border-bottom:1px solid">
+			            	<h4>{{'monitor.memory' | translate}}</h4>
+			          	</div>
+			          	<div class="panel-body">
+			            	<h5>{{'monitor.totolUsage' | translate}}</h5>
+				    		<div id="memory-usage-chart"></div>	            
+			          	</div>
+					</div>
+					<div class="panel col-sm-12" ng-show="hasnetwork">
+						<div class="panel-heading" style="border-bottom:1px solid">
+					    	<h4>{{'monitor.network' | translate}}</h4>
+					    	<select class="form-control" ng-model="selectednetwork.value" ng-options="nw.name as nw.name for nw in networks" ng-change="changeNetwork()" style="width:50%;float:right;margin-top:-35px">
+							</select>
+						</div>
+						<div class="panel-body">
+						    <h5>{{'monitor.throughput' | translate}}</h5>
+						    <div id="network-chart"></div>
+						</div>
+					</div>
+			        <div class="panel col-sm-12" ng-show="hasdiskio">
+			          <div class="panel-heading" style="border-bottom:1px solid">
+			            <h4>{{'monitor.diskio' | translate}}</h4>
+			            <select class="form-control" ng-model="selecteddisk.value" ng-options="disk.value as disk.name for disk in disks" ng-change="changeDisk()" style="width:50%;float:right;margin-top:-35px">
+						</select>
+			          </div>
+			          <div class="panel-body">
+			            		<h5>{{'monitor.diskread' | translate}} / {{'monitor.diskwrite' | translate}}</h5>
+				    			<div id="diskio-chart"></div>	            
+			          	</div>
+			        </div>
+			        <div class="panel col-sm-12" ng-show="hasfilesystem">
+			          <div class="panel-heading" style="border-bottom:1px solid">
+			            <h4>{{'monitor.filesystem' | translate}}</h4>
+					    <select class="form-control" ng-model="selectedfs.value" ng-options="fs.device as fs.device for fs in filesystems" ng-change="changeFs()" style="width:80%;float:right;margin-top:-35px;{{fontsize}}">
+						</select>
+			          </div>
+			          <div class="panel-body">
+			            		<h5>{{'monitor.totolUsage' | translate}}</h5>
+				    			<div id="filesystem-usage-chart"></div>	            
+			          	</div>
+			        </div>
+				</div>
+				<div class="pull-left" style="width:100%;margin-top:30px;margin-left:15px" ng-show="!hasMonitorData">
+			    	{{'monitor.dataNotFound' | translate}}
+			    </div>
+    </div>
+    <div class="pull-left" style="width:100%;margin-left:15px" ng-if="nodes.length == 0">
+    	{{'monitor.nodesNotFound' | translate}}
+    </div>
+    <div class="pull-left" style="width:100%;margin-left:15px" ng-if="nocluster">
+    	{{'monitor.clusterNotFound' | translate}}
+    </div>
+</div>

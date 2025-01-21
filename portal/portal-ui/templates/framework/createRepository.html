@@ -1,0 +1,36 @@
+<div>
+    <div class="modal-header">      
+        <button type="button" class="close" aria-label="Close" ng-click="close('close')"><span aria-hidden="true">&times;</span></button>
+        <h4>{{'framework.addRepository' | translate }}</h4>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" name="CreateRepositoryForm" novalidate>
+            <div class="form-group">
+                <label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'framework.name'|translate}}</label>
+                <div class="col-sm-6">
+                     <input type="text" class="form-control" ng-model="repository.name" name="nameInput" required ng-pattern="/^(?!\-)(?!.*?\-$)[A-Za-z0-9\-]+$/">
+                    <span class="form-error" ng-show="CreateRepositoryForm.$submitted || CreateRepositoryForm.nameInput.$touched">
+                       <span ng-if="CreateRepositoryForm.nameInput.$error.required">{{'framework.nameRequired' | translate}}</span>
+                       <span ng-if="CreateRepositoryForm.nameInput.$error.pattern">{{'framework.namePattern' | translate}}</span>
+                    </span>
+                </div>
+            </div>
+           
+            <div class="form-group">
+                <label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'framework.url'|translate}}</label>
+                <div class="col-sm-6">
+                    <input type="url" class="form-control" ng-model="repository.uri" name="urlInput" required ng-pattern="/^(http|https):\/\//" />
+                    <span class="form-error" ng-show="CreateRepositoryForm.$submitted || CreateRepositoryForm.urlInput.$touched">
+                       <span ng-if="CreateRepositoryForm.urlInput.$error.required">{{'framework.urlRequired' | translate}}</span>
+                       <span class="error" ng-show="CreateRepositoryForm.urlInput.$error.pattern">{{'framework.urlValid' | translate}}</span>
+                    </span>
+                </div>
+            </div>
+           
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="close('execute')" ng-disabled="CreateRepositoryForm.$invalid">{{'common.add' | translate}}</button>
+        <button class="btn btn-warning" ng-click="close('close')">{{'common.cancel' | translate}}</button>
+    </div>
+</div>

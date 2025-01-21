@@ -1,0 +1,15 @@
+ALERT HostHighCPUAlert
+  IF host_cpu_usage > 80
+  FOR 10m
+  ANNOTATIONS {
+    description = "High CPU usage for host machine on {{$labels.host_ip}}, (current value: {{$value}})",
+    summary = "High CPU usage alert for host machine",
+  }
+
+ALERT HostLowCPUAlert
+  IF host_cpu_usage < 20
+  FOR 10m
+  ANNOTATIONS {
+    description = "Low CPU usage for host machine on {{$labels.host_ip}}, (current value: {{$value}})",
+    summary = "Low CPU usage alert for host machine",
+  }

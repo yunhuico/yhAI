@@ -1,0 +1,53 @@
+{
+  "user_api": {
+    "get": "/v1/user/",
+    "validate": "/v1/user/validate",
+    "password":"/v1/user/changepassword/"
+  },
+  "controller_api": {
+    "cluster": "/v1/cluster/",
+    "host": "/v1/host/",
+    "flavor": "/v1/flavor",
+    "validateCluster": "/v1/cluster/validate",
+    "keypair":"/v1/pubkey/",
+    "smtp":"/v1/smtp/",
+    "provider":"/v1/provider/",
+    "log":"/v1/logs",
+    "component": "/v1/cluster/{clusterId}/components",
+    "dockerregistries":"/v1/dockerregistries/",
+    "clusterRegistries": "/v1/cluster/{clusterId}/registry",
+    "clusterPublicKeys": "/v1/cluster/{clusterId}/pubkey",
+    "clusterSetting": "/v1/cluster/{clusterId}/setting"
+  },
+  "login_api": {
+    "login": "/v1/user/login"
+  },
+  "dcosclient_api":{
+  	"webconsole":":10022/console",
+    "framework": ":10004/v1/frameworks",
+    "appset":":10004/v1/appsets",
+    "monitor":":10004/v1/monitors",
+    "alert":":10004/v1/alerts",
+    "component":":10004/v1/components",
+    "network":":10004/v1/network/",
+    "networkOvs":":10004/v1/network/ovs",
+    "container":":10004/v1/containers",
+    "containerName":"/cadvisor/{slaveid}/api/linker/dockerid?taskid={taskid}",
+    "containerInfo":"/cadvisor/{slaveid}/api/linker/dockerinfo?taskid={taskid}&slaveid={slaveid}",
+    "package":"/package",
+    "repository":"/package/repository",
+    "forget":"/forget",
+    "reset":"/forget/change",
+    "sandbox": {
+      "read":"/agent/{slaveid}/files/read?path=",
+      "browse": "/agent/{slaveid}/files/browse?path="
+    }
+  },
+  "cadvisor":{
+      "machineinfo" : "http://{ip}/cadvisor/{slaveid}/api/v2.0/machine",
+      "nodeMonitoring" : "http://{ip}/cadvisor/{slaveid}/api/v2.0/stats?count=1",
+      "nodeSpec" : "http://{ip}/cadvisor/{slaveid}/api/v2.0/spec?count=1",
+      "containerMonitoring" : "http://{ip}/cadvisor/{slaveid}/api/v2.0/stats/{dockername}?type=docker&count=1",
+      "containerSpec" : "http://{ip}/cadvisor/{slaveid}/api/v2.0/spec/{dockername}?type=docker&count=1"
+  }
+}

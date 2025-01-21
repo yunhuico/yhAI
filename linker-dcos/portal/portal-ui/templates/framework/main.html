@@ -1,0 +1,92 @@
+<div>
+    <div class="pull-left full-width">
+        <div class="row" ng-if="!endPointAvailable">
+          <div class="col-xs-12">
+           <div ng-class="{'alert':true,'alert-danger': true}" role="alert" style="font-weight:500;color:#555">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>&nbsp;{{'error.EndPoint.Unavailable' | translate}}
+            <span ng-if="$storage.cluster.status !=='INSTALLING'&&$storage.cluster.status !=='TERMINATING'&&$storage.cluster.status !=='FAILED'&&$storage.cluster.status !=='MODIFYING'&&$storage.cluster.status !=='TERMINATED'">{{'cluster.needCreateCluster' | translate}}</span>
+            <span ng-if="$storage.cluster.status ==='INSTALLING'">{{'cluster.installingCluster' | translate}}</span>
+            <span ng-if="$storage.cluster.status ==='TERMINATING'">{{'cluster.terminatingCluster' | translate}}</span>
+            <span ng-if="$storage.cluster.status ==='FAILED'">{{'cluster.failedCluster' | translate}}</span>
+            <span ng-if="$storage.cluster.status ==='MODIFYING'">{{'cluster.modifyingCluster' | translate}}</span>
+            <span ng-if="$storage.cluster.status ==='TERMINATED'">{{'cluster.terminatedCluster' | translate}}</span>
+            </div>
+          </div>
+        </div>
+
+        <uib-tabset>
+           
+            <uib-tab heading="{{'framework.category' | translate}}" select="getFrameworks(query.name)" active="true">
+            		<div class="input-group input-group-sm" style="display:inline;">
+            			<input class="form-control" type="text" placeholder="{{'framework.search' | translate}}" ng-model="query.name" ng-keypress="($event.which === 13)?getFrameworks(query.name):return" ng-disabled="!endPointAvailable" style="width:200px;">
+            			<a style="position:absolute;right:0;z-index:3;padding:8px 10px;" ng-click="getFrameworks(query.name)">
+            				<span class="glyphicon glyphicon-search" aria-hidden="true" style="color:#000;"></span>
+            			</a>
+            		</div>
+                <button type="button" class="btn btn-info btn-control btn-sm" style="margin-left:30px;" ng-click="getFrameworks(query.name)" ng-disabled="!endPointAvailable"><span class="glyphicon glyphicon-refresh" aria-hidden="true" ></span> {{'common.refresh' | translate}}</button>
+                <div class="row" style="margin-top:20px;">
+                    <div class="col-xs-6 col-md-3" ng-repeat="item in frameworks" ng-if="frameworks.length > 0">
+                        <div class="thumbnail" style="background-color:#fff;margin:0 auto 20px auto;">
+
+                            	<img fallback-src="/img/graph/app/default.png" ng-src="{{item.images['icon-medium']}}" style="width:90px;height:90px;border-radius:20%;border:1px solid #ddd;" title="{{item.name}}" alt="{{item.name}}" >
+                            <div class="caption text-center">
+                                <p style="font-size:16px;font-weight:bold;color:#555;" ng-bind="item.name"></p>
+                                <p><span ng-if="item.selected" class="selected">{{'framework.selected' | translate}}</span><span ng-if="!item.selected" class="selected">{{'framework.community' | translate}}</span><span ng-bind="item.currentVersion"></span></p>
+                                <p>
+                                    <!-- <button type="button" class="btn btn-info btn-xs btn-xs-60" ng-click="confirmInstall(item)" ng-if="item.can_deploy && !item.in_process">{{'common.deploy' | translate}}</button>
+                                    <button type="button" class="btn btn-warning btn-xs btn-xs-80" ng-if="item.in_process" disabled>{{'common.INPROCESSING' | translate}}...</button>
+                                    <button type="button" class="btn btn-success btn-xs btn-xs-60" ng-if="!item.can_deploy && !item.in_process" disabled>{{'framework.deployed' | translate}}</button>
+                                    <button type="button" class="btn btn-warning btn-xs btn-xs-60" ng-click="confirmDelete(item, 'instances')" ng-if="!item.in_process" ng-disabled="!item.can_uninstall">{{'common.uninstall' | translate}}</button> -->
+                                  	<button class="btn btn-success btn-xs" type="button" ui-sref="framework.detail({frameworkName: item.name, packageVersion: item.currentVersion})">{{'framework.install' | translate}}</button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12" ng-if="frameworks.length == 0">
+                        {{'framework.no' | translate}}
+                    </div>
+                </div>
+            </uib-tab>
+              <uib-tab heading="{{'framework.tasks' | translate}}" select="getInstalledFrameworks()">
+                <table class="table table-striped">
+                    <tr>
+                        <th width="25%">{{'common.name' | translate }}</th>
+                        <th width="35%">{{'common.id' | translate }}</th>
+                        <th width="25%">{{'framework.version' | translate }}</th>
+                        <th width="5%">{{'common.action' | translate }}</th>
+                    </tr>
+                    <tr ng-repeat="item in installedFrameworks | orderBy:'packageInformation.packageDefinition.name'">
+                        <td ng-bind="item.packageInformation.packageDefinition.name"></td>
+                        <td ng-bind="item.appId"></td>
+                        <td ng-bind="item.packageInformation.packageDefinition.version"></td>
+                        <td>
+                        		<button type="button" class="btn btn-default btn-xs" aria-label="Uninstall" ng-click="confirmUninstall(item)" uib-tooltip="{{'common.uninstall' | translate}}" >
+                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </uib-tab>
+
+            <uib-tab heading="{{'framework.repository' | translate}}" select="getRepository()">
+            	<button class="btn btn-success btn-sm btn-control" ng-click="createRepository()" ng-disabled="!endPointAvailable"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> {{'framework.addRepository' | translate }}</button>
+                <table class="table table-striped">
+                    <tr>
+                        <th width="40%">{{'framework.name' | translate }}</th>
+                        <th width="45%">{{'framework.url' | translate }}</th>
+                        <th width="5%">{{'common.action' | translate }}</th>
+                    </tr>
+                    <tr ng-repeat="repo in repos">
+                        <td ng-bind="repo.name"></td>
+                        <td ng-bind="repo.uri"></td>
+                        <td>
+                        		<button type="button" class="btn btn-default btn-xs" aria-label="Delete" ng-click="confirmDeleteRepo(repo)" uib-tooltip="{{'common.delete' | translate}}" >
+                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </uib-tab>
+        </uib-tabset>
+    </div>
+</div>

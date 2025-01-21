@@ -1,0 +1,44 @@
+
+<div class="modal-header">
+	 <button type="button" class="close" aria-label="Close" ng-click="close('close')"><span aria-hidden="true">&times;</span></button>
+	<h4 ng-if="type == 'add'">{{'config.smtp.add' | translate}}</h4>
+	<h4 ng-if="type == 'edit'">{{'config.smtp.edit' | translate}}</h4>
+</div>
+<div class="modal-body">
+	<form class="form-horizontal" name="addSMTPServer" novalidate>
+		<div class="form-group">
+			<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'config.smtp.address' | translate}}</label>
+			<div class="col-sm-6">
+				<input type="text" name="address" ng-model="smtp.address" required ng-pattern="/^(([\w]+\.)+)([A-Za-z]{1,3})$/" ng-class="{'form-control':true}">
+				<span class="form-error" ng-if="addSMTPServer.address.$touched">
+					<span ng-if="addSMTPServer.address.$error.required">{{'config.smtp.formError.addressIsRequired' | translate}}</span>
+					<span ng-if="addSMTPServer.address.$error.pattern">{{'config.smtp.formError.addressIsInvalid' | translate}}</span>
+				</span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'config.platform.username' | translate}}</label>
+			<div class="col-sm-6">
+				<input type="text" name="smtpname" ng-model="smtp.name" required ng-class="{'form-control':true}">
+				<span class="form-error" ng-if="addSMTPServer.smtpname.$touched">
+					<span ng-if="addSMTPServer.smtpname.$error.required">{{'config.smtp.formError.usernameIsRequired' | translate}}</span>
+				</span>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'config.platform.password' | translate}}</label>
+			<div class="col-sm-6">
+				<input class="form-control" type="password" name="passwd" ng-model="smtp.passwd" ng-required="!smtp._id">
+				<span class="form-error" ng-if="addSMTPServer.passwd.$touched">
+					<span ng-if="addSMTPServer.passwd.$error.required">{{'config.smtp.formError.passwordIsRequired' | translate}}</span>
+				</span>
+			</div>
+		</div>
+	</form>
+</div>
+<div class="modal-footer">
+	<button ng-click="close('execute')" class="btn btn-primary" ng-disabled="addSMTPServer.$invalid">
+	{{'common.save' | translate}}
+	</button>
+	<button class="btn btn-warning" ng-click="close('close')">{{'common.cancel' | translate}}</button>
+</div>

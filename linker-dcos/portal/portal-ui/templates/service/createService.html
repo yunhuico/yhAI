@@ -1,0 +1,58 @@
+<div>
+    <div class="modal-header">      
+        <button type="button" class="close" aria-label="Close" ng-click="close('close')"><span aria-hidden="true">&times;</span></button>
+        <h4>{{'service.create' | translate }}</h4>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" name="CreateServiceForm" novalidate autocomplete="off">
+            <div class="form-group">
+                <label class="col-sm-4 control-label"><span style="font-size:10px;color:#EA402E" class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'common.name'|translate}}</label>
+                <div class="col-sm-6">
+                     <input type="text" class="form-control" ng-model="service.name" name="nameInput" required ng-pattern="/^(([a-z0-9]|[a-z0-9][a-z0-9\\-]*[a-z0-9])\\.)*([a-z0-9]|[a-z0-9][a-z0-9\\-]*[a-z0-9])$/">
+               <!--      <input type="text" class="form-control" ng-model="service.name" name="nameInput" required  ng-pattern="/^[a-z0-9]+$/">   -->                
+                    <span class="form-error" ng-show="CreateServiceForm.$submitted || CreateServiceForm.nameInput.$touched">
+                       <span ng-if="CreateServiceForm.nameInput.$error.required">{{'service.nameRequired' | translate}}</span>
+                     
+                       <span ng-if="CreateServiceForm.nameInput.$error.pattern">{{'service.namePattern' | translate}}</span>
+                    </span>
+                </div>
+            </div>
+           
+            <div class="form-group">
+                <label class="col-sm-4 control-label">{{'common.desc'|translate}}</label>
+                <div class="col-sm-6">
+                    <textarea class="form-control" ng-model="service.description"></textarea>                   
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-4 col-sm-6">
+                  <div class="checkbox" >
+                    <label>
+                       <input type="checkbox" style="margin-top:1px;" ng-model="service.created_by_json"> {{'service.existJSON'|translate}}                 
+                    </label>
+                  </div>
+                  <span style="color:#E38D13;line-height:1.7;font-size:8px;">
+                    {{'service.tip' | translate}}</span>
+                    <br/>
+                  <span style="color:#E38D13;line-height:1.7;font-size:8px;" ng-if="service.created_by_json">
+                    {{'service.tip_1'|translate}} 
+                    </span>
+                </div>
+            </div>
+            
+            <div class="form-group" ng-if="service.created_by_json">
+                <label class="col-sm-4 control-label">{{'service.json'|translate}}</label>
+                <div class="col-sm-6">
+                    <textarea drag ng-model="service.group" class="form-control" rows="20" autofocus style="border-style:dashed;font-size:12px;border-color:blue;" placeholder="{{'service.dragFile' | translate}}"></textarea>
+                    <span ng-show="showLengthWarning" class="form-error">{{'service.showLengthWarning' | translate}}</span>
+                    <span ng-show="showTypeWarning" class="form-error">{{'service.showTypeWarning' | translate}}</span>
+                </div>
+            </div>
+           
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="close('execute')" ng-disabled="CreateServiceForm.$invalid || CreateServiceForm.$pending">{{'common.save' | translate}}</button>
+        <button class="btn btn-warning" ng-click="close('close')">{{'common.cancel' | translate}}</button>
+    </div>
+</div>

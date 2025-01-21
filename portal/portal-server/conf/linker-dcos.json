@@ -1,0 +1,66 @@
+{
+  "uid": "Linker-DCOS-Portal",
+  "http": {
+    "enabled": true,
+    "port_http": 3000,
+    "port_https": 443
+  },
+  "purpose": {
+    "production": true
+  },
+  "ha": {
+    "enabled": false,
+    "numWorkers": 3,
+    "redis": {
+      "options": {
+        "host": "marathonlb-lb-linkerdns.marathon.mesos",
+        "port": 10011
+      }
+    },
+    "options": {
+      "sentinels": [
+        [
+          "192.168.5.105",
+          "26379"
+        ]
+      ],
+      "master_debug": false,
+      "masterName": "mymaster"
+    }
+  },
+  "controllerProvider": {
+    "ha": {
+      "enabled": false,
+      "controller_url": "marathonlb-lb-linkerdns.marathon.mesos:10002",
+      "zookeeper_url": "172.17.2.44:2181,172.17.2.45:2181,172.17.2.46:2181"
+    },
+    "auth": {
+      "protocol": "http",
+      "ca": "ca.crt"
+    }
+  },
+  "identityProvider": {
+    "ha": {
+      "enabled": false,
+      "identity_url": "marathonlb-lb-linkerdns.marathon.mesos:10001",
+      "zookeeper_url": "172.17.2.44:2181,172.17.2.45:2181,172.17.2.46:2181"
+    },
+    "auth": {
+      "protocol": "http",
+      "ca": "ca.crt"
+    }
+  },
+  "logging": {
+    "console": {
+      "enabled": true,
+      "level": "debug"
+    },
+    "file": {
+      "enabled": true,
+      "level": "trace",
+      "maxSizeMB": 10,
+      "maxFile": 10,
+      "dir": "/var/log/"
+    }
+  }
+}

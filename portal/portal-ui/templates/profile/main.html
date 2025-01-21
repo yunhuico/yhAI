@@ -1,0 +1,90 @@
+<div>
+    <div class="main-nav-header">
+        <div class="pull-left">
+            <h3>{{'main_nav.profile' | translate}}</h3>
+        </div>
+    </div>
+    <div class="pull-left full-width">
+        <uib-tabset>
+            <uib-tab heading="{{'common.profile' | translate}}" select="getUserInfo()" active="true">
+                <form class="form-horizontal" name="profileForm" novalidate>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">{{'common.userName' | translate}}</label>
+                        <div class="col-sm-5">
+                            <input class="form-control" type="text" disabled ng-model="profile.username">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">{{'common.email' | translate}}</label>
+                        <div class="col-sm-5">
+                            <input class="form-control" type="text" disabled ng-model="profile.email">
+                        </div>
+                    </div>
+                    <!-- <div class="form-group">
+                        <label class="col-sm-3 control-label"><span style="font-size:10px;color:#EA402E"class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>{{'common.email' | translate}}</label>
+                        <div class="col-sm-5">
+                            <input class="form-control" type="email" ng-model="profile.email" name="emailInput"  required >
+                            <span class="form-error" ng-show="profileForm.$submitted || profileForm.emailInput.$dirty">
+                                <span ng-if="profileForm.emailInput.$error.required">{{'user.emailRequired' | translate}}</span>
+
+                                <span ng-if="profileForm.emailInput.$error.email">{{'user.emailNotValidate' | translate}}</span>
+                            </span>
+                        </div>
+                    </div> -->
+                     <div class="form-group">
+                        <label class="col-sm-3 control-label">{{'common.company' | translate}}</label>
+                        <div class="col-sm-5">
+                            <input class="form-control" type="text" ng-model="profile.company">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-8">
+                          <button class="btn btn-info btn-sm" ng-click="updateUserInfo()" ng-disabled="profileForm.$invalid">{{'common.save' | translate}}</button>
+                        </div>
+                    </div>
+
+                </form>
+            </uib-tab>
+            <uib-tab heading="{{'user.updatePassword' | translate}}" select="clearPwd()">
+                <form class="form-horizontal" name="passwordForm" novalidate ng-if="showPwdChange">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">{{'common.oldPassword' | translate}}</label>
+                        <div class="col-sm-5">
+                            <input class="form-control" autocomplete="new-password" name="oldPasswordInput" type="password" placeholder="{{'common.oldPassword' | translate}}" ng-model="passwords.password" required oldpassword  ng-model-options="{ updateOn: 'blur' }">
+                            <span class="form-error" ng-show="passwordForm.$submitted || passwordForm.oldPasswordInput.$touched">
+                                <span ng-if="passwordForm.oldPasswordInput.$error.required" >{{'user.passwordRequired' | translate}}</span>
+                                <span ng-if="passwordForm.oldPasswordInput.$pending.oldpassword">{{'user.isCheckingPassword' | translate}}</span>
+                                <span ng-if="passwordForm.oldPasswordInput.$error.oldpassword">{{'user.passwordError' | translate}}</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">{{'common.newPassword' | translate}}</label>
+                        <div class="col-sm-5">
+                            <input class="form-control" autocomplete="new-password" name="newPasswordInput" type="password" placeholder="{{'common.newPassword' | translate}}" ng-model="passwords.newpassword" required>
+                            <span class="form-error" ng-show="passwordForm.$submitted || passwordForm.newPasswordInput.$touched">
+                               <span ng-if="passwordForm.newPasswordInput.$error.required" >{{'user.newPasswordRequired' | translate}}</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">{{'common.confirmPassword' | translate}}</label>
+                        <div class="col-sm-5">
+                            <input class="form-control" autocomplete="new-password" name="confirmPasswordInput" type="password" placeholder="{{'common.confirmPassword' | translate}}" ng-model="passwords.confirm_newpassword" confirmpassword>
+                            <span class="form-error" ng-show="passwordForm.$submitted || passwordForm.confirmPasswordInput.$touched">
+                                <!-- <span ng-if="passwordForm.confirmPasswordInput.$error.required" >{{'user.confirmPasswordRequired' | translate}}</span> -->
+                                <span ng-if="passwordForm.confirmPasswordInput.$error.confirmpassword">{{'user.confirmPasswordError' | translate}}</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-8">
+                           <button class="btn btn-info btn-sm" ng-click="updatePassword()" ng-disabled="passwordForm.$invalid || passwordForm.$pending">{{'common.save' | translate}}</button>
+                        </div>
+                    </div>
+                </form>
+            </uib-tab>
+
+        </uib-tabset>
+    </div>
+</div>

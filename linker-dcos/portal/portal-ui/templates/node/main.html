@@ -1,0 +1,144 @@
+<div id='nodeMain'>
+
+  <div class="row" ng-if="$storage.cluster && $storage.cluster.status">
+    <div class="col-xs-12">
+      <div ng-class="{'alert':true,'alert-success': $storage.cluster.status == 'RUNNING', 'alert-warning': $storage.cluster.status == 'DEPLOYING'||$storage.cluster.status == 'INSTALLING'||$storage.cluster.status == 'MODIFYING',
+           'alert-danger': $storage.cluster.status == 'TERMINATING' || $storage.cluster.status == 'FAILED'}" role="alert" style="font-weight:500;color:#555">
+        <span class="glyphicon glyphicon-home" aria-hidden="true"></span> &nbsp;{{'cluster.current' | translate}}: &nbsp;{{$storage.cluster.name}}, &nbsp;&nbsp;{{'common.' + $storage.cluster.status | translate}}, &nbsp;&nbsp;{{'cluster.CreateCluster.ClusterType'
+        | translate}}:{{'common.' + $storage.cluster.type | translate}}<span ng-if="provider_name">, &nbsp;&nbsp;{{'cluster.CreateCluster.provider_name'| translate}}:{{provider_name}}</span>.
+        </br>
+        </br><span ng-if="infoStatus">&nbsp;{{'node.AddNodeFailed' | translate}}</span>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-bottom: 15px;" ng-if="$storage.cluster.setProjectvalue.cmi">
+    <div class="col-xs-6">
+      <form>
+        <label class="control-label" style="margin-right:10px;">{{'node.filterNode' | translate}}</label>
+        <select class="form-control select-control-header input-sm" ng-model="filterSelect">
+    				<option ng-repeat="filterOption in filterOptions" value="{{filterOption.value}}">{{filterOption.name}}</option>
+    			</select>
+        <button type="button" class="btn btn-default btn-sm" ng-click="filterClick()">{{'node.filter' | translate}}</button>
+        <button type="button" class="btn btn-default btn-sm" ng-click="filterClick('none')">{{'node.clear' | translate}}</button>
+      </form>
+    </div>
+  </div>
+  <button ng-click="addNode();" ng-disabled="!$storage.cluster||$storage.cluster.status !='RUNNING'" class="btn btn-success btn-sm btn-control">
+		<span ng-class="{'disabled-cursor': (!$storage.cluster||$storage.cluster.status !='RUNNING')}" class="glyphicon glyphicon-edit" aria-hidden="true"></span> {{'node.AddNode' | translate}}</button>
+  <button ng-click="refreshCluster();" class="btn btn-info btn-sm btn-control">
+		<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> {{'common.refresh' | translate }}</button>
+  <button ng-disabled="!$storage.cluster||$storage.cluster.status!='RUNNING'" ng-click="terminateNodes()" class="btn btn-warning btn-sm btn-control">
+		<span ng-class="{'disabled-cursor':!$storage.cluster||$storage.cluster.status!='RUNNING'}" class="glyphicon glyphicon-trash" aria-hidden="true"></span> {{'common.delete' | translate }}</button>
+  <button ng-click="updatePublickey();" class="btn btn-success btn-sm btn-control">
+		<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+		{{'node.updatePublickey' | translate}}
+	</button>
+  <button ng-click="updateRegistry();" class="btn btn-success btn-sm btn-control">
+		<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+		{{'node.updateRegistry' | translate}}
+	</button>
+  <div class="card">
+    <div ng-if="$storage.cluster.setProjectvalue.cmi" class="dot-view">
+      <div ng-click="showNodeInfo(item, $index)" ng-repeat="item in node track by $index" class="block {{item.status.toLowerCase()}}" tooltip="{{item.hostName}}">
+      </div>
+    </div>
+    <table class="table table-striped">
+      <tr>
+        <th width="35px">
+          <input type="checkbox" ng-model="nodeSelectAll" ng-click="selectAll(nodeSelectAll)" ng-disabled="$storage.cluster.status!='RUNNING'">
+        </th>
+        <th width="10%">{{'common.name' | translate}}</th>
+        <th width="7%" ng-if="$storage.cluster.setProjectvalue.cmi">{{'common.note' | translate}}</th>
+        <th width="9%">{{'node.NodeType' | translate}}</th>
+        <th width="9%">{{'node.role' | translate}}</th>
+        <th width="15%">IP</th>
+        <th width="8%">{{'common.status' | translate}}</th>
+        <th width="5%">{{'common.task' | translate}}</th>
+        <th width="5%">{{'common.cpu' | translate}}</th>
+        <th width="6%">{{'common.memory' | translate}}</th>
+        <th width="5%">{{'common.gpu' | translate}}</th>
+        <th>{{'common.tag' | translate}}</th>
+        <th width="66px">{{'common.action' | translate}}</th>
+        <th ng-if="$storage.cluster.setProjectvalue.cmi" width="86px">{{'common.action' | translate}}<br>Yes/No/Skip</th>
+      </tr>
+      <tr ng-if="node === undefined">
+        <td></td>
+        <td>{{'common.loading' | translate}}</td>
+      </tr>
+      <tr ng-repeat="item in node track by $index" ng-show="item.show">
+        <td>
+          <input type="checkbox" ng-disabled="($storage.cluster.status!='RUNNING')||item.isMasterNode||(item.status=='TERMINATING')||(item.status=='INSTALLING')" ng-model="item.select">
+        </td>
+        <td>
+          <a ng-click="nodedetail(item)"><span ng-class="{'disabled-cursor':(item.status=='OFFLINE'||item.status=='FAILED')}">{{item.hostName}}</span></a>
+        </td>
+        <td ng-if="$storage.cluster.setProjectvalue.cmi">
+          <span class="label label-default label-warning" style="margin-right:5px;display: inline-block;max-width: 100px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" uib-tooltip="{{note}}" tooltip-class="wordbreak" ng-repeat="note in item.note">{{note}}</span>
+        </td>
+        <td>
+          <span ng-if="item.type=='customized'">{{'common.customized'| translate}}</span>
+          <span ng-if="item.type!='customized'">{{'node.platform'| translate}}</span>
+        </td>
+        <td>
+          <span ng-if="item.isMasterNode">{{'node.masterNode' | translate}}</span>
+          <span ng-if="item.isSlaveNode && item.isSharedNode">{{'node.childNode' | translate}}({{'node.shared' | translate}})</span>
+          <span ng-if="item.isSlaveNode && !item.isSharedNode">{{'node.childNode' | translate}}</span>
+        </td>
+        <td>
+          <div>{{'common.publicnet' | translate}}:
+            <strong>
+							{{item.ip}}
+						</strong>
+          </div>
+          <div>{{'common.privatenet' | translate}}:
+            <strong>
+							{{item.privateIp}}
+						</strong>
+          </div>
+        </td>
+        <td>
+          <status type="{{item.status}}"></status>
+        </td>
+        <td>{{item.task}}</td>
+        <td>
+          <span ng-if="item.cpu==0">-</span>
+          <span ng-if="item.cpu!=0">{{item.cpu}}</span>
+        </td>
+        <td>
+          <span ng-if="item.memory==0">-MB</span>
+          <span ng-if="item.memory!=0">{{item.memory}}MB</span>
+        </td>
+        <td>
+          <span ng-if="item.gpu==0">-</span>
+          <span ng-if="item.gpu!=0">{{item.gpu}}</span>
+        </td>
+        <td>
+          <span class="label label-default" style="margin-right:5px;display: inline-block;max-width: 100px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" uib-tooltip="{{tag}}" tooltip-class="wordbreak" ng-repeat="tag in item.tag">{{tag}}</span>
+        </td>
+        <td>
+          <button type="button" class="btn btn-default btn-xs" aria-label="Delete" ng-click="terminateNode(item)" ng-disabled="($storage.cluster.status!='RUNNING')||item.isMasterNode||(item.status=='TERMINATING')||(item.status=='INSTALLING')"
+            uib-tooltip="{{'common.delete' | translate}}">
+						<span ng-class="{'disabled-cursor': ($storage.cluster.status!='RUNNING')||item.isMasterNode||(item.status=='TERMINATING')||(item.status=='INSTALLING')}" class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+					</button>
+        </td>
+        <td ng-if="$storage.cluster.setProjectvalue.cmi">
+          <span ng-show="filterSelect">
+						<input type="radio" value="yes" ng-model="node[$index].feedback">
+						<input type="radio" value="no" ng-model="node[$index].feedback">
+						<input type="radio" value="skip" ng-model="node[$index].feedback">
+					</span>
+
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div id="scrollTop" ng-click="scrollTop();">TOP</div>
+  <div class="loader" ng-show="filterLoading"></div>
+  <div class="row" style="margin-bottom: 15px;" ng-show="filterSelect">
+    <div class="pull-right feedback-btn">
+      <button type="button" class="btn btn-default btn-sm" ng-click="feedbackClickHandler()">{{'node.feedback' | translate}}</button>
+      <button type="button" class="btn btn-default btn-sm" ng-click="retrainClickHandler()">{{'node.retrain' | translate}}</button>
+    </div>
+  </div>
+  <paginations present="currentPage" length="totalPage" total="totalrecords"></paginations>
+</div>
