@@ -1,0 +1,37 @@
+{
+  "name": "List salesforce accounts",
+  "type": "actor",
+  "adapterClass": "ultrafox/salesforce",
+  "class": "ultrafox/salesforce#listAccount",
+  "hidden": true,
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "page",
+        "label": "Choose page",
+        "type": "integer",
+        "ui": {
+          "component": "hidden"
+        }
+      },
+      {
+        "key": "perPage",
+        "label": "Count project per page",
+        "type": "integer",
+        "ui": {
+          "component": "hidden"
+        }
+      },
+      {
+        "key": "search",
+        "label": "Search",
+        "ui": {
+          "component": "hidden"
+        }
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": []
+  }
+}

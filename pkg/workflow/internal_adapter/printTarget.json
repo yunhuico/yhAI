@@ -1,0 +1,34 @@
+{
+  "name": {
+    "en-US": "Print target",
+    "zh-CN": "打印测试结果"
+  },
+  "desc": {
+    "en-US": "Print the test results of the code in the target location.",
+    "zh-CN": "打印目标位置代码测试结果。"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/debug",
+  "class": "ultrafox/debug#printTarget",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "target",
+        "label": {
+          "en-US": "Target path",
+          "zh-CN": "目标位置路径"
+        },
+        "desc": {
+          "en-US": "Please input the target path.",
+          "zh-CN": "请输入目标位置路径。"
+        },
+        "type": "string",
+
+        "required": true
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": []
+  }
+}

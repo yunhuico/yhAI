@@ -1,0 +1,46 @@
+{
+  "name": {
+    "en-US": "Account updated",
+    "zh-CN": "客户信息更新"
+  },
+  "desc": {
+    "en-US": "Triggers when an account is updated in Salesforce.",
+    "zh-CN": "当客户信息更新时触发流程。"
+  },
+  "shortName": "Account",
+  "type": "trigger",
+  "triggerType": "webhook",
+  "adapterClass": "ultrafox/salesforce",
+  "class": "ultrafox/salesforce#accountUpdatedTrigger",
+  "inputSchema": {
+    "fields": []
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "attributes.type",
+        "label": "SObject type",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "Name",
+        "label": "Account name",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "Id",
+        "label": "Account ID",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

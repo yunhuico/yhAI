@@ -1,0 +1,248 @@
+{
+  "name": {
+    "en-US": "List project merge requests",
+    "zh-CN": "列举项目中的合并请求"
+  },
+  "desc": {
+    "en-US": "List merge requests of the project you choose，support search by title of the merge request.",
+    "zh-CN": "列出所选项目下所有的合并请求，支持按合并请求的标题搜索。"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/gitlab",
+  "class": "ultrafox/gitlab#listProjectMergeRequests",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "projectId",
+        "label": {
+          "en-US": "Project",
+          "zh-CN": "项目"
+        },
+        "desc": {
+          "en-US": "Please choose a project, or switch to custom input mode to enter the project ID.",
+          "zh-CN": "请选择项目，或切换到自定义输入模式输入项目 ID。"
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listProject",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      },
+      {
+        "key": "page",
+        "label": "Choose page",
+        "type": "integer",
+        "ui": {
+          "component": "hidden"
+        }
+      },
+      {
+        "key": "perPage",
+        "label": "Count project per page",
+        "type": "integer",
+        "ui": {
+          "component": "hidden"
+        }
+      },
+      {
+        "key": "state",
+        "label": {
+          "en-US": "State",
+          "zh-CN": "状态"
+        },
+        "desc": {
+          "en-US": "Choose the state of the merge request to filter.",
+          "zh-CN": "选择合并请求状态进行过滤。"
+        },
+        "type": "string",
+        "default": "all",
+        "ui": {
+          "component": "select",
+          "disableCustomInput": true,
+          "selectFrom": {
+            "source": "static",
+            "options": [
+              {
+                "label": {
+                  "en-US": "All",
+                  "zh-CN": "全部"
+                },
+                "value": "all"
+              },
+              {
+                "label": {
+                  "en-US": "Opened",
+                  "zh-CN": "开放中"
+                },
+                "value": "opened"
+              },
+              {
+                "label": {
+                  "en-US": "Closed",
+                  "zh-CN": "已关闭"
+                },
+                "value": "closed"
+              },
+              {
+                "label": {
+                  "en-US": "Merged",
+                  "zh-CN": "已合并"
+                },
+                "value": "merged"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "search",
+        "label": {
+          "en-US": "Search",
+          "zh-CN": "搜索"
+        },
+        "desc": {
+          "en-US": "Input the title or description of the merge request to search.",
+          "zh-CN": "输入合并请求标题或描述进行搜索。"
+        },
+        "type": "string"
+      },
+      {
+        "key": "labels",
+        "label": {
+          "en-US": "Labels filter",
+          "zh-cn": "标记过滤"
+        },
+        "desc": {
+          "en-US": "Input some lables to filter the merge requests in the project.",
+          "zh-cn": "添加标记对项目下合并请求进行过滤。"
+        },
+        "type": "list",
+        "child": {
+          "type": "string",
+          "required": true
+        }
+      },
+      {
+        "key": "authorId",
+        "label": {
+          "en-US": "Author ID",
+          "zh-CN": "作者 ID"
+        },
+        "desc": {
+          "en-US": "Return merge requests created by the given user id.",
+          "zh-CN": "根据创建人的 ID 进行过滤。"
+        },
+        "type": "integer",
+        "required": false,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listUser",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      },
+      {
+        "key": "assigneeId",
+        "label": {
+          "en-US": "Assignee ID",
+          "zh-CN": "指派人 ID"
+        },
+        "desc": {
+          "en-US": "Return merge requests assigned to the given user id.",
+          "zh-CN": "根据指派人的 ID 进行过滤。"
+        },
+        "type": "integer",
+        "required": false,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listUser",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "label": "All merge requests",
+        "type": "list",
+        "child": {
+          "type": "struct",
+          "where": [
+            "template"
+          ],
+          "fields": [
+            {
+              "key": "iid",
+              "label": "Merge request ID",
+              "type": "integer",
+              "where": [
+                "template"
+              ],
+              "fields": null
+            },
+            {
+              "key": "title",
+              "label": "Merge request title",
+              "type": "integer",
+              "where": [
+                "template"
+              ],
+              "fields": null
+            },
+            {
+              "key": "description",
+              "label": "Merge request description",
+              "type": "integer",
+              "where": [
+                "template"
+              ],
+              "fields": null
+            },
+            {
+              "key": "labels",
+              "label": "Labels",
+              "type": "string",
+              "where": [
+                "template"
+              ],
+              "fields": null
+            },
+            {
+              "key": "project_id",
+              "label": "project ID",
+              "type": "integer",
+              "where": [
+                "template"
+              ],
+              "fields": null
+            }
+          ]
+        },
+        "where": [
+          "foreach"
+        ]
+      },
+      {
+        "key": "[].iid",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

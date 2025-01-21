@@ -1,0 +1,27 @@
+{
+  "name": "List my channels",
+  "type": "actor",
+  "adapterClass": "ultrafox/slack",
+  "class": "ultrafox/slack#listChannel",
+  "hidden": true,
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "perPage",
+        "label": "SObject type",
+        "type": "integer"
+      },
+      {
+        "key": "cursor",
+        "label": "Next cursor",
+        "type": "string",
+        "ui": {
+          "component": "hidden"
+        }
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": []
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "name": {
+    "en-US": "List existing services",
+    "zh-CN": "列举现有服务"
+  },
+  "desc": {
+    "en-US": "List all existing services, support search and filter.",
+    "zh-CN": "列出所有现有的服务，支持搜索和过滤。"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/pagerduty",
+  "class": "ultrafox/pagerduty#listServices",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "page",
+        "label": {
+          "en-US": "Choose page",
+          "zh-CN": "页码"
+        },
+        "desc": {
+          "en-US": "List existing services for a specific page.",
+          "zh-CN": "列出具体某一网页的现有服务。"
+        },
+        "type": "integer"
+      },
+      {
+        "key": "perPage",
+        "label": {
+          "en-US": "Count of services per page",
+          "zh-CN": "每页数量"
+        },
+        "desc": {
+          "en-US": "Set the number of services returned per page.",
+          "zh-CN": "设置接口每一页返回的服务的数量。"
+        },
+        "type": "integer"
+      },
+      {
+        "key": "search",
+        "label": {
+          "en-US": "Search by service name",
+          "zh-CN": "按服务名称搜索"
+        },
+        "desc": {
+          "en-US": "Search by inputing a service name.",
+          "zh-CN": "输入服务名称进行搜索。"
+        },
+        "type": "string"
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "id",
+        "label": "ID",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "name",
+        "label": "Name",
+        "type": "string",
+        "desc": "The name of the service",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,265 @@
+{
+  "name": {
+    "en-US": "List group milestones",
+    "zh-CN": "列举群组里程碑"
+  },
+  "desc": {
+    "en-US": "List milestones of the group you choose.",
+    "zh-CN": "列出所选群组下的所有里程碑。"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/gitlab",
+  "class": "ultrafox/gitlab#listGroupMilestone",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "groupId",
+        "label": {
+          "en-US": "Group",
+          "zh-CN": "群组"
+        },
+        "desc": {
+          "en-US": "Please choose a group, or switch to custom input mode to enter the group ID.",
+          "zh-CN": "请选择您GitLab中的一个群组，或切换到自定义输入模式输入群组 ID。"
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listGroup",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "type": "list",
+        "child": {
+          "type": "struct",
+          "where": [
+            "template"
+          ],
+          "fields": [
+            {
+              "key": "id",
+              "label": "Milestone ID",
+              "type": "integer",
+              "where": [
+                "template"
+              ],
+              "fields": null
+            },
+            {
+              "key": "iid",
+              "label": "Milestone IID",
+              "type": "integer",
+              "where": [
+                "template"
+              ],
+              "fields": null
+            },
+            {
+              "key": "group_id",
+              "label": "Group ID",
+              "type": "integer",
+              "where": [
+                "template"
+              ],
+              "fields": null
+            },
+            {
+              "key": "title",
+              "label": "Title",
+              "type": "string",
+              "where": [
+                "template"
+              ],
+              "fields": null
+            },
+            {
+              "key": "description",
+              "label": "Description",
+              "type": "string",
+              "where": [
+                "template"
+              ],
+              "fields": null
+            },
+            {
+              "key": "expired",
+              "label": "Expired",
+              "type": "string",
+              "where": [
+                "template"
+              ],
+              "fields": null
+            }
+          ]
+        },
+        "where": [
+          "foreach"
+        ]
+      },
+      {
+        "key": "[].id",
+        "label": "All group milestone ID",
+        "type": "list",
+        "child": {
+          "type": "integer",
+          "where": [
+            "template"
+          ]
+        },
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "[].iid",
+        "label": "All IID",
+        "type": "list",
+        "child": {
+          "type": "integer",
+          "where": [
+            "template"
+          ]
+        },
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "[].group_id",
+        "label": "All group ID",
+        "type": "list",
+        "child": {
+          "type": "integer",
+          "where": [
+            "template"
+          ]
+        },
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "[].title",
+        "label": "All title",
+        "type": "list",
+        "child": {
+          "type": "string",
+          "where": [
+            "template"
+          ]
+        },
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "[].description",
+        "label": "All description",
+        "type": "list",
+        "child": {
+          "type": "string",
+          "where": [
+            "template"
+          ]
+        },
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "[].start_date",
+        "label": "All start date",
+        "type": "list",
+        "child": {
+          "type": "string",
+          "where": [
+            "template"
+          ]
+        },
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "[].due_date",
+        "label": "All due date",
+        "type": "list",
+        "child": {
+          "type": "string",
+          "where": [
+            "template"
+          ]
+        },
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "[].state",
+        "label": "All state",
+        "type": "list",
+        "child": {
+          "type": "string",
+          "where": [
+            "template"
+          ]
+        },
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "[].updated_at",
+        "label": "All update time",
+        "type": "list",
+        "child": {
+          "type": "string",
+          "where": [
+            "template"
+          ]
+        },
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "[].created_at",
+        "label": "All create time",
+        "type": "list",
+        "child": {
+          "type": "string",
+          "where": [
+            "template"
+          ]
+        },
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "[].expired",
+        "label": "All expired",
+        "type": "list",
+        "child": {
+          "type": "bool",
+          "where": [
+            "template"
+          ]
+        },
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "List salesforce contacts",
+  "type": "actor",
+  "adapterClass": "ultrafox/salesforce",
+  "class": "ultrafox/salesforce#listContact",
+  "hidden": true,
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "page",
+        "label": "Choose page",
+        "type": "integer",
+        "ui": {
+          "component": "hidden"
+        }
+      },
+      {
+        "key": "perPage",
+        "label": "Count project per page",
+        "type": "integer",
+        "ui": {
+          "component": "hidden"
+        }
+      },
+      {
+        "key": "search",
+        "label": "Search",
+        "type": "string",
+        "ui": {
+          "component": "input"
+        }
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": []
+  }
+}

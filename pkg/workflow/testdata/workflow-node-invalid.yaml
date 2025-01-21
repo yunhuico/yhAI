@@ -1,0 +1,16 @@
+name: "testWorkflow"
+description: "..."
+version: 1
+nodes:
+  - id: start
+    name: ""
+    type: trigger
+    class: ultrafox/gitlab#triggerIssue
+    credentialId: "1"
+    data:
+      metaData:
+        adapterClass: ultrafox/gitlab
+        triggerType: webhook
+      inputFields:
+        projectID: 23407
+    transition: addIssueLabel

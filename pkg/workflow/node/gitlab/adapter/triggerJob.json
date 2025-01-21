@@ -1,0 +1,221 @@
+{
+  "name": {
+    "en-US": "Job trigger",
+    "zh-CN": "作业触发"
+  },
+  "desc": {
+    "en-US": "Triggers when an issue is opend, closed, updated or reopend.",
+    "zh-CN": "当作业被创建，或作业为成功，失败等其他状态时触发流程。"
+  },
+  "type": "trigger",
+  "triggerType": "webhook",
+  "shortName": "Job",
+  "adapterClass": "ultrafox/gitlab",
+  "class": "ultrafox/gitlab#triggerJob",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "scope",
+        "label": {
+          "en-US": "Scope",
+          "zh-CN": "范围"
+        },
+        "desc": {
+          "en-US": "Choose a scope to trigger the workflow，by project or by group.",
+          "zh-CN": "选择触发流程的范围，按项目触发或按群组触发。"
+        },
+        "type": "string",
+        "default": "project",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "disableCustomInput": true,
+          "selectFrom": {
+            "source": "static",
+            "options": [
+              {
+                "label": {
+                  "en-US": "Project",
+                  "zh-CN": "项目"
+                },
+                "value": "project"
+              },
+              {
+                "label": {
+                  "en-US": "Group",
+                  "zh-CN": "群组"
+                },
+                "value": "group"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "projectId",
+        "label": {
+          "en-US": "Project",
+          "zh-CN": "项目"
+        },
+        "desc": {
+          "en-US": "Please choose a project of your Gitlab, or switch to custom input mode to enter the project ID.",
+          "zh-CN": "请选择您GitLab中的一个项目，或切换到自定义输入模式输入项目 ID。"
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listProject",
+            "enableSearch": true,
+            "enablePage": true
+          },
+          "display": {
+            "scope": "project"
+          }
+        }
+      },
+      {
+        "key": "groupId",
+        "label": {
+          "en-US": "Group",
+          "zh-CN": "群组"
+        },
+        "desc": {
+          "en-US": "Please choose a group of your Gitlab, or switch to custom input mode to enter the group ID.",
+          "zh-CN": "请选择您GitLab中的一个群组，或切换到自定义输入模式输入群组 ID。"
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listGroup",
+            "enableSearch": true,
+            "enablePage": true
+          },
+          "display": {
+            "scope": "group"
+          }
+        }
+      },
+      {
+        "key": "event",
+        "label": {
+          "en-US": "Event condition",
+          "zh-CN": "触发条件过滤"
+        },
+        "desc": {
+          "en-US": "Please choose the condition of the job.",
+          "zh-CN": "请选择流水线作业任务的状态。"
+        },
+        "type": "string",
+        "default": "all",
+        "ui": {
+          "component": "select",
+          "disableCustomInput": true,
+          "selectFrom": {
+            "source": "static",
+            "options": [
+              {
+                "label": "All",
+                "value": "all"
+              },
+              {
+                "label": "Created",
+                "value": "created"
+              },
+              {
+                "label": "Success",
+                "value": "success"
+              },
+              {
+                "label": "Failed",
+                "value": "failed"
+              },
+              {
+                "label": "Warning",
+                "value": "warning"
+              },
+              {
+                "label": "Pending",
+                "value": "pending"
+              },
+              {
+                "label": "Running",
+                "value": "running"
+              },
+              {
+                "label": "Manual",
+                "value": "manual"
+              }
+            ]
+          }
+        },
+        "required": true
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "ref",
+        "label": "Ref",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "project_id",
+        "label": "Project ID",
+        "type": "integer",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "build_status",
+        "label": "Build status",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "build_name",
+        "label": "Build name",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "pipline_id",
+        "label": "Pipeline ID",
+        "type": "integer",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "user.name",
+        "label": "Username",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "tag",
+        "label": "Trigger by tag",
+        "type": "bool",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

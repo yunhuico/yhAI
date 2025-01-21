@@ -1,0 +1,39 @@
+{
+  "name": {
+    "en-US": "Receive data",
+    "zh-CN": "接收数据"
+  },
+  "shortName": "Data",
+  "desc": {
+    "en-US": "Triggers when new data is received.",
+    "zh-CN": "当接收到新的数据时触发流程。"
+  },
+  "type": "trigger",
+  "triggerType": "webhook",
+  "adapterClass": "ultrafox/webhook",
+  "class": "ultrafox/webhook#receiveData",
+  "noMoreSamplesMsg": {
+    "en-US": "Please configure your application with our generated webhook URL first and test again to have access to its data.",
+    "zh-CN": "请先使用我们生成的webhook地址配置您的应用程序，并再次测试以访问其数据。"
+  },
+  "testPageSchema": {
+    "fields": [
+      {
+        "key": "webhookURL",
+        "label": {
+          "en-US": "Webhook URL",
+          "zh-CN": "Webhook 地址"
+        },
+        "desc": {
+          "en-US": "You need to copy the generated webhook URL to send requests to.",
+          "zh-CN": "您需要复制生成的 Webhook 地址来向其发送请求。"
+        },
+        "type": "string",
+        "ui": {
+          "disabled": true,
+          "copyable": true
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "name": {
+    "en-US": "Update release",
+    "zh-CN": "更新发布"
+  },
+  "desc": {
+    "en-US": "Update the information of the release in the project you choose.",
+    "zh-CN": "对所选项目下某一发布的内容进行更新。"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/gitlab",
+  "class": "ultrafox/gitlab#updateRelease",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "projectId",
+        "label": {
+          "en-US": "Project",
+          "zh-cn": "项目"
+        },
+        "desc": {
+          "en-US": "Please choose the project, or switch to custom input mode to enter the project ID.",
+          "zh-CN": "请选择您GitLab中的一个项目，或切换到自定义输入模式输入项目 ID。"
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listProject",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      },
+      {
+        "key": "tagName",
+        "label": {
+          "en-US": "Tag name",
+          "zh-CN": "Git 标签。"
+        },
+        "desc": {
+          "en-US": "Related git tag",
+          "zh-CN": "与发布关联的 Git 标签。"
+        },
+        "required": true,
+        "type": "string"
+      },
+      {
+        "key": "description",
+        "label": {
+          "en-US": "Description",
+          "zh-CN": "发布的描述"
+        },
+        "desc": {
+          "en-US": "The description of the release. You can use Markdown.",
+          "zh-CN": "发布的描述。您可以使用 Markdown。"
+        },
+        "type": "string",
+        "ui": {
+          "component": "textarea"
+        }
+      },
+      {
+        "key": "milestones",
+        "label": {
+          "en-US": "Milestones",
+          "zh-CN": "里程碑"
+        },
+        "desc": {
+          "en-US": "The title of each milestone to associate with the release. GitLab Premium customers can specify group milestones.",
+          "zh-CN": "与发布相关联的每个里程碑的标题。专业版客户可以指定群组里程碑。"
+        },
+        "type": "list",
+        "child": {
+          "type": "string",
+          "required": true
+        }
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "success",
+        "label": "Updated successfully",
+        "type": "bool",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

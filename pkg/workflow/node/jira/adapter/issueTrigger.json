@@ -1,0 +1,145 @@
+{
+  "name": {
+    "en-US": "Issue trigger",
+    "zh-CN": "事务触发"
+  },
+  "desc": {
+    "en-US": "Triggers when an issue is created or updated.",
+    "zh-CN": "当议题被创建或更新时触发流程。"
+  },
+  "type": "trigger",
+  "triggerType": "poll",
+  "shortName": "Issue",
+  "adapterClass": "ultrafox/jira",
+  "class": "ultrafox/jira#issueTrigger",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "projectKey",
+        "label": {
+          "en-US": "Project",
+          "zh-CN": "项目"
+        },
+        "desc": {
+          "en-US": "Please choose a project of your Jira, or switch to custom input mode to input project key.",
+          "zh-CN": "请选择您Jira中的一个项目，或切换到自定义输入模式输入项目 Key。"
+        },
+        "type": "string",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/jira#listProjectKeys",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      },
+      {
+        "key": "scope",
+        "label": {
+          "en-US": "Scope",
+          "zh-CN": "范围"
+        },
+        "desc": {
+          "en-US": "Choose a scope to trigger the workflow，by issue creation or issue updating",
+          "zh-CN": "选择触发流程的范围，按事务创建触发或事务更新触发。"
+        },
+        "type": "string",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "disableCustomInput": true,
+          "selectFrom": {
+            "source": "static",
+            "options": [
+              {
+                "label": {
+                  "en-US": "New issue",
+                  "zh-CN": "事务创建"
+                },
+                "value": "New issue"
+              },
+              {
+                "label": {
+                  "en-US": "Updated issue",
+                  "zh-CN": "事务更新"
+                },
+                "value": "Updated issue"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "id",
+        "label": "Issue ID",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "key",
+        "label": "Issue key",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "fields.summary",
+        "label": "Issue summary",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "fields.project.name",
+        "label": "Project name",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "fields.project.key",
+        "label": "Project key",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "fields.status.name",
+        "label": "Status name",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "fields.status.id",
+        "label": "Status ID",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "fields.creator.displayName",
+        "label": "Creator name",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

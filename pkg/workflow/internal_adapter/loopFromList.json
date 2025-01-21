@@ -1,0 +1,66 @@
+{
+  "name": {
+    "en-US": "Loop from list",
+    "zh-CN": "从列表中循环"
+  },
+  "desc": {
+    "en-US": "The elements of lists can be split and processed through the loop.",
+    "zh-CN": "列表的元素可以被拆分，并通过循环逐条处理。"
+  },
+  "type": "logic",
+  "adapterClass": "ultrafox/foreach",
+  "class": "ultrafox/foreach#loopFromList",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "inputCollection",
+        "label": {
+          "en-US": "Values to loop",
+          "zh-CN": "循环的内容"
+        },
+        "desc": {
+          "en-US": "Select the list data from attribute to loop through. One piece of data is executed each time until the end of the loop.",
+          "zh-CN": "从属性中选择需要轮询的列表数据。每次执行一条数据，直至循环结束。"
+        },
+        "type": "string",
+        "required": true
+      },
+      {
+        "key": "transition",
+        "type": "string",
+        "ui": {
+          "component": "hidden"
+        },
+        "required": false
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "loopTotalIterations",
+        "label": "Total iterations",
+        "type": "int",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "loopIteration",
+        "label": "Current iteration number",
+        "type": "int",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "loopIterationIsLast",
+        "label": "Is last iteration",
+        "type": "bool",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

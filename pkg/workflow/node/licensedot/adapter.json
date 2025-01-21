@@ -1,0 +1,44 @@
+{
+  "name": {
+    "en-US": "License dot(Beta)",
+    "zh-CN": "License dot（内部测试中）"
+  },
+  "class": "ultrafox/licensedot",
+  "version": "0.0.1",
+  "description": "Adapter of License dot",
+  "icon": "official://licensedot",
+  "url": "https://license.gitlab.cn/",
+  "tags": [
+    "devops",
+    "CI/CD"
+  ],
+  "supportCredentials": [
+    "accessToken"
+  ],
+  "inputSchemas": {
+    "accessToken": {
+      "fields": [
+        {
+          "key": "server",
+          "label": "Server address",
+          "type": "string",
+          "default": "https://license.gitlab.cn/",
+          "required": true
+        },
+        {
+          "key": "email",
+          "label": "User email",
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "accessToken",
+          "label": "Access token",
+          "type": "string",
+          "encrypted": true,
+          "required": true
+        }
+      ]
+    }
+  }
+}

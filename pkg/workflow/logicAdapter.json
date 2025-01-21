@@ -1,0 +1,15 @@
+{
+  "name": {
+    "en-US": "Logic",
+    "zh-CN": "逻辑分支"
+  },
+  "class": "ultrafox/logic",
+  "version": "0.0.1",
+  "icon": "official://logic",
+  "url": "https://ultrafox.cn",
+  "tags": [
+    "internal",
+    "logic"
+  ],
+  "isInternal": true
+}

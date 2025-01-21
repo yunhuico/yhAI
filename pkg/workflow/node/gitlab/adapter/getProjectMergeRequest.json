@@ -1,0 +1,129 @@
+{
+  "name": {
+    "en-US": "Get project merge request",
+    "zh-CN": "获取合并请求信息"
+  },
+  "desc": {
+    "en-US": "Get the merge request information according to the specific merge request ID in the project you choose.",
+    "zh-CN": "根据项目中的合并请求ID获取该合并请求的信息。"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/gitlab",
+  "class": "ultrafox/gitlab#getProjectMergeRequest",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "projectId",
+        "label": {
+          "en-US": "Project",
+          "zh-CN": "项目"
+        },
+        "desc": {
+          "en-US": "Please choose a project, or switch to custom input mode to enter the project ID.",
+          "zh-CN": "请选择项目，或切换到自定义输入模式输入项目 ID。"
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listProject",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      },
+      {
+        "key": "mergeRequestId",
+        "label": {
+          "en-US": "Merge request",
+          "zh-CN": "合并请求"
+        },
+        "desc": {
+          "en-US": "Please choose the merge request, or switch to custom input mode to enter the merge request ID.",
+          "zh-CN": "请选择合并请求，或切换到自定义输入模式输入合并请求 ID。"
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listProjectMergeRequests",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "title",
+        "label": "Title",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "description",
+        "label": "Description",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "assignees.[].username",
+        "label": "Assignees username list",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "assignees.[].name",
+        "label": "Assignees name list",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "state",
+        "label": "State",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "author.name",
+        "label": "Author",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "project_id",
+        "label": "Project ID",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "web_url",
+        "label": "Merge request link",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

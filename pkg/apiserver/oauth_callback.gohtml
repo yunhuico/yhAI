@@ -1,0 +1,9 @@
+<html lang="en">
+<h2>Please wait...</h2>
+<script>
+    (function() {
+        let msg = {{ .Msg | jsonify }};
+        window.opener.postMessage(msg, window.origin);
+    })();
+</script>
+</html>

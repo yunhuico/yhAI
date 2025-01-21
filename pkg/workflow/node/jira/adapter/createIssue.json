@@ -1,0 +1,407 @@
+{
+  "name": {
+    "en-US": "Create issue",
+    "zh-CN": "创建事务"
+  },
+  "desc": {
+    "en-US": "Create an issue in the project you choose. Linking issues and adding attachments are not supported in this event currently.",
+    "zh-CN": "选择某个项目创建事务。该事件中暂不支持链接事务和添加附件。"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/jira",
+  "class": "ultrafox/jira#createIssue",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "projectId",
+        "label": {
+          "en-US": "Project",
+          "zh-CN": "项目"
+        },
+        "desc": {
+          "en-US": "Please choose a Jira project, or switch to custom input mode and enter project ID.",
+          "zh-CN": "请选择您Jira中的一个项目，或切换到自定义输入模式填写项目ID。"
+        },
+        "type": "string",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/jira#listProjectIDs",
+            "enableSearch": true,
+            "enablePage": false
+          }
+        }
+      },
+      {
+        "key": "issueType",
+        "label": {
+          "en-US": "Issue type",
+          "zh-CN": "事务类型"
+        },
+        "desc": {
+          "en-US": "Please choose an issue type, or switch to custom input mode and enter issue type ID.",
+          "zh-CN": "请选择一个事务类型，或切换到自定义输入模式填写事务类型ID。"
+        },
+        "type": "string",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "static",
+            "options": [
+              {
+                "label": {
+                  "en-US": "Bug",
+                  "zh-CN": "故障"
+                },
+                "value": "Bug"
+              },
+              {
+                "label": {
+                  "en-US": "Story",
+                  "zh-CN": "故事"
+                },
+                "value": "Story"
+              },
+              {
+                "label": {
+                  "en-US": "Task",
+                  "zh-CN": "任务"
+                },
+                "value": "Task"
+              },
+              {
+                "label": {
+                  "en-US": "Epic",
+                  "zh-CN": "长篇故事"
+                },
+                "value": "Epic"
+              },
+              {
+                "label": {
+                  "en-US": "Subtask",
+                  "zh-CN": "子任务"
+                },
+                "value": "Subtask"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "summary",
+        "label": {
+          "en-US": "Summary",
+          "zh-CN": "摘要"
+        },
+        "desc": {
+          "en-US": "Please input the summary of the issue.",
+          "zh-CN": "请输入事务的摘要。"
+        },
+        "type": "string",
+        "required": true
+      },
+      {
+        "key": "parentIssueKey",
+        "label": {
+          "en-US": "Parent",
+          "zh-CN": "父事务"
+        },
+        "desc": {
+          "en-US": "Choose a parent of the issue, or switch to custom input mode and enter parent issue key.",
+          "zh-CN": "选择该事务的父事务，或切换到自定义输入模式填写父事务Key。"
+        },
+        "type": "string",
+        "ui": {
+          "display": {
+            "issueType": "Subtask"
+          },
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/jira#searchProjectIssues?projectId=projectId",
+            "enableSearch": true,
+            "enablePage": false
+          }
+        }
+      },
+      {
+        "key": "description",
+        "label": {
+          "en-US": "Description",
+          "zh-CN": "描述"
+        },
+        "desc": {
+          "en-US": "Input the description of the issue.",
+          "zh-CN": "输入该事务的描述。"
+        },
+        "type": "string",
+        "ui": {
+          "component": "textarea"
+        }
+      },
+      {
+        "key": "flaggedImpediment",
+        "label": {
+          "en-US": "Flagged",
+          "zh-CN": "阻挡标记"
+        },
+        "desc": {
+          "en-US": "Allows to flag issues with impediments.",
+          "zh-CN": "为事务添加阻挡标记。"
+        },
+        "type": "bool",
+        "ui": {
+          "disableCustomInput": true
+        }
+      },
+      {
+        "key": "labels",
+        "label": {
+          "en-US": "Labels",
+          "zh-CN": "标签"
+        },
+        "desc": {
+          "en-US": "Add some labels to the issue.",
+          "zh-CN": "为该事务添加标签。"
+        },
+        "type": "list",
+        "child": {
+          "type": "string",
+          "required": true
+        }
+      },
+      {
+        "key": "reporterUserId",
+        "label": {
+          "en-US": "Reporter",
+          "zh-CN": "报告人"
+        },
+        "desc": {
+          "en-US": "Please choose a reporter for the issue, or switch to custom input mode and enter reporter ID. The default value is the account you connect to.",
+          "zh-CN": "请为该事务选择报告人，或切换到自定义输入模式填写报告人ID。默认为您连接的账户。"
+        },
+        "type": "string",
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/jira#listAssignableUsers?projectId=projectId",
+            "enableSearch": true,
+            "enablePage": false
+          }
+        }
+      },
+      {
+        "key": "assigneeUserId",
+        "label": {
+          "en-US": "Assignee",
+          "zh-CN": "经办人"
+        },
+        "desc": {
+          "en-US": "Choose an assignee for the issue,  or switch to custom input mode and enter assignee ID.",
+          "zh-CN": "为该事务选择经办人，或切换到自定义输入模式填写经办人ID。"
+        },
+        "type": "string",
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/jira#listAssignableUsers?projectId=projectId",
+            "enableSearch": true,
+            "enablePage": false
+          }
+        }
+      },
+      {
+        "key": "startDate",
+        "label": {
+          "en-US": "Start date",
+          "zh-CN": "开始日期"
+        },
+        "desc": {
+          "en-US": "Select the start date of the epic.",
+          "zh-CN": "选择长篇故事的开始日期。"
+        },
+        "type": "string",
+        "ui": {
+          "display": {
+            "issueType": "Epic"
+          },
+          "component": "date",
+          "dateFormat": "YYYY-MM-DD"
+        }
+      },
+      {
+        "key": "dueDate",
+        "label": {
+          "en-US": "Due date",
+          "zh-CN": "截止日期"
+        },
+        "desc": {
+          "en-US": "Select the due date of the epic.",
+          "zh-CN": "选择长篇故事的截止日期。"
+        },
+        "type": "string",
+        "ui": {
+          "display": {
+            "issueType": "Epic"
+          },
+          "component": "date",
+          "dateFormat": "YYYY-MM-DD"
+        }
+      },
+      {
+        "key": "issueColor",
+        "label": {
+          "en-US": "Issue color",
+          "zh-CN": "事务颜色"
+        },
+        "desc": {
+          "en-US": "Select a color to represent the issue.",
+          "zh-CN": "选择一个代表该事务的颜色。"
+        },
+        "type": "string",
+        "ui": {
+          "display": {
+            "issueType": "Epic"
+          },
+          "component": "select",
+          "selectFrom": {
+            "source": "static",
+            "options": [
+              {
+                "label": {
+                  "en-US": "Purple",
+                  "zh-CN": "紫色"
+                },
+                "value": "purple"
+              },
+              {
+                "label": {
+                  "en-US": "Blue",
+                  "zh-CN": "蓝色"
+                },
+                "value": "blue"
+              },
+              {
+                "label": {
+                  "en-US": "Green",
+                  "zh-CN": "绿色"
+                },
+                "value": "green"
+              },
+              {
+                "label": {
+                  "en-US": "Teal",
+                  "zh-CN": "青色"
+                },
+                "value": "teal"
+              },
+              {
+                "label": {
+                  "en-US": "Yellow",
+                  "zh-CN": "黄色"
+                },
+                "value": "yellow"
+              },
+              {
+                "label": {
+                  "en-US": "Orange",
+                  "zh-CN": "橙色"
+                },
+                "value": "orange"
+              },
+              {
+                "label": {
+                  "en-US": "Grey",
+                  "zh-CN": "灰色"
+                },
+                "value": "grey"
+              },
+              {
+                "label": {
+                  "en-US": "Dark Purple",
+                  "zh-CN": "深紫色"
+                },
+                "value": "dark_purple"
+              },
+              {
+                "label": {
+                  "en-US": "Dark Blue",
+                  "zh-CN": "深蓝色"
+                },
+                "value": "dark_blue"
+              },
+              {
+                "label": {
+                  "en-US": "Dark Green",
+                  "zh-CN": "深绿色"
+                },
+                "value": "dark_green"
+              },
+              {
+                "label": {
+                  "en-US": "Dark Teal",
+                  "zh-CN": "深青色"
+                },
+                "value": "dark_teal"
+              },
+              {
+                "label": {
+                  "en-US": "Dark Yellow",
+                  "zh-CN": "深黄色"
+                },
+                "value": "dark_yellow"
+              },
+              {
+                "label": {
+                  "en-US": "Dark Orange",
+                  "zh-CN": "深橙色"
+                },
+                "value": "dark_orange"
+              },
+              {
+                "label": {
+                  "en-US": "Dark Grey",
+                  "zh-CN": "深灰色"
+                },
+                "value": "dark_grey"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "id",
+        "label": "Issue ID",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "key",
+        "label": "Issue key",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "self",
+        "label": "Issue URL",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

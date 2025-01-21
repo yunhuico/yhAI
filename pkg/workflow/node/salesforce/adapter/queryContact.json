@@ -1,0 +1,91 @@
+{
+  "name": {
+    "en-US": "Query contact attribute",
+    "zh-CN": "查询联系人属性"
+  },
+  "desc": {
+    "en-US": "Query contact attribute according to the contact ID.",
+    "zh-CN": "根据联系人ID查询联系人属性。"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/salesforce",
+  "class": "ultrafox/salesforce#queryContact",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "contactId",
+        "label": {
+          "en-US": "Contact",
+          "zh-CN": "联系人"
+        },
+        "desc": {
+          "en-US": "Please choose the contact, or switch to custom input mode to enter the contact ID.",
+          "zh-CN": "请选择联系人，或切换到自定义输入模式输入联系人 ID。"
+        },
+        "type": "string",
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/salesforce#listContact",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        },
+        "required": true
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "Id",
+        "label": "Contact ID",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "MobilePhone",
+        "label": "Contact mobile phone",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "Email",
+        "label": "Contact email",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "Title",
+        "label": "Contact title",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "Department",
+        "label": "Contact department",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "Name",
+        "label": "Contact name",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

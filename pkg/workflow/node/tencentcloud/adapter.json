@@ -1,0 +1,38 @@
+{
+  "name": {
+    "en-US": "Tencent cloud",
+    "zh-CN": "腾讯云"
+  },
+  "class": "ultrafox/tencentcloud",
+  "version": "0.0.1",
+  "description": "Adapter of Tencentcloud",
+  "icon": "official://tencentcloud",
+  "url": "https://cloud.tencent.com",
+  "tags": [
+    "devops",
+    "CI/CD"
+  ],
+  "supportCredentials": [
+    "custom"
+  ],
+  "inputSchemas": {
+    "custom": {
+      "fields": [
+        {
+          "key": "secretId",
+          "label": "Secret ID",
+          "type": "string",
+          "encrypted": true,
+          "required": true
+        },
+        {
+          "key": "secretKey",
+          "label": "Secret Key",
+          "type": "string",
+          "encrypted": true,
+          "required": true
+        }
+      ]
+    }
+  }
+}

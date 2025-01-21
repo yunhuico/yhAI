@@ -1,0 +1,62 @@
+{
+  "name": {
+    "en-US": "Opportunity created",
+    "zh-CN": "创建新业务机会"
+  },
+  "desc": {
+    "en-US": "Triggers when an opportunity is created in Salesforce.",
+    "zh-CN": "当有新的业务机会被创建时触发流程。"
+  },
+  "shortName": "Opportunity",
+  "type": "trigger",
+  "triggerType": "webhook",
+  "adapterClass": "ultrafox/salesforce",
+  "class": "ultrafox/salesforce#opportunityCreatedTrigger",
+  "inputSchema": {
+    "fields": []
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "attributes.type",
+        "label": "SObject type",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "Id",
+        "label": "Opportunity ID",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "StageName",
+        "label": "Opportunity stage",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "Name",
+        "label": "Opportunity name",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "CreatedById",
+        "label": "Opportunity creator",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

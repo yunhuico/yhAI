@@ -1,0 +1,96 @@
+{
+  "name": {
+    "en-US": "Add project issue label",
+    "zh-CN": "给议题添加标记"
+  },
+  "desc": {
+    "en-US": "Add labels to an issue in the project you choose.",
+    "zh-CN": "为所选项目中的某个议题添加标记。"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/gitlab",
+  "class": "ultrafox/gitlab#addProjectIssueLabel",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "projectId",
+        "label": {
+          "en-US": "Project",
+          "zh-CN": "项目"
+        },
+        "desc": {
+          "en-US": "Please choose the project, or switch to custom input mode to enter the project ID.",
+          "zh-CN": "请选择项目，或切换到自定义输入模式输入项目 ID。"
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listProject",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      },
+      {
+        "key": "issueId",
+        "label": {
+          "en-US": "Issue",
+          "zh-CN": "议题"
+        },
+        "desc": {
+          "en-US": "Please choose the issue ID, or switch to custom input mode to enter the issue ID.",
+          "zh-CN": "请选择议题，或切换到自定义输入模式输入议题 ID。"
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listIssue",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      },
+      {
+        "key": "addLabels",
+        "label": {
+          "en-US": "Add labels",
+          "zh-CN": "添加标记"
+        },
+        "desc": {
+          "en-US": "Please add labels.",
+          "zh-CN": "请添加标记。"
+        },
+        "type": "list",
+        "child": {
+          "type": "string",
+          "required": true
+        }
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "currentLabels",
+        "label": "Current labels",
+        "type": "list",
+        "child": {
+          "type": "string",
+          "where": [
+            "template"
+          ]
+        },
+        "where": [
+          "template",
+          "foreach"
+        ]
+      }
+    ]
+  }
+}

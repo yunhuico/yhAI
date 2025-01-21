@@ -1,0 +1,62 @@
+{
+  "name": "Send ActionCard message to group",
+  "type": "actor",
+  "hidden": true,
+  "adapterClass": "ultrafox/dingtalk",
+  "class": "ultrafox/dingtalk#sendActionCardMessage",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "title",
+        "label": "Title",
+        "type": "string",
+        "required": true
+      },
+      {
+        "key": "text",
+        "label": "Content",
+        "type": "string",
+        "ui": {
+          "component": "textarea"
+        },
+        "required": true
+      },
+      {
+        "key": "singleURL",
+        "label": "Message URL",
+        "type": "string"
+      },
+      {
+        "key": "picUrl",
+        "label": "Picture URL",
+        "type": "string"
+      },
+      {
+        "key": "btns",
+        "label": "Buttons",
+        "type": "list",
+        "child": {
+          "type": "struct",
+          "fields": [
+            {
+              "key": "title",
+              "label": "Title",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "actionURL",
+              "label": "Action URL",
+              "type": "string",
+              "required": true
+            }
+          ],
+          "required": true
+        }
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": []
+  }
+}

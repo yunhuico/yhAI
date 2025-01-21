@@ -1,0 +1,59 @@
+{
+  "name": {
+    "en-US": "Query account attribute",
+    "zh-CN": "查询账户属性"
+  },
+  "desc": {
+    "en-US": "Query account attribute according to the account ID.",
+    "zh-CN": "根据账户ID查询账户属性。"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/salesforce",
+  "class": "ultrafox/salesforce#queryAccount",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "accountId",
+        "label": {
+          "en-US": "Account",
+          "zh-CN": "账户"
+        },
+        "desc": {
+          "en-US": "Please choose the account, or switch to custom input mode to enter the account ID.",
+          "zh-CN": "请选择账户，或切换到自定义输入模式输入账户 ID。"
+        },
+        "type": "string",
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/salesforce#listAccount",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        },
+        "required": true
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "Id",
+        "label": "Account ID",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "Name",
+        "label": "Account name",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

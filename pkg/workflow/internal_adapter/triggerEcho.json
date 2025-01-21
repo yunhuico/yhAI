@@ -1,0 +1,14 @@
+{
+  "name": "Trigger echo",
+  "type": "trigger",
+  "triggerType": "webhook",
+  "adapterClass": "ultrafox/debug",
+  "class": "ultrafox/debug#triggerEcho",
+  "hidden": true,
+  "inputSchema": {
+    "fields": []
+  },
+  "outputSchema": {
+    "fields": []
+  }
+}

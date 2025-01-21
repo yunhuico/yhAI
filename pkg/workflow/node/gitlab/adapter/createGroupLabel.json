@@ -1,0 +1,96 @@
+{
+  "name": {
+    "en-US": "Create group label",
+    "zh-CN": "创建群组标记"
+  },
+  "desc": {
+    "en-US": "Create a group label in the group you choose.",
+    "zh-CN": "创建一个群组标记。"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/gitlab",
+  "class": "ultrafox/gitlab#createGroupLabel",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "groupId",
+        "label": {
+          "en-US": "Group",
+          "zh-CN": "群组"
+        },
+        "desc": {
+          "en-US": "Please choose a group, or switch to custom input mode to enter the group ID.",
+          "zh-CN": "请选择群组，或切换到自定义输入模式输入群组 ID。"
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listGroup",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      },
+      {
+        "key": "name",
+        "label": {
+          "en-US": "Name",
+          "zh-CN": "名称"
+        },
+        "desc": {
+          "en-US": "Please input the name of your group label.",
+          "zh-CN": "请输入您的群组标记名称。"
+        },
+        "type": "string",
+        "required": true
+      },
+      {
+        "key": "color",
+        "label": {
+          "en-US": "Color",
+          "zh-CN": "颜色"
+        },
+        "desc": {
+          "en-US": "Please select a color to represent the label.",
+          "zh-CN": "请选择一个颜色代表该标记。"
+        },
+        "type": "string",
+        "ui": {
+          "component": "color"
+        },
+        "required": true
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "id",
+        "label": "Label ID",
+        "type": "integer",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "name",
+        "label": "Label name",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "color",
+        "label": "Label color",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

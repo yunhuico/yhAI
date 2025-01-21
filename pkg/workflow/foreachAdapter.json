@@ -1,0 +1,14 @@
+{
+  "name": {
+    "en-US": "Foreach",
+    "zh-CN": "循环"
+  },
+  "class": "ultrafox/foreach",
+  "version": "0.0.1",
+  "icon": "official://foreach",
+  "url": "https://ultrafox.io",
+  "tags": [
+    "foreach"
+  ],
+  "isInternal": true
+}

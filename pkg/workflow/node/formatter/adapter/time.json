@@ -1,0 +1,343 @@
+{
+  "name": {
+    "en-US": "Format Date/Time",
+    "zh-CN": "时间转换"
+  },
+  "desc": {
+    "en-US": "Adjust the date/time format in the preceding step to connect to the subsequent system.",
+    "zh-CN": "调整前序步骤中的日期时间格式以便对接后续系统。"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/format",
+  "class": "ultrafox/format#datetime",
+  "hidden": false,
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "inputTime",
+        "label": {
+          "en-US": "Input date/time",
+          "zh-CN": "输入日期/时间"
+        },
+        "desc": {
+          "en-US": "Input the date/time you would like to format.",
+          "zh-CN": "请输入您想要转换的日期/时间。"
+        },
+        "type": "string",
+        "required": true
+      },
+      {
+        "key": "fromTimezone",
+        "label": {
+          "en-US": "From timezone",
+          "zh-CN": "输入数据的时区"
+        },
+        "desc": {
+          "en-US": "If no timezone is provided in the input data, choose the specific timezone of it. The default value is UTC",
+          "zh-CN": "如果输入数据中没有提供时区，选择输入时间的具体时区。默认为UTC时区。"
+        },
+        "type": "string",
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "static",
+            "options": [
+              {
+                "label": {
+                  "en-US": "Automatically",
+                  "zh-CN": "自动选择"
+                },
+                "value": "auto"
+              },
+              {
+                "label": {
+                  "en-US": "Shanghai",
+                  "zh-CN": "上海"
+                },
+                "value": "Asia/Shanghai"
+              },
+              {
+                "label": "UTC",
+                "value": "UTC"
+              },
+              {
+                "label": {
+                  "en-US": "Hong Kong",
+                  "zh-CN": "香港"
+                },
+                "value": "Hongkong"
+              },
+              {
+                "label": {
+                  "en-US": "Japan",
+                  "zh-CN": "日本"
+                },
+                "value": "Japan"
+              },
+              {
+                "label": {
+                  "en-US": "Singapore",
+                  "zh-CN": "新加坡"
+                },
+                "value": "Asia/Singapore"
+              },
+              {
+                "label": {
+                  "en-US": "New York",
+                  "zh-CN": "纽约"
+                },
+                "value": "America/New_York"
+              },
+              {
+                "label": {
+                  "en-US": "London",
+                  "zh-CN": "伦敦"
+                },
+                "value": "Europe/London"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "fromFormat",
+        "label": {
+          "en-US": "From format",
+          "zh-CN": "输入数据的格式"
+        },
+        "desc": {
+          "en-US": "You can specify the format of input data to avoid some misidentification.",
+          "zh-CN": "您可以设置输入数据的具体格式以避免错误识别。"
+        },
+        "type": "string",
+        "default": "auto",
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "static",
+            "options": [
+              {
+                "label": {
+                  "en-US": "Automatically identify format",
+                  "zh-CN": "自动选择"
+                },
+                "value": "auto"
+              },
+              {
+                "label": "YYYY-MM-DD HH:mm:ss（2006-01-02 15:04:05）",
+                "value": "2006-01-02 15:04:05"
+              },
+              {
+                "label": "YYYY-MM-DDTHH:mm:ssZ（2006-01-02T15:04:05-07:00）",
+                "value": "2006-01-02T15:04:05-07:00"
+              },
+              {
+                "label": "YYYY/MM/DD HH:mm:ss（2006/01/02 15:04:05）",
+                "value": "2006/01/02 15:04:05"
+              },
+              {
+                "label": "YYYY-MM-DD（2006-01-02）",
+                "value": "2006-01-02"
+              },
+              {
+                "label": "YYYY/MM/DD（2006/01/02）",
+                "value": "2006/01/02"
+              },
+              {
+                "label": "DD/MM/YYYY（02/01/2006）",
+                "value": "02/01/2006"
+              },
+              {
+                "label": "YYYY-MM（2006-01）",
+                "value": "2006-01"
+              },
+              {
+                "label": "MM-DD（01-02）",
+                "value": "01-02"
+              },
+              {
+                "label": "YYYY年M月D日HH:mm:ss（2006年01月02日15:04:05）",
+                "value": "2006年01月02日15:04:05"
+              },
+              {
+                "label": "YYYY年MM月DD日（2006年01月02日）",
+                "value": "2006年01月02日"
+              },
+              {
+                "label": "YYYY年MM月（2006年01月）",
+                "value": "2006年01月"
+              },
+              {
+                "label": "YYYY月MM日（01月02日）",
+                "value": "01月02日"
+              },
+              {
+                "label": "Timestamp(s)（1597247662）",
+                "value": "timestamp"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "toTimezone",
+        "label": {
+          "en-US": "To timezone",
+          "zh-CN": "转换后的时区"
+        },
+        "desc": {
+          "en-US": "Choose a timezone the input date/time should be converted to. The default value is UTC",
+          "zh-CN": "选择输入日期/时间将要转换成的时区。默认为UTC时区。"
+        },
+        "type": "string",
+        "default": "UTC",
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "static",
+            "options": [
+              {
+                "label": {
+                  "en-US": "Shanghai",
+                  "zh-CN": "上海"
+                },
+                "value": "Asia/Shanghai"
+              },
+              {
+                "label": "UTC",
+                "value": "UTC"
+              },
+              {
+                "label": {
+                  "en-US": "Hong Kong",
+                  "zh-CN": "香港"
+                },
+                "value": "Hongkong"
+              },
+              {
+                "label": {
+                  "en-US": "Japan",
+                  "zh-CN": "日本"
+                },
+                "value": "Japan"
+              },
+              {
+                "label": {
+                  "en-US": "Singapore",
+                  "zh-CN": "新加坡"
+                },
+                "value": "Asia/Singapore"
+              },
+              {
+                "label": {
+                  "en-US": "New York",
+                  "zh-CN": "纽约"
+                },
+                "value": "America/New_York"
+              },
+              {
+                "label": {
+                  "en-US": "London",
+                  "zh-CN": "伦敦"
+                },
+                "value": "Europe/London"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "toFormat",
+        "label": {
+          "en-US": "To format",
+          "zh-CN": "转换后的格式"
+        },
+        "desc": {
+          "en-US": "Please choose a format that the date/time is converted to.",
+          "zh-CN": "选择输入日期/时间将要转换成的格式。"
+        },
+        "type": "string",
+        "required": true,
+        "default": "2006-01-02T15:04:05-07:00",
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "static",
+            "options": [
+              {
+                "label": "YYYY-MM-DDTHH:mm:ssZ（2006-01-02T15:04:05-07:00）",
+                "value": "2006-01-02T15:04:05-07:00"
+              },
+              {
+                "label": "YYYY-MM-DD HH:mm:ss（2006-01-02 15:04:05）",
+                "value": "2006-01-02 15:04:05"
+              },
+              {
+                "label": "YYYY/MM/DD HH:mm:ss（2006/01/02 15:04:05）",
+                "value": "2006/01/02 15:04:05"
+              },
+              {
+                "label": "YYYY-MM-DD（2006-01-02）",
+                "value": "2006-01-02"
+              },
+              {
+                "label": "YYYY/MM/DD（2006/01/02）",
+                "value": "2006/01/02"
+              },
+              {
+                "label": "DD/MM/YYYY（02/01/2006）",
+                "value": "02/01/2006"
+              },
+              {
+                "label": "YYYY-MM（2006-01）",
+                "value": "2006-01"
+              },
+              {
+                "label": "MM-DD（01-02）",
+                "value": "01-02"
+              },
+              {
+                "label": "YYYY年M月D日HH:mm:ss（2006年01月02日15:04:05）",
+                "value": "2006年01月02日15:04:05"
+              },
+              {
+                "label": "YYYY年MM月DD日（2006年01月02日）",
+                "value": "2006年01月02日"
+              },
+              {
+                "label": "YYYY年MM月（2006年01月）",
+                "value": "2006年01月"
+              },
+              {
+                "label": "YYYY月MM日（01月02日）",
+                "value": "01月02日"
+              },
+              {
+                "label": "Timestamp(s)（1597247662）",
+                "value": "timestamp"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "label": "Time format",
+        "type": "string",
+        "child": {
+          "type": "string",
+          "where": [
+            "template"
+          ],
+          "fields": null
+        },
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

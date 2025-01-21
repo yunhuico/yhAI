@@ -1,0 +1,73 @@
+{
+  "name": "GitLab",
+  "class": "ultrafox/gitlab",
+  "version": "0.0.1",
+  "description": "Adapter of Gitlab",
+  "icon": "official://gitlab",
+  "url": "https://www.gitlab.com",
+  "tags": [
+    "devops",
+    "CI/CD"
+  ],
+  "supportCredentials": [
+    "OAuth",
+    "accessToken"
+  ],
+  "inputSchemas": {
+    "OAuth": {
+      "fields": [
+        {
+          "key": "path",
+          "label": {
+            "en-US": "Platform",
+            "zh-CN": "平台"
+          },
+          "type": "string",
+          "required": true,
+          "default": "/api/v1/credentials/oauth/authorize/jihulab",
+          "ui": {
+            "component": "select",
+            "disableCustomInput": true,
+            "selectFrom": {
+              "source": "static",
+              "options": [
+                {
+                  "label": {
+                    "en-US": "Jihu Gitlab",
+                    "zh-CN": "极狐Gitlab"
+                  },
+                  "value": "/api/v1/credentials/oauth/authorize/jihulab"
+                },
+                {
+                  "label": {
+                    "en-US": "Gitlab",
+                    "zh-CN": "Gitlab"
+                  },
+                  "value": "/api/v1/credentials/oauth/authorize/gitlab"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "accessToken": {
+      "fields": [
+        {
+          "key": "server",
+          "label": "Server address",
+          "type": "string",
+          "default": "https://gitlab.com",
+          "required": true
+        },
+        {
+          "key": "accessToken",
+          "label": "Access token",
+          "type": "string",
+          "encrypted": true,
+          "required": true
+        }
+      ]
+    }
+  }
+}

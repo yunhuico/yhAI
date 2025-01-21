@@ -1,0 +1,175 @@
+{
+  "name": {
+    "en-US": "Every month",
+    "zh-CN": "每月"
+  },
+  "desc": {
+    "en-US": "Triggers every month.",
+    "zh-CN": "每月触发流程。"
+  },
+  "type": "trigger",
+  "triggerType": "cron",
+  "shortName": "Every Month",
+  "adapterClass": "ultrafox/schedule",
+  "class": "ultrafox/schedule#everyMonth",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "timezone",
+        "label": {
+          "en-US": "Time zone",
+          "zh-CN": "时区"
+        },
+        "desc": {
+          "en-US": "Please choose a time zone.",
+          "zh-CN": "请选择时区。"
+        },
+        "type": "string",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/schedule#timezone"
+          }
+        }
+      },
+      {
+        "key": "daysOfMonth",
+        "label": {
+          "en-US": "Day of month",
+          "zh-CN": "日期"
+        },
+        "desc": {
+          "en-US": "Please choose or input the day of the month to trigger.",
+          "zh-CN": "请选择每月具体触发的日期。"
+        },
+        "type": "list",
+        "child": {
+          "type": "integer",
+          "required": true,
+          "ui": {
+            "component": "select",
+            "multiple": true,
+            "selectFrom": {
+              "source": "static",
+              "options": [
+                {"label":"1","value":1},{"label":"2","value":2},{"label":"3","value":3},{"label":"4","value":4},{"label":"5","value":5},{"label":"6","value":6},{"label":"7","value":7},{"label":"8","value":8},{"label":"9","value":9},{"label":"10","value":10},{"label":"11","value":11},{"label":"12","value":12},{"label":"13","value":13},{"label":"14","value":14},{"label":"15","value":15},{"label":"16","value":16},{"label":"17","value":17},{"label":"18","value":18},{"label":"19","value":19},{"label":"20","value":20},{"label":"21","value":21},{"label":"22","value":22},{"label":"23","value":23},{"label":"24","value":24},{"label":"25","value":25},{"label":"26","value":26},{"label":"27","value":27},{"label":"28","value":28},{"label":"29","value":29},{"label":"30","value":30},{"label":"31","value":31}
+              ]
+            }
+          }
+        },
+        "required": true
+      },
+      {
+        "key": "time",
+        "label": {
+          "en-US": "Time",
+          "zh-CN": "时间"
+        },
+        "desc": {
+          "en-US": "Please choose the time of the day to trigger.",
+          "zh-CN": "请选择每天触发的时间。"
+        },
+        "type": "string",
+        "required": true,
+        "ui": {
+          "component": "date",
+          "dateFormat": "HH:mm:ss"
+        }
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "dateTime",
+        "label": "Date time",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "date",
+        "label": "Date",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "time",
+        "label": "Time",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "dayOfWeek",
+        "label": "Day of week",
+        "type": "integer",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "dayOfWeekName",
+        "label": "Day name of week",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "dateYear",
+        "label": "Year",
+        "type": "integer",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "dateMonth",
+        "label": "Month",
+        "type": "integer",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "dateDay",
+        "label": "Day",
+        "type": "integer",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "timeHour",
+        "label": "Hour",
+        "type": "integer",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "timeMinute",
+        "label": "Minute",
+        "type": "integer",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "timeSecond",
+        "label": "Second",
+        "type": "integer",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

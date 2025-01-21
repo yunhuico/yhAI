@@ -1,0 +1,59 @@
+{
+  "name": {
+    "en-US": "List current on-call users of the schedule",
+    "zh-CN": "列举目前时间计划内随叫随到用户"
+  },
+  "desc": {
+    "en-US": "List the current on-call users of the schedule you choose.",
+    "zh-CN": "列出所选时间计划内目前随叫随到的用户。"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/pagerduty",
+  "class": "ultrafox/pagerduty#listCurrentOnCallUser",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "scheduleId",
+        "label": {
+          "en-US": "Schedule",
+          "zh-CN": "时间表"
+        },
+        "desc": {
+          "en-US": "Pleas choose the schedule, or switch to custom input mode to enter the schedule ID.",
+          "zh-CN": "请选择时间表，或切换到自定义输入模式输入时间表 ID。"
+        },
+        "type": "string",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/pagerduty#listSchedules",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "name",
+        "label": "Name",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "email",
+        "label": "Email",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

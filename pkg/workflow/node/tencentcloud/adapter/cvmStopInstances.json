@@ -1,0 +1,110 @@
+{
+  "name": {
+    "en-US": "Stop cvm instances",
+    "zh-CN": "关闭CVM实例"
+  },
+  "desc": {
+    "en-US": "Stop the CVM instance based on the selected region and instance IDs.",
+    "zh-CN": "根据所选区域和实例ID关闭CVM实例。"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/tencentcloud",
+  "class": "ultrafox/tencentcloud#cvmStopInstances",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "region",
+        "label": {
+          "en-US": "Region",
+          "zh-CN": "地区"
+        },
+        "desc": {
+          "en-US": "Please choose the region of the instance.",
+          "zh-CN": "请选择实例所在区域。"
+        },
+        "type": "string",
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "static",
+            "options": [
+              {
+                "label": {
+                  "en-US": "BeiJing",
+                  "zh-CN": "北京"
+                },
+                "value": "ap-beijing"
+              },
+              {
+                "label": {
+                  "en-US": "ShangHai",
+                  "zh-CN": "上海"
+                },
+                "value": "ap-shanghai"
+              },
+              {
+                "label": {
+                  "en-US": "GuangZhou",
+                  "zh-CN": "广州"
+                },
+                "value": "ap-guangzhou"
+              },
+              {
+                "label": {
+                  "en-US": "ChongQing",
+                  "zh-CN": "重庆"
+                },
+                "value": "ap-chongqing"
+              },
+              {
+                "label": {
+                  "en-US": "ChengDu",
+                  "zh-CN": "成都"
+                },
+                "value": "ap-chengdu"
+              },
+              {
+                "label": {
+                  "en-US": "NanJing",
+                  "zh-CN": "南京"
+                },
+                "value": "ap-nanjing"
+              },
+              {
+                "label": {
+                  "en-US": "HongKong",
+                  "zh-CN": "香港"
+                },
+                "value": "ap-hongkong"
+              }
+            ]
+          }
+        },
+        "required": true
+      },
+      {
+        "key": "instanceIds",
+        "label": {
+          "en-US": "Instance IDs",
+          "zh-CN": "实例ID"
+        },
+        "desc": {
+          "en-US": "Please add instance IDs.",
+          "zh-CN": "请添加实例ID。"
+        },
+        "type": "list",
+        "child": {
+          "type": "string",
+          "ui": {
+            "component": "input"
+          },
+          "required": true
+        },
+        "required": true
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": []
+  }
+}

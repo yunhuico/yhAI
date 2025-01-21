@@ -1,0 +1,217 @@
+{
+  "name": {
+    "en-US": "Release trigger",
+    "zh-CN": "发布触发"
+  },
+  "desc": {
+    "en-US": "Triggers when a release is created or updated.",
+    "zh-CN": "当发布事件创建或更新时触发流程。"
+  },
+  "type": "trigger",
+  "shortName": "Release",
+  "triggerType": "webhook",
+  "adapterClass": "ultrafox/gitlab",
+  "class": "ultrafox/gitlab#triggerRelease",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "scope",
+        "label": {
+          "en-US": "Scope",
+          "zh-CN": "范围"
+        },
+        "desc": {
+          "en-US": "Choose a scope to trigger the workflow，by project or by group.",
+          "zh-CN": "选择触发流程的范围，按项目触发或按群组触发。"
+        },
+        "type": "string",
+        "default": "project",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "disableCustomInput": true,
+          "selectFrom": {
+            "source": "static",
+            "options": [
+              {
+                "label": {
+                  "en-US": "Project",
+                  "zh-CN": "项目"
+                },
+                "value": "project"
+              },
+              {
+                "label": {
+                  "en-US": "Group",
+                  "zh-CN": "群组"
+                },
+                "value": "group"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "projectId",
+        "label": {
+          "en-US": "Project",
+          "zh-CN": "项目"
+        },
+        "desc": {
+          "en-US": "Please choose a project of your Gitlab, or switch to custom input mode to enter the project ID.",
+          "zh-CN": "请选择您GitLab中的一个项目，或切换到自定义输入模式输入项目 ID。"
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listProject",
+            "enableSearch": true,
+            "enablePage": true
+          },
+          "display": {
+            "scope": "project"
+          }
+        }
+      },
+      {
+        "key": "groupId",
+        "label": {
+          "en-US": "Group",
+          "zh-CN": "群组"
+        },
+        "desc": {
+          "en-US": "Please choose a group of your Gitlab, or switch to custom input mode to enter the group ID.",
+          "zh-CN": "请选择您GitLab中的一个群组，或切换到自定义输入模式输入群组 ID。"
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listGroup",
+            "enableSearch": true,
+            "enablePage": true
+          },
+          "display": {
+            "scope": "group"
+          }
+        }
+      },
+      {
+        "key": "event",
+        "label": {
+          "en-US": "Event condition",
+          "zh-CN": "触发条件过滤"
+        },
+        "desc": {
+          "en-US": "Please choose the condition of the release.",
+          "zh-CN": "请选择触发流程的发布事件状态。"
+        },
+        "type": "string",
+        "default": "all",
+        "ui": {
+          "component": "select",
+          "disableCustomInput": true,
+          "selectFrom": {
+            "source": "static",
+            "options": [
+              {
+                "label": "All",
+                "value": "all"
+              },
+              {
+                "label": "Create",
+                "value": "create"
+              },
+              {
+                "label": "Update",
+                "value": "update"
+              }
+            ]
+          }
+        },
+        "required": true
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "id",
+        "label": "Release event ID",
+        "type": "integer",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "project.id",
+        "label": "Project ID",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "created_at",
+        "label": "Release event created time",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "description",
+        "label": "Release event description",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "name",
+        "label": "Release event name",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "released_at",
+        "label": "Release event release time",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "tag",
+        "label": "Release event tag",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "url",
+        "label": "Release event URL",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "action",
+        "label": "Release event action",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

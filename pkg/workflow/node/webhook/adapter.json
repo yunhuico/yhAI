@@ -1,0 +1,11 @@
+{
+  "name": "Webhook",
+  "class": "ultrafox/webhook",
+  "version": "0.0.1",
+  "description": "custom webhook",
+  "icon": "official://webhook",
+  "url": "https://ultrafox.io",
+  "tags": [
+    "webhook"
+  ]
+}

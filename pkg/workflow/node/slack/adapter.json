@@ -1,0 +1,66 @@
+{
+  "name": "Slack",
+  "class": "ultrafox/slack",
+  "version": "0.0.1",
+  "description": "Adapter of Slack",
+  "icon": "official://slack",
+  "url": "https://www.slack.com",
+  "tags": [
+    "devops",
+    "CI/CD"
+  ],
+  "supportCredentials": [
+    "accessToken",
+    "oauth2"
+  ],
+  "inputSchemas": {
+    "oauth2": {
+      "fields": [
+        {
+          "key": "server",
+          "label": "Slack Server",
+          "type": "string",
+          "default": "https://slack.com",
+          "required": true
+        },
+        {
+          "key": "clientId",
+          "label": "Client ID",
+          "type": "string",
+          "encrypted": true,
+          "writePerm": 3,
+          "required": true
+        },
+        {
+          "key": "clientSecret",
+          "label": "Client Secret",
+          "type": "string",
+          "encrypted": true,
+          "required": true
+        },
+        {
+          "key": "redirectUrl",
+          "label": "Redirect URL",
+          "type": "string",
+          "required": true,
+          "ui": {
+            "disabled": true,
+            "copyable": true
+          }
+        }
+      ]
+    },
+    "accessToken": {
+      "fields": [
+        {
+          "key": "accessToken",
+          "label": "Access Token",
+          "type": "string",
+          "encrypted": true,
+          "required": true
+        }
+      ]
+    }
+  }
+}
+

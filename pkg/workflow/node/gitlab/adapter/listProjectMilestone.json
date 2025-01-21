@@ -1,0 +1,109 @@
+{
+  "name": "list gitlab milestones",
+  "type": "actor",
+  "adapterClass": "ultrafox/gitlab",
+  "hidden": true,
+  "class": "ultrafox/gitlab#listProjectMilestone",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "projectId",
+        "label": {
+          "en-US": "Project",
+          "zh-CN": "项目"
+        },
+        "desc": {
+          "en-US": "Please choose a project, or switch to custom input mode to enter the project ID.",
+          "zh-CN": "请选择项目，或切换到自定义输入模式输入项目 ID。"
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listProject",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      },
+      {
+        "key": "page",
+        "label": "Choose page",
+        "type": "integer",
+        "ui": {
+          "component": "hidden"
+        }
+      },
+      {
+        "key": "perPage",
+        "label": "Count project per page",
+        "type": "integer",
+        "ui": {
+          "component": "hidden"
+        }
+      },
+      {
+        "key": "search",
+        "label": "Search",
+        "type": "string"
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "label": "All project milestones",
+        "type": "list",
+        "child": {
+          "type": "struct",
+          "where": [
+            "template"
+          ],
+          "fields": [
+            {
+              "key": "iid",
+              "label": "Milestone ID",
+              "type": "integer",
+              "where": [
+                "template"
+              ],
+              "fields": null
+            },
+            {
+              "key": "title",
+              "label": "Milestone title",
+              "type": "string",
+              "where": [
+                "template"
+              ],
+              "fields": null
+            },
+            {
+              "key": "description",
+              "label": "Milestone description",
+              "type": "integer",
+              "where": [
+                "template"
+              ],
+              "fields": null
+            },
+            {
+              "key": "project_id",
+              "label": "Project ID",
+              "type": "integer",
+              "where": [
+                "template"
+              ],
+              "fields": null
+            }
+          ]
+        },
+        "where": [
+          "foreach"
+        ]
+      }
+    ]
+  }
+}

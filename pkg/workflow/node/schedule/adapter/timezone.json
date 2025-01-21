@@ -1,0 +1,8 @@
+{
+  "name": "Timezone List",
+  "type": "actor",
+  "adapterClass": "ultrafox/schedule",
+  "hidden": true,
+  "class": "ultrafox/schedule#timezone",
+  "inputSchema": {}
+}

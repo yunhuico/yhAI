@@ -1,0 +1,20 @@
+{
+    "name": "Test Action2",
+    "type": "actor",
+    "adapterClass": "ultrafox/test",
+    "class": "ultrafox/test#action2",
+    "inputSchema": {
+        "fields": [
+            {
+                "key": "key",
+                "label": "Key",
+                "type": "string",
+
+                "required": true
+            }
+        ]
+    },
+    "outputSchema": {
+        "fields": []
+    }
+}

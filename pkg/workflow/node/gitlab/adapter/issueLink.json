@@ -1,0 +1,117 @@
+{
+  "name": {
+    "en-US": "Link issue",
+    "zh-CN": "关联议题"
+  },
+  "desc": {
+    "en-US": "List issues of the project you choose，support search by title and filter by labels of issues.",
+    "zh-CN": "列出某个项目下的议题，支持按议题标题搜索和标记过滤。"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/gitlab",
+  "class": "ultrafox/gitlab#issueLink",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "projectId",
+        "label": {
+          "en-US": "Project",
+          "zh-CN": "项目"
+        },
+        "desc": {
+          "en-US": "Please choose a project, or switch to custom input mode to enter the project ID.",
+          "zh-CN": "请选择项目，或切换到自定义输入模式输入项目 ID。"
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listProject",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      },
+      {
+        "key": "issueId",
+        "label": {
+          "en-US": "Issue",
+          "zh-CN": "议题"
+        },
+        "desc": {
+          "zh-CN": "请选择议题，或切换到自定义输入模式输入议题 ID。",
+          "en-US": "Please choose the issue, or switch to custom input mode to enter the issue ID."
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listIssue",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      },
+      {
+        "key": "targetProjectId",
+        "label": {
+          "en-US": "Target project",
+          "zh-CN": "目标项目"
+        },
+        "desc": {
+          "en-US": "Please choose the project you want to link with, or switch to custom input mode to enter the project ID.",
+          "zh-CN": "请选择想要关联的项目，或切换到自定义输入模式输入项目 ID。"
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listProject",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      },
+      {
+        "key": "targetIssueIId",
+        "label": {
+          "en-US": "Target issue",
+          "zh-CN": "目标议题"
+        },
+        "desc": {
+          "en-US": "Please choose the issue you wang to link with, or switch to custom input mode to enter the issue ID.",
+          "zh-CN": "请选择想要关联的议题，或切换到自定义输入模式输入议题 ID。"
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listIssue?targetProjectId=projectId",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "success",
+        "label": "Link success",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

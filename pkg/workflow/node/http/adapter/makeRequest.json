@@ -1,0 +1,262 @@
+{
+  "name": {
+    "en-US": "Make a Request",
+    "zh-CN": "发送网络请求"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/http",
+  "class": "ultrafox/http#makeRequest",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "method",
+        "label": {
+          "en-US": "Method",
+          "zh-CN": "请求方法"
+        },
+        "type": "string",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "static",
+            "options": [
+              {
+                "label": "GET",
+                "value": "GET"
+              },
+              {
+                "label": "POST",
+                "value": "POST"
+              },
+              {
+                "label": "DELETE",
+                "value": "DELETE"
+              },
+              {
+                "label": "PATCH",
+                "value": "PATCH"
+              },
+              {
+                "label": "PUT",
+                "value": "PUT"
+              },
+              {
+                "label": "OPTIONS",
+                "value": "OPTIONS"
+              },
+              {
+                "label": "HEAD",
+                "value": "HEAD"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "url",
+        "label": {
+          "en-US": "URL",
+          "zh-CN": "URL"
+        },
+        "desc": {
+          "en-US": "Enter the URL to which you want to send the request.",
+          "zh-CN": "请输入请求地址。"
+        },
+        "type": "string",
+        "required": true
+      },
+      {
+        "key": "queries",
+        "label": {
+          "en-US": "Query String",
+          "zh-CN": "请求参数"
+        },
+        "desc": {
+          "en-US": "Enter the desired query key-value pairs.",
+          "zh-CN": "请输入请求参数的键值对。"
+        },
+        "type": "list",
+        "required": false,
+        "child": {
+          "type": "struct",
+          "fields": [
+            {
+              "key": "key",
+              "label": "Key",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "value",
+              "label": "Value",
+              "type": "string",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "headers",
+        "label": {
+          "en-US": "Headers",
+          "zh-CN": "请求头"
+        },
+        "desc": {
+          "en-US": "Enter the desired request headers. For example, an authorization.",
+          "zh-CN": "请输入请求头"
+        },
+        "type": "list",
+        "required": false,
+        "child": {
+          "type": "struct",
+          "fields": [
+            {
+              "key": "key",
+              "label": "Key",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "value",
+              "label": "Value",
+              "type": "string",
+              "required": true
+            }
+          ]
+        }
+      },
+      {
+        "key": "bodyType",
+        "label": {
+          "en-US": "Body type",
+          "zh-CN": "请求体类型"
+        },
+        "type": "string",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "static",
+            "options": [
+              {
+                "label": "Empty",
+                "value": "empty"
+              },
+              {
+                "label": "Raw",
+                "value": "raw"
+              },
+              {
+                "label": "Form-urlencoded",
+                "value": "formUrlencoded"
+              },
+              {
+                "label": "Form-data",
+                "value": "formData"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "contentType",
+        "label": {
+          "en-US": "Content type",
+          "zh-CN": "请求内容类型"
+        },
+        "type": "string",
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "static",
+            "options": [
+              {
+                "label": "Empty",
+                "value": "empty"
+              },
+              {
+                "label": "Text",
+                "value": "text"
+              },
+              {
+                "label": "JSON",
+                "value": "json"
+              }
+            ]
+          },
+          "display": {
+            "bodyType": "raw"
+          }
+        }
+      },
+      {
+        "key": "rawContent",
+        "label": {
+          "en-US": "Content",
+          "zh-CN": "请求内容"
+        },
+        "type": "string",
+        "ui": {
+          "component": "textarea",
+          "display": {
+            "bodyType": "raw"
+          }
+        }
+      },
+      {
+        "key": "formContent",
+        "label": {
+          "en-US": "Content",
+          "zh-CN": "请求内容"
+        },
+        "type": "list",
+        "child": {
+          "type": "struct",
+          "fields": [
+            {
+              "key": "key",
+              "label": "Key",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "value",
+              "label": "Value",
+              "type": "string",
+              "required": true
+            }
+          ]
+        },
+        "ui": {
+          "display": {
+            "bodyType": [
+              "formData",
+              "formUrlencoded"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "statusCode",
+        "label": "Status code",
+        "type": "int",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "status",
+        "label": "Status",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

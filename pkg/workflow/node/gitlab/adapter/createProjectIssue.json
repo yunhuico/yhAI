@@ -1,0 +1,203 @@
+{
+  "name": {
+    "en-US": "Create project issue",
+    "zh-CN": "创建议题"
+  },
+  "desc": {
+    "en-US": "Create an issue in the project you choose.",
+    "zh-CN": "选择某个项目创建议题"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/gitlab",
+  "class": "ultrafox/gitlab#createProjectIssue",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "projectId",
+        "label": {
+          "en-US": "Project",
+          "zh-CN": "项目"
+        },
+        "desc": {
+          "en-US": "Please choose a project of your Gitlab, or switch to custom input mode to enter the project ID.",
+          "zh-CN": "请选择您GitLab中的一个项目，或切换到自定义输入模式输入项目 ID。"
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listProject",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      },
+      {
+        "key": "title",
+        "label": {
+          "en-US": "Title",
+          "zh-CN": "标题"
+        },
+        "desc": {
+          "en-US": "Please input the title of the issue.",
+          "zh-CN": "请输入议题的标题。"
+        },
+        "type": "string",
+        "required": true
+      },
+      {
+        "key": "description",
+        "label": {
+          "en-US": "Description",
+          "zh-CN": "描述"
+        },
+        "desc": {
+          "en-US": "Add description of the issue here.",
+          "zh-CN": "在此处添加议题的描述信息。"
+        },
+        "type": "string",
+        "ui": {
+          "component": "textarea"
+        }
+      },
+      {
+        "key": "labels",
+        "label": {
+          "en-US": "Labels",
+          "zh-CN": "标记"
+        },
+        "desc": {
+          "en-US": "Add some lables to the issue.",
+          "zh-CN": "为议题添加标记。"
+        },
+        "type": "list",
+        "child": {
+          "type": "string",
+          "required": true
+        }
+      },
+      {
+        "key": "milestoneId",
+        "label": {
+          "en-US": "Milestone",
+          "zh-CN": "里程碑"
+        },
+        "desc": {
+          "en-US": "Choose a milestone for the issue, or switch to custom input mode to enter the milestone ID.",
+          "zh-CN": "为该议题选择一个里程碑，或切换到自定义输入模式输入里程碑 ID。"
+        },
+        "type": "integer",
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listProjectMilestone",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      },
+      {
+        "key": "assigneeIds",
+        "label": {
+          "en-US": "Assignees",
+          "zh-CN": "指派人"
+        },
+        "desc": {
+          "en-US": "Choose some assignees for the issue, or switch to custom input mode to enter the assignee IDs.",
+          "zh-CN": "为该议题选择指派人，或切换到自定义输入模式输入指派人 ID。"
+        },
+        "type": "list",
+        "child": {
+          "type": "integer",
+          "required": true,
+          "ui": {
+            "component": "select",
+            "selectFrom": {
+              "source": "adapter",
+              "class": "ultrafox/gitlab#listUser",
+              "enableSearch": true,
+              "enablePage": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "iid",
+        "label": "Issue ID",
+        "type": "integer",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "state",
+        "label": "Issue state",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "description",
+        "label": "Issue description",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "author.id",
+        "label": "Issue author ID",
+        "type": "integer",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "milestone.id",
+        "label": "Issue milestone ID",
+        "type": "integer",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "project_id",
+        "label": "Issue project ID",
+        "type": "integer",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "title",
+        "label": "Issue title",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "labels.[]",
+        "label": "Issue labels",
+        "type": "list",
+        "child": {
+          "type": "string",
+          "where": [
+            "template"
+          ]
+        },
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

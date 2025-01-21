@@ -1,0 +1,48 @@
+{
+  "name": {
+    "en-US": "DingTalk Custom Bot",
+    "zh-CN": "钉钉群组机器人"
+  },
+  "class": "ultrafox/dingtalk",
+  "version": "0.0.1",
+  "description": "Adapter of DingTalk",
+  "icon": "official://dingtalk",
+  "url": "https://www.dingtalk.com",
+  "tags": [
+    "devops",
+    "CI/CD"
+  ],
+  "supportCredentials": [
+    "accessToken"
+  ],
+  "inputSchemas": {
+    "accessToken": {
+      "fields": [
+        {
+          "key": "accessToken",
+          "label": {
+            "en-US": "Webhook URL",
+            "zh-CN": "Webhook 地址"
+          },
+          "type": "string",
+          "encrypted": true,
+          "required": true
+        },
+        {
+          "key": "secret",
+          "label": {
+            "en-US": "Signing secret",
+            "zh-CN": "加签密钥"
+          },
+          "desc": {
+            "en-US": "The secret you generate after adding a chatbot to DingTalk group and using signature as security setting",
+            "zh-CN": "添加机器人后，安全设置 方式选择 加签 时生成的密钥。"
+          },
+          "type": "string",
+          "encrypted": true,
+          "required": false
+        }
+      ]
+    }
+  }
+}

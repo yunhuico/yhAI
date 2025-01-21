@@ -1,0 +1,137 @@
+{
+  "name": {
+    "en-US": "Get project issue",
+    "zh-CN": "获取议题信息"
+  },
+  "desc": {
+    "en-US": "Get the issue information according to the specific issue ID in the project you choose.",
+    "zh-CN": "根据项目中的议题ID获取该议题的信息。"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/gitlab",
+  "class": "ultrafox/gitlab#getProjectIssue",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "projectId",
+        "label": {
+          "en-US": "Project",
+          "zh-CN": "项目"
+        },
+        "desc": {
+          "en-US": "Please choose the project, or switch to custom input mode to enter the project ID.",
+          "zh-CN": "请选择您GitLab中的一个项目，或切换到自定义输入模式输入项目 ID。"
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listProject",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      },
+      {
+        "key": "issueId",
+        "label": {
+          "en-US": "Issue",
+          "zh-CN": "议题"
+        },
+        "desc": {
+          "en-US": "Please choose the issue, or switch to custom input mode to enter the issue ID.",
+          "zh-CN": "请选择议题，或切换到自定义输入模式输入议题 ID。"
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listIssue",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "title",
+        "label": "Title",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "description",
+        "label": "Description",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "state",
+        "label": "State",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "assignees.[].username",
+        "label": "Assignees username list",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "assignees.[].name",
+        "label": "Assignees name list",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "author.name",
+        "label": "Author",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "project_id",
+        "label": "Project ID",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "labels",
+        "label": "Labels",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "web_url",
+        "label": "Issue link",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

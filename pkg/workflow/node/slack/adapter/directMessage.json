@@ -1,0 +1,103 @@
+{
+  "name": {
+    "en-US": "Direct message",
+    "zh-CN": "私发消息"
+  },
+  "desc": {
+    "en-US": "Send a direct message to a user by slackbot.",
+    "zh-CN": "通过slack机器人给某一用户私发信息。"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/slack",
+  "class": "ultrafox/slack#directMessage",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "userId",
+        "label": {
+          "en-US": "User",
+          "zh-CN": "用户"
+        },
+        "desc": {
+          "en-US": "Please choose the user, or switch to custom input mode to enter the user ID.",
+          "zh-CN": "请选择用户，或者切换到自定义输入模式输入用户 ID。"
+        },
+        "type": "string",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/slack#listUser"
+          }
+        }
+      },
+      {
+        "key": "bot",
+        "label": {
+          "en-US": "Send as bot?",
+          "zh-CN": "以机器人形式发送？"
+        },
+        "desc": {
+          "en-US": "Please choose whether to send the reactions as a bot. The default value is yes.",
+          "zh-CN": "选择是否用机器人发送消息，默认为是。"
+        },
+        "type": "string",
+        "default": "yes",
+        "ui": {
+          "component": "select",
+          "disableCustomInput": true,
+          "selectFrom": {
+            "source": "static",
+            "options": [
+              {
+                "label": "Yes",
+                "value": "yes"
+              },
+              {
+                "label": "No",
+                "value": "no"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "message",
+        "label": {
+          "en-US": "Message",
+          "zh-CN": "消息"
+        },
+        "desc": {
+          "en-US": "Please input the message that you want to send.",
+          "zh-CN": "请输入想要发送的消息内容。"
+        },
+        "type": "string",
+        "ui": {
+          "component": "textarea"
+        },
+        "required": true
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "userId",
+        "label": "User ID",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "timestamp",
+        "label": "Send message time stamp",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

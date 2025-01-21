@@ -1,0 +1,16 @@
+{
+  "name": {
+    "en-US": "Persistent KV",
+    "zh-CN": "键值数据库"
+  },
+  "class": "ultrafox/persistentKV",
+  "version": "0.0.1",
+  "icon": "official://kv",
+  "url": "https://ultrafox.io",
+  "tags": [
+    "internal",
+    "kv"
+  ],
+  "supportCredentials": [],
+  "isInternal": true
+}

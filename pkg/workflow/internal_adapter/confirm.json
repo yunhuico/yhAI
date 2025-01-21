@@ -1,0 +1,127 @@
+{
+  "name": {
+    "en-US": "Create confirmation",
+    "zh-CN": "创建审批"
+  },
+  "desc": {
+    "en-US": "Designate confimers to review and approve the relevant content.",
+    "zh-CN": "指定审批人对相关事项进行审查批准。"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/confirm",
+  "class": "ultrafox/confirm#email",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "description",
+        "label": {
+          "en-US": "Confirmation description",
+          "zh-CN": "审批内容描述"
+        },
+        "desc": {
+          "en-US": "Input the description that needs to be confirmed by the confirmers when the workflow is executed.",
+          "zh-CN": "输入审批人在工作流执行时需要审批的具体内容。"
+        },
+        "type": "string",
+        "ui": {
+          "component": "textarea"
+        },
+        "required": true
+      },
+      {
+        "key": "confirmers",
+        "label": {
+          "en-US": "Confirmers",
+          "zh-CN": "审批人"
+        },
+        "desc": {
+          "en-US": "Designate one or more confirmers. The confirmation link will be sent to their emails corresponding to the UltraFox accounts.",
+          "zh-CN": "指定一个或多个审批人。审批链接将发送到他们UltraFox帐户对应的电子邮箱中。"
+        },
+        "type": "list",
+        "child": {
+          "type": "integer",
+          "required": true
+        },
+        "ui": {
+          "component": "confirmer",
+          "disableCustomInput": true
+        },
+        "required": true
+      },
+      {
+        "key": "timeout",
+        "label": {
+          "en-US": "Expiring Time",
+          "zh-CN": "过期时间"
+        },
+        "desc": {
+          "en-US": "Please input the number of hours required to complete the confirmation. After expiration, the confirmation link cannot be accessed.",
+          "zh-CN": "请输入完成审批的时间限制，单位为小时。过期后，审批链接将无法访问。"
+        },
+        "type": "integer",
+        "required": true
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "confirmId",
+        "label": "Confirm ID",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "url",
+        "label": "Confirm Page URL",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "decision",
+        "label": "Decision",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "confirmerUserId",
+        "label": "Confirmer User ID",
+        "type": "integer",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "confirmerUsername",
+        "label": "Confirmer Username",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "confirmerEmail",
+        "label": "Confirmer email",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "confirmedAt",
+        "label": "Confirm Time",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

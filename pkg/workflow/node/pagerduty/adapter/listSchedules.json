@@ -1,0 +1,119 @@
+{
+  "name": {
+    "en-US": "List the on-call schedules",
+    "zh-CN": "列举随叫随到时间计划表"
+  },
+  "desc": {
+    "en-US": "List all on-call schedules,support search and filter.",
+    "zh-CN": "列出所有随叫随到的时间计划表，支持搜索和过滤。"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/pagerduty",
+  "class": "ultrafox/pagerduty#listSchedules",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "page",
+        "label": {
+          "en-US": "Choose page",
+          "zh-CN": "页码"
+        },
+        "desc": {
+          "en-US": "List the on-call schedule for a specific page.",
+          "zh-CN": "列出具体某一页码的随叫随到时间表。"
+        },
+        "type": "integer"
+      },
+      {
+        "key": "perPage",
+        "label": {
+          "en-US": "Count of schedules per page",
+          "zh-CN": "每页时间表数量"
+        },
+        "desc": {
+          "en-US": "Set the number of schedules returned per page.",
+          "zh-CN": "设置接口每一页返回的时间表的数量。"
+        },
+        "type": "integer"
+      },
+      {
+        "key": "search",
+        "label": {
+          "en-US": "Search",
+          "zh-CN": "搜索"
+        },
+        "desc": {
+          "en-US": "Search by inputing schedule information.",
+          "zh-CN": "输入时间表信息进行搜索。"
+        },
+        "type": "string"
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "id",
+        "label": "ID",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "name",
+        "label": "Name",
+        "type": "string",
+        "desc": "The name of the schedule",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "summary",
+        "label": "Summary",
+        "type": "string",
+        "desc": "A short-form, server-generated string that provides succinct, important information about an object suitable for primary labeling of an entity in a client.",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "self",
+        "label": "Self",
+        "type": "string",
+        "desc": "the API show URL at which the object is accessible",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "htmlUrl",
+        "label": "HTML URL",
+        "type": "string",
+        "desc": "a URL at which the entity is uniquely displayed in the Web app",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "timezone",
+        "label": "Timezone",
+        "type": "string",
+        "desc": "The time zone of the schedule",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "description",
+        "label": "Description",
+        "type": "string",
+        "desc": "The description of the schedule",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

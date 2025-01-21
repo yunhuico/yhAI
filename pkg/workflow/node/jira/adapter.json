@@ -1,0 +1,43 @@
+{
+  "name": "Jira",
+  "class": "ultrafox/jira",
+  "version": "0.0.1",
+  "description": "Adapter of Jira",
+  "icon": "official://jira",
+  "url": "https://www.atlassian.com/software/jira",
+  "tags": [
+    "productive",
+    "automate"
+  ],
+  "supportCredentials": [
+    "custom"
+  ],
+  "inputSchemas": {
+    "custom": {
+      "fields": [
+        {
+          "key": "accountEmail",
+          "label": "Account Email",
+          "desc": "Email of your Atlassian account",
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "apiToken",
+          "label": "Account API token",
+          "desc": "You may access <a href='https://id.atlassian.com/manage-profile/security/api-tokens' target='_blank'>your Atlassian account</a> to generate one.",
+          "type": "string",
+          "encrypted": true,
+          "required": true
+        },
+        {
+          "key": "baseUrl",
+          "label": "Jira base URL",
+          "type": "string",
+          "placeholder": "https://your-name.atlassian.net",
+          "required": true
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "name": {
+    "en-US": "Update epic",
+    "zh-CN": "更新史诗"
+  },
+  "desc": {
+    "en-US": "Update the information of the epic in the group you choose.",
+    "zh-CN": "对所选群组下某一史诗的内容进行更新。"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/gitlab",
+  "class": "ultrafox/gitlab#updateEpic",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "groupId",
+        "label": {
+          "en-US": "Group",
+          "zh-CN": "群组"
+        },
+        "desc": {
+          "en-US": "Please choose a group, or switch to custom input mode to input group ID.",
+          "zh-CN": "请选择群组，或切换到自定义输入模式输入群组 ID。"
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listGroup",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      },
+      {
+        "key": "epicId",
+        "label": {
+          "en-US": "Epic",
+          "zh-CN": "史诗"
+        },
+        "desc": {
+          "en-US": "Please choose an epic, or switch to custom input mode to input the epic ID.",
+          "zh-CN": "请选择史诗，或切换到自定义输入模式输入史诗 ID。"
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listGroupEpic",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      },
+      {
+        "key": "title",
+        "label": {
+          "en-US": "Title",
+          "zh-CN": "标题"
+        },
+        "desc": {
+          "en-US": "You can input the updated title of the epic.",
+          "zh-CN": "输入更新后的史诗标题。"
+        },
+        "type": "string"
+      },
+      {
+        "key": "description",
+        "label": {
+          "en-US": "Epic description",
+          "zh-CN": "描述"
+        },
+        "desc": {
+          "en-US": "Input the updated epic description.",
+          "zh-CN": "输入更新后的史诗描述。"
+        },
+        "type": "string",
+        "ui": {
+          "component": "textarea"
+        }
+      },
+      {
+        "key": "labels",
+        "label": {
+          "en-US": "Labels",
+          "zh-CN": "标记"
+        },
+        "desc": {
+          "en-US": "Add labels to the epic.",
+          "zh-CN": "为史诗添加标记。"
+        },
+        "type": "list",
+        "child": {
+          "type": "string",
+          "required": true
+        }
+      },
+      {
+        "key": "startDateFixed",
+        "label": {
+          "en-US": "Start date",
+          "zh-CN": "开始日期"
+        },
+        "desc": {
+          "en-US": "Reselect the start date of the epic.",
+          "zh-CN": "重新选择史诗的开始日期。"
+        },
+        "type": "string",
+        "ui": {
+          "component": "date",
+          "dateFormat": "YYYY-MM-DD"
+        }
+      },
+      {
+        "key": "dueDateFixed",
+        "label": {
+          "en-US": "Due date",
+          "zh-CN": "结束日期"
+        },
+        "desc": {
+          "en-US": "Reselect the due date of the epic.",
+          "zh-CN": "重新选择史诗的结束日期。"
+        },
+        "type": "string",
+        "ui": {
+          "component": "date",
+          "dateFormat": "YYYY-MM-DD"
+        }
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "key": "id",
+        "label": "Epic ID",
+        "type": "integer",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "iid",
+        "label": "Epic IID",
+        "type": "integer",
+        "child": {
+          "type": "integer",
+          "where": [
+            "template"
+          ],
+          "fields": null
+        },
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "group_id",
+        "label": "Group ID",
+        "type": "integer",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "title",
+        "label": "Epic title",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "description",
+        "label": "Description",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "state",
+        "label": "Epic state",
+        "type": "string",
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

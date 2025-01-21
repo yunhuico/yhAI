@@ -1,0 +1,79 @@
+{
+  "name": {
+    "en-US": "Pins an item to a channel",
+    "zh-CN": "在频道中标记重要内容"
+  },
+  "desc": {
+    "en-US": "Pins an important discussion paragraph in the channel according to the timestamp.",
+    "zh-CN": "根据时间戳在频道中标记重要讨论段落。"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/slack",
+  "class": "ultrafox/slack#channelAddPin",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "channelId",
+        "label": {
+          "en-US": "Channel",
+          "zh-CN": "频道"
+        },
+        "desc": {
+          "en-US": "Please choose the channel, or switch to custom input mode to enter the channel ID.",
+          "zh-CN": "请选择您的一个频道，或切换到自定义输入模式输入频道 ID。"
+        },
+        "type": "string",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/slack#listChannel"
+          }
+        }
+      },
+      {
+        "key": "bot",
+        "label": {
+          "en-US": "As bot?",
+          "zh-CN": "以机器人操作？否则使用个人身份操作"
+        },
+        "type": "string",
+        "default": "yes",
+        "ui": {
+          "component": "select",
+          "disableCustomInput": true,
+          "selectFrom": {
+            "source": "static",
+            "options": [
+              {
+                "label": "Yes",
+                "value": "yes"
+              },
+              {
+                "label": "No",
+                "value": "no"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "key": "timestamp",
+        "label": {
+          "en-US": "Timestamp",
+          "zh-CN": "消息时间戳"
+        },
+        "desc": {
+          "en-US": "Please input the timestamp.",
+          "zh-CN": "请输入消息时间戳。"
+        },
+        "type": "string",
+        "required": true
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": []
+  }
+}

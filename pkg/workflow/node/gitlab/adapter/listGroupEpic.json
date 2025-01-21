@@ -1,0 +1,219 @@
+{
+  "name": {
+    "en-US": "List group epics",
+    "zh-CN": "列举群组史诗"
+  },
+  "desc": {
+    "en-US": "List epics of the group you choose，support search by title and filter by state of epics.",
+    "zh-CN": "列出所选群组下的所有史诗，支持按史诗标题搜索和状态过滤。"
+  },
+  "type": "actor",
+  "adapterClass": "ultrafox/gitlab",
+  "class": "ultrafox/gitlab#listGroupEpic",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "groupId",
+        "label": {
+          "en-US": "Group",
+          "zh-CN": "群组"
+        },
+        "desc": {
+          "en-US": "Please choose a group, or switch to custom input mode to enter the group ID.",
+          "zh-CN": "请选择群组，或切换到自定义输入模式输入群组 ID。"
+        },
+        "type": "integer",
+        "required": true,
+        "ui": {
+          "component": "select",
+          "selectFrom": {
+            "source": "adapter",
+            "class": "ultrafox/gitlab#listGroup",
+            "enableSearch": true,
+            "enablePage": true
+          }
+        }
+      },
+      {
+        "key": "search",
+        "label": {
+          "en-US": "Search title",
+          "zh-CN": "按标题搜索"
+        },
+        "desc": {
+          "en-US": "Input the title of the epic to search.",
+          "zh-CN": "输入史诗标题进行搜索。"
+        },
+        "type": "string"
+      },
+      {
+        "key": "page",
+        "label": "Choose page",
+        "type": "integer",
+        "ui": {
+          "component": "hidden"
+        }
+      },
+      {
+        "key": "perPage",
+        "label": "Count project per page",
+        "type": "integer",
+        "ui": {
+          "component": "hidden"
+        }
+      },
+      {
+        "key": "state",
+        "label": {
+          "en-US": "State",
+          "zh-CN": "状态"
+        },
+        "desc": {
+          "en-US": "Choose the state of the epic to filter.",
+          "zh-CN": "选择史诗状态进行过滤。"
+        },
+        "type": "string",
+        "ui": {
+          "component": "select",
+          "disableCustomInput": true,
+          "selectFrom": {
+            "source": "static",
+            "options": [
+              {
+                "label": {
+                  "en-US": "All",
+                  "zh-CN": "全部"
+                },
+                "value": "all"
+              },
+              {
+                "label": {
+                  "en-US": "Opened",
+                  "zh-CN": "开放中"
+                },
+                "value": "opened"
+              },
+              {
+                "label": {
+                  "en-US": "Closed",
+                  "zh-CN": "已关闭"
+                },
+                "value": "closed"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": [
+      {
+        "type": "list",
+        "child": {
+          "type": "struct",
+          "where": [
+            "template"
+          ],
+          "fields": [
+            {
+              "key": "iid",
+              "label": "Epic ID",
+              "type": "integer",
+              "where": [
+                "template"
+              ],
+              "fields": null
+            },
+            {
+              "key": "group_id",
+              "label": "Group ID",
+              "type": "integer",
+              "where": [
+                "template"
+              ],
+              "fields": null
+            },
+            {
+              "key": "title",
+              "label": "Title",
+              "type": "string",
+              "where": [
+                "template"
+              ],
+              "fields": null
+            },
+            {
+              "key": "description",
+              "label": "Description",
+              "type": "string",
+              "where": [
+                "template"
+              ],
+              "fields": null
+            }
+          ]
+        },
+        "where": [
+          "foreach"
+        ]
+      },
+      {
+        "key": "[].iid",
+        "label": "All epic ID",
+        "type": "list",
+        "child": {
+          "type": "integer",
+          "where": [
+            "template"
+          ]
+        },
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "[].group_id",
+        "label": "All group ID",
+        "type": "list",
+        "child": {
+          "type": "integer",
+          "where": [
+            "template"
+          ]
+        },
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "[].title",
+        "label": "All epic title",
+        "type": "list",
+        "child": {
+          "type": "string",
+          "where": [
+            "template"
+          ]
+        },
+        "where": [
+          "template"
+        ]
+      },
+      {
+        "key": "[].description",
+        "label": "Description",
+        "type": "list",
+        "child": {
+          "type": "string",
+          "where": [
+            "template"
+          ]
+        },
+        "where": [
+          "template"
+        ]
+      }
+    ]
+  }
+}

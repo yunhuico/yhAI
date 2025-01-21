@@ -1,0 +1,53 @@
+{
+  "name": "Send FeedCard to group",
+  "type": "actor",
+  "hidden": true,
+  "adapterClass": "ultrafox/dingtalk",
+  "class": "ultrafox/dingtalk#sendFeedCardMessage",
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "links",
+        "label": "Links",
+        "type": "list",
+        "child": {
+          "key": "link",
+          "type": "struct",
+          "fields": [
+            {
+              "key": "title",
+              "label": "Title",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "text",
+              "label": "Content",
+              "type": "string",
+              "ui": {
+                "component": "textarea"
+              },
+              "required": true
+            },
+            {
+              "key": "messageUrl",
+              "label": "Message URL",
+              "type": "string",
+              "required": true
+            },
+            {
+              "key": "picUrl",
+              "label": "Picture URL",
+              "type": "string"
+            }
+          ],
+          "required": true
+        },
+        "required": true
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": []
+  }
+}

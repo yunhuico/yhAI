@@ -1,0 +1,15 @@
+{
+  "name": {
+    "en-US": "Confirm",
+    "zh-CN": "审批"
+  },
+  "class": "ultrafox/confirm",
+  "version": "0.0.1",
+  "icon": "official://confirm",
+  "url": "https://ultrafox.cn",
+  "tags": [
+    "internal",
+    "confirm"
+  ],
+  "isInternal": true
+}

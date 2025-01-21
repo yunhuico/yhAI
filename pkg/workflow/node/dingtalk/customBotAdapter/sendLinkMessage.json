@@ -1,0 +1,40 @@
+{
+  "name": "Send link message to group",
+  "type": "actor",
+  "adapterClass": "ultrafox/dingtalk",
+  "class": "ultrafox/dingtalk#sendLinkMessage",
+  "hidden": true,
+  "inputSchema": {
+    "fields": [
+      {
+        "key": "title",
+        "label": "Title",
+        "type": "string",
+        "required": true
+      },
+      {
+        "key": "text",
+        "label": "Content",
+        "type": "string",
+        "ui": {
+          "component": "textarea"
+        },
+        "required": true
+      },
+      {
+        "key": "messageUrl",
+        "label": "Message url",
+        "type": "string",
+        "required": true
+      },
+      {
+        "key": "picUrl",
+        "label": "Picture url",
+        "type": "string"
+      }
+    ]
+  },
+  "outputSchema": {
+    "fields": []
+  }
+}
