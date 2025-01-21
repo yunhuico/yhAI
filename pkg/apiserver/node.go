@@ -27,6 +27,7 @@ import (
 // @Produce json
 // @Success 200 {object} apiserver.R{data=response.ResourceCreatedResponse}
 // @Failure 400 {object} apiserver.R
+// @Failure 500 {object} apiserver.R
 // @Param   id  path string true "workflow id"
 // @Param   body body payload.EditNodeReq true "the payload"
 // @Router /api/v1/workflows/{id}/nodes [post]
@@ -129,6 +130,7 @@ func (h *APIHandler) CreateNode(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} apiserver.R
 // @Failure 400 {object} apiserver.R
+// @Failure 500 {object} apiserver.R
 // @Param   id  path string true "workflow id"
 // @Param   nodeId  path string true "node id"
 // @Param   body body payload.EditNodeReq true "the payload"
@@ -260,6 +262,7 @@ func (h *APIHandler) UpdateNode(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} apiserver.R
 // @Failure 400 {object} apiserver.R
+// @Failure 500 {object} apiserver.R
 // @Param   id  path string true "workflow id"
 // @Param   nodeId  path string true "node id"
 // @Param   body body payload.UpdateNodeTransitionReq true "the payload"
@@ -320,6 +323,7 @@ func (h *APIHandler) UpdateNodeTransition(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} apiserver.R
 // @Failure 400 {object} apiserver.R
+// @Failure 500 {object} apiserver.R
 // @Param   id  path string true "workflow id"
 // @Param   nodeId  path string true "node id"
 // @Param   body body payload.UpdateSwitchNodePathNameReq true "the payload"
@@ -498,6 +502,7 @@ func processNodeTestingStatusTransition(ctx context.Context, tx model.Operator, 
 // @Param   body body payload.RunNodeReq true "the payload"
 // @Success 200 {object} apiserver.R{data=response.RunNodeResp}
 // @Failure 400 {object} apiserver.R
+// @Failure 500 {object} apiserver.R
 // @Router /api/v1/workflows/{id}/nodes/{nodeId}/run [post]
 func (h *APIHandler) RunNode(c *gin.Context) {
 	const timeout = 20 * time.Second
@@ -671,6 +676,7 @@ func (h *APIHandler) RunNode(c *gin.Context) {
 // @Param   nodeId  path string true "node id"
 // @Success 200 {object} apiserver.R
 // @Failure 400 {object} apiserver.R
+// @Failure 500 {object} apiserver.R
 // @Router /api/v1/workflows/{id}/nodes/{nodeId} [delete]
 func (h *APIHandler) DeleteNode(c *gin.Context) {
 	var (
@@ -832,6 +838,7 @@ func (h *APIHandler) DeleteNode(c *gin.Context) {
 // @Param   nodeId  path string true "node id"
 // @Success 200 {object} apiserver.R{data=response.GetNodeTestPageDataResp}
 // @Failure 400 {object} apiserver.R
+// @Failure 500 {object} apiserver.R
 // @Router /api/v1/workflows/{id}/nodes/{nodeId}/testPageData [get]
 func (h *APIHandler) GetNodeTestPageData(c *gin.Context) {
 	var (
