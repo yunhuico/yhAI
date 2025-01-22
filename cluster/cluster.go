@@ -44,8 +44,6 @@ func init() {
 	switch Props.GetString("logrus.formatter", "") {
 	case "text":
 		logrus.SetFormatter(&logrus.TextFormatter{})
-	case "json":
-		logrus.SetFormatter(&logrus.JSONFormatter{})
 	default:
 		logrus.SetFormatter(&logrus.TextFormatter{})
 	}
@@ -55,13 +53,13 @@ func init() {
 
 	// Output to stderr instead of stdout, could also be a file.
 	// logrus.SetOutput(f)
-	logFile := Props.GetString("logrus.file", "/var/log/linkerdcos_clusterMgmt.log")
+	logFile := Props.GetString("logrus.file", "/var/log/clusterMgmt.log")
 	f, err := os.OpenFile(logFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0777)
 	if err != nil {
 		fmt.Printf("error opening file %v", err)
 		f, err = os.OpenFile("linkerdcos_clusterMgmt.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0777)
 		if err != nil {
-			fmt.Printf("still failed to open log file linkerdcos_clusterMgmt.log %v", err)
+			fmt.Printf("still failed to open log file clusterMgmt.log %v", err)
 		}
 	}
 	logrus.SetOutput(f)
@@ -81,10 +79,6 @@ func main() {
 	// Swagger configuration
 	SwaggerPath = Props.GetString("swagger.path", "")
 	LinkerIcon = filepath.Join(SwaggerPath, "images/mora.ico")
-
-	// TODO: Check mongo flag, if mongo is set by flag, using mongo flag
-
-	//	fmt.Println("call deployment enabled:", Props.GetBool("call.deployment", false))
 
 	// New, shared session manager, seprate DAO layer
 	MongoAlias = Props.GetString("db.alias", "dev")
