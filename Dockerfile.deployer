@@ -1,7 +1,6 @@
 FROM golang:1.6.2
 
 # docker build -t jiezhang/python:3.4-go-1.6-alpine -f Dockerfile.base .
-MAINTAINER jzhang@linkernetworks.com
 
 # install docker tools
 RUN mkdir -p /opt/local/bin \
