@@ -1,8 +1,8 @@
 define(['app'], function (app) {
   'use strict';
-  app.provide.factory('AlertService', ['$http','$q',function ($http,$q) {
+  app.provide.factory('AlertService', ['$http', '$q', function ($http, $q) {
     return {
-      getAlerts : function(clientAddr, params){
+      getAlerts: function (clientAddr, params) {
         var deferred = $q.defer();
         var url = "/alerts?count=true&skip=" + params.skip + "&limit=" + params.limit;
         var request = {
@@ -16,9 +16,9 @@ define(['app'], function (app) {
           }
         };
 
-        $http(request).success(function(data){
+        $http(request).success(function (data) {
           deferred.resolve(data);
-        }).error(function(error){
+        }).error(function (error) {
           deferred.reject(error);
         });
         return deferred.promise;
