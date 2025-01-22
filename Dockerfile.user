@@ -1,7 +1,5 @@
 FROM golang:1.6-alpine
 
-MAINTAINER jzhang@linkernetworks.com
-
 RUN apk add --no-cache --virtual git
 RUN apk add --no-cache --virtual bash
 

@@ -1,7 +1,6 @@
 FROM python:3.4-alpine
 
 # docker build -t jiezhang/python:3.4-go-1.6-alpine -f Dockerfile.base .
-MAINTAINER jzhang@linkernetworks.com
 
 # Install golang
 ENV GOLANG_VERSION 1.6.4
