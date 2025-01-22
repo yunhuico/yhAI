@@ -1,13 +1,8 @@
 FROM golang:1.6-alpine
 
-MAINTAINER jzhang@linkernetworks.com
-
 RUN apk add --no-cache --virtual git
-
 RUN apk add --no-cache --virtual bash
-
 RUN apk add --update openssh
-
 RUN go get -d github.com/Sirupsen/logrus \
 	&& go get -d github.com/magiconair/properties \
 	&& go get -d github.com/emicklei/go-restful \
@@ -22,12 +17,9 @@ RUN go get -d github.com/Sirupsen/logrus \
 	&& git clone https://github.com/wordnik/swagger-ui.git /go/bin/swagger-ui
 
 COPY . /go/src/linkernetworks.com/dcos-backend
-
 WORKDIR /go/src/linkernetworks.com/dcos-backend/cluster
-
 RUN go build -v -o /go/bin/cluster \
 	&& chmod u+x /go/bin/cluster
-
 RUN cp ./cluster_mgmt_policy.json /go/bin/ \
 	&& cp ./cluster_mgmt.properties /go/bin \
 	&& cp ./entrypoint.sh /go/bin \
