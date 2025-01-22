@@ -43,10 +43,10 @@ func clusterCompose(userName, clusterName, swarmName, storagePath string, slaveS
 	return
 }
 
+//generate command for docker-machine to create cluster machine on Iaas
 func changeSwarmForMgmtCluster(userName, clusterName, swarmName, storagePath string, slaveScale int) (output, errput string, err error) {
 	var commandTextBuffer bytes.Buffer
 	str := strconv.Itoa(slaveScale)
-	// resolvStr := strconv.Itoa(slaveScale)
 	commandTextBuffer.WriteString("eval ")
 	commandTextBuffer.WriteString("`docker-machine ")
 	commandTextBuffer.WriteString("--storage-path " + storagePath + " ")
@@ -56,8 +56,6 @@ func changeSwarmForMgmtCluster(userName, clusterName, swarmName, storagePath str
 	commandTextBuffer.WriteString("docker-compose -f ")
 	commandTextBuffer.WriteString(DOCKERSWARM_STORAGEPATH_PREFIX + userName + "/" + clusterName + "/docker-compose.yml ")
 	commandTextBuffer.WriteString("scale ")
-	// commandTextBuffer.WriteString("exhibitor")
-	// commandTextBuffer.WriteString("=" + str + " ")
 	commandTextBuffer.WriteString("mesosmaster")
 	commandTextBuffer.WriteString("=" + str + " ")
 	commandTextBuffer.WriteString("dnsserver")
