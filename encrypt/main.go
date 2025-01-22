@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
-	"io/ioutil"
 	"os"
 )
 
@@ -33,7 +32,7 @@ func main() {
 		return
 	}
 
-	buf, err := ioutil.ReadFile(inputFile)
+	buf, err := os.ReadFile(inputFile)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "File Error: %s\n", err)
 		return
