@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -58,7 +59,7 @@ func Http_put(url string, body string, headers ...Header) (resp *http.Response, 
 	if body == "" {
 		Body = nil
 	} else {
-		Body = ioutil.NopCloser(strings.NewReader(body))
+		Body = io.NopCloser(strings.NewReader(body))
 	}
 	req, _ := http.NewRequest("PUT", "http://"+url, Body)
 	// req.Header.Set("Content-Type", contenttype)
@@ -75,7 +76,7 @@ func Http_delete(url string, body string, headers ...Header) (resp *http.Respons
 	if body == "" {
 		Body = nil
 	} else {
-		Body = ioutil.NopCloser(strings.NewReader(body))
+		Body = io.NopCloser(strings.NewReader(body))
 	}
 	req, _ := http.NewRequest("DELETE", "http://"+url, Body)
 	// req.Header.Set("Content-Type", contenttype)
@@ -96,7 +97,7 @@ func Https_get(url string, body string, caCertPath string, headers ...Header) (r
 	if body == "" {
 		Body = nil
 	} else {
-		Body = ioutil.NopCloser(strings.NewReader(body))
+		Body = io.NopCloser(strings.NewReader(body))
 	}
 	req, err := http.NewRequest("GET", "https://"+url, Body)
 	if err != nil {
@@ -118,7 +119,7 @@ func Https_post(url string, body string, caCertPath string, headers ...Header) (
 	if body == "" {
 		Body = nil
 	} else {
-		Body = ioutil.NopCloser(strings.NewReader(body))
+		Body = io.NopCloser(strings.NewReader(body))
 	}
 	req, _ := http.NewRequest("POST", "https://"+url, Body)
 	for _, header := range headers {
@@ -139,7 +140,7 @@ func Https_put(url string, body string, caCertPath string, headers ...Header) (r
 	if body == "" {
 		Body = nil
 	} else {
-		Body = ioutil.NopCloser(strings.NewReader(body))
+		Body = io.NopCloser(strings.NewReader(body))
 	}
 	req, _ := http.NewRequest("PUT", "https://"+url, Body)
 	for _, header := range headers {
@@ -158,7 +159,7 @@ func Https_delete(url string, body string, caCertPath string, headers ...Header)
 	if body == "" {
 		Body = nil
 	} else {
-		Body = ioutil.NopCloser(strings.NewReader(body))
+		Body = io.NopCloser(strings.NewReader(body))
 	}
 	req, _ := http.NewRequest("DELETE", "https://"+url, Body)
 	for _, header := range headers {
@@ -182,7 +183,7 @@ func getClient(isHttps bool, caCertPath string) (client *http.Client, err error)
 	// 	}
 	// 	pool.AppendCertsFromPEM(caCrt)
 	// }
-	caCrt, err := ioutil.ReadFile(caCertPath)
+	caCrt, err := os.ReadFile(caCertPath)
 	if err != nil {
 		return
 	}

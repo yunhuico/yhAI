@@ -1,6 +1,7 @@
 package common
 
 import (
+	"io"
 	"io/ioutil"
 	"os/exec"
 	"strings"
@@ -42,7 +43,7 @@ func ExecCommand(input string) (output string, errput string, err error) {
 		reterrput = strings.Trim(string(bytesErr), "\n")
 	}
 
-	bytes, err := ioutil.ReadAll(stdout)
+	bytes, err := io.ReadAll(stdout)
 	if err != nil {
 		logrus.Errorf("read stdout failed, error is %v", err)
 		return "", reterrput, err
