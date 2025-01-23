@@ -56,6 +56,9 @@ func DesEncrypt(origData, key []byte) ([]byte, error) {
 }
 
 func DesDecrypt(crypted, key []byte) ([]byte, error) {
+	if len(key) != 8 {
+        	return nil, errors.New("key length must be 8 bytes")
+    	}
 	block, err := des.NewCipher(key)
 	if err != nil {
 		return nil, err
