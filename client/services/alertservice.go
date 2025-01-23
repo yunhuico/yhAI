@@ -38,7 +38,7 @@ func GetAlertService() *AlertService {
 
 func (p *AlertService) Create(alert entity.Alert) (newAlert entity.Alert,
 	errorCode string, err error) {
-	logrus.Infof("start to create alert [%v]", alert)
+	logrus.Infof("start to create alert [%v] with %v", alert, errorCode)
 
 	// generate ObjectId
 	alert.ObjectId = bson.NewObjectId()
