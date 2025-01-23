@@ -148,7 +148,7 @@ func (p *TokenService) TokenCreate(username string, password string, tenantname 
 
 	token, err := p.checkAndGenerateToken(username, password, tenantname, true)
 	if err != nil {
-		logrus.Errorf("failed to generate token, error is %s", err)
+		logrus.Errorf("failed to generate token for username %s, error is %s", username, err)
 		return ret, TOKEN_ERROR_CREATE, err
 	}
 
